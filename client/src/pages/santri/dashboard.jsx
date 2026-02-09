@@ -549,9 +549,9 @@ export default function SantriDashboard() {
                   <Home size={24} />
                   <span className="text-xs mt-1">Beranda</span>
                 </button>
-                <button onClick={() => navigate("/santri/settings")} className="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
+                <button onClick={() => navigate("/santri/profil")} className="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
                   <Settings size={24} />
-                  <span className="text-xs mt-1">Pengaturan</span>
+                  <span className="text-xs mt-1">Edit Profil</span>
                 </button>
                 <button onClick={handleLogout} className="flex flex-col items-center p-2 text-gray-600 hover:text-red-600">
                   <LogOut size={24} />

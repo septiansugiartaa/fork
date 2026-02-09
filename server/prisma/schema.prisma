@@ -225,13 +225,16 @@ model observasi {
 }
 
 model orangtua {
-  id        Int     @id @default(autoincrement())
-  id_santri Int
-  hubungan  String? @db.VarChar(100)
-  is_active Boolean
-  users     users   @relation(fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK")
+  id                                Int     @id @default(autoincrement())
+  id_orangtua                       Int?
+  id_santri                         Int
+  hubungan                          String? @db.VarChar(100)
+  is_active                         Boolean
+  users                             users   @relation(fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK")
+  users_orangtua_id_orangtuaTousers users?  @relation("orangtua_id_orangtuaTousers", fields: [id_orangtua], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK_1")
 
   @@index([id_santri], map: "orangtua_users_FK")
+  @@index([id_orangtua], map: "orangtua_users_FK_1")
 }
 
 model pembayaran {
@@ -383,6 +386,7 @@ model users {
   email                                 String?              @db.VarChar(100)
   no_hp                                 String?              @db.VarChar(100)
   alamat                                String?              @db.VarChar(255)
+  foto_profil                           String?              @db.VarChar(100)
   password                              String?              @db.VarChar(100)
   is_active                             Boolean              @default(true)
   absensi                               absensi[]
@@ -394,6 +398,7 @@ model users {
   observasi_observasi_id_santriTousers  observasi[]          @relation("observasi_id_santriTousers")
   observasi_observasi_id_timkesTousers  observasi[]          @relation("observasi_id_timkesTousers")
   orangtua                              orangtua[]
+  orangtua_orangtua_id_orangtuaTousers  orangtua[]           @relation("orangtua_id_orangtuaTousers")
   pengaduan_pengaduan_id_pelaporTousers pengaduan[]          @relation("pengaduan_id_pelaporTousers")
   pengaduan_pengaduan_id_santriTousers  pengaduan[]          @relation("pengaduan_id_santriTousers")
   riwayat_layanan                       riwayat_layanan[]
