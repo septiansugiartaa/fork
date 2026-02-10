@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2 } from "lucide-react";
+import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown } from "lucide-react";
 
 export default function SantriDashboard() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dashboardData, setDashboardData] = useState(null);
   const [activeMenu, setActiveMenu] = useState("home");
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const navigate = useNavigate();
   const API_URL = "http://localhost:3000/api/santri";
@@ -234,7 +235,7 @@ export default function SantriDashboard() {
   })) : defaultMenu;
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
       <div className="bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6">
         <div className="max-w-6xl mx-auto">
@@ -251,9 +252,60 @@ export default function SantriDashboard() {
                 <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
                   <User size={24} />
                 </div>
-                <div>
-                  <p className="font-medium">{santri.nama}</p>
-                  <p className="text-sm text-blue-100">NIS: {santri.nip}</p>
+                {/* Profil Dropdown Desktop */}
+                <div className="relative hidden md:block">
+                  <button 
+                    onClick={() => setIsProfileOpen(!isProfileOpen)}
+                    className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/20">
+                      <User size={20} />
+                    </div>
+                    <div>
+                      <p className="font-medium leading-tight">{santri.nama}</p>
+                      <p className="text-sm text-white/75">NIS: {santri.nip}</p>
+                    </div>
+                    <ChevronDown 
+                      size={16} 
+                      className={`text-blue-200 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} 
+                    />
+                  </button>
+
+                  {/* Dropdown Menu Absolute */}
+                  {isProfileOpen && (
+                    <div className="absolute right-0 top-full mt-2 w-56 bg-white rounded-xl shadow-md py-2 z-50 border border-gray-100 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+
+                      {/* Item 1: Edit Profil */}
+                      <button 
+                        onClick={() => {
+                          setIsProfileOpen(false);
+                          navigate("/santri/profil");
+                        }}
+                        className="w-full text-left px-4 py-2.5 text-md text-gray-700 hover:bg-blue-50 hover:text-blue-700 flex items-center transition"
+                      >
+                        <Settings size={16} className="mr-3" />
+                        Edit Profil
+                      </button>
+
+                      {/* Item 2: Keluar */}
+                      <button 
+                        onClick={handleLogout}
+                        className="w-full text-left px-4 py-2.5 text-md text-red-600 hover:bg-red-50 flex items-center transition"
+                      >
+                        <LogOut size={16} className="mr-3" />
+                        Keluar
+                      </button>
+
+                    </div>
+                  )}
+
+                  {/* Backdrop transparan untuk menutup dropdown saat klik di luar */}
+                  {isProfileOpen && (
+                    <div 
+                      className="fixed inset-0 z-40" 
+                      onClick={() => setIsProfileOpen(false)}
+                    ></div>
+                  )}
                 </div>
               </div>
             </div>
@@ -457,14 +509,7 @@ export default function SantriDashboard() {
                 Status Tagihan
               </h3>
               
-              <div className="space-y-4">
-                <div className="p-4 bg-gray-50 rounded-xl">
-                  <p className="text-gray-600 mb-1">Bulan</p>
-                  <p className="text-2xl font-bold text-gray-800 truncate">
-                    {keuangan.tagihan_terakhir.bulan}
-                  </p>
-                </div>
-                
+              <div className="space-y-4">                
                 <div className={`p-4 rounded-xl ${keuangan.tagihan_terakhir.status === 'Lunas' ? 'bg-green-50' : 'bg-red-50'}`}>
                   <div className="flex items-center justify-between">
                     <div>
@@ -543,7 +588,7 @@ export default function SantriDashboard() {
             </div>
 
             {/* Bottom Navigation */}
-            <div className="bg-white rounded-2xl shadow-md p-4">
+            <div className="fixed bottom-4 left-4 right-4 bg-white rounded-2xl shadow-2xl p-4 z-50 border border-gray-100 md:hidden">
               <div className="flex justify-around">
                 <button onClick={() => setActiveMenu('home')} className={`flex flex-col items-center p-2 ${activeMenu === 'home' ? 'text-blue-600' : 'text-gray-600'}`}>
                   <Home size={24} />

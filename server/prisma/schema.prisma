@@ -162,8 +162,8 @@ model kamar_santri {
 model kegiatan {
   id               Int        @id @default(autoincrement())
   nama_kegiatan    String     @db.VarChar(100)
-  hari             String?    @db.VarChar(20)
   tanggal          DateTime?  @db.Date
+  lokasi           String?    @db.VarChar(100)
   waktu_mulai      DateTime?  @db.Time(0)
   waktu_selesai    DateTime?  @db.Time(0)
   penanggung_jawab Int?

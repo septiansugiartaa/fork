@@ -145,7 +145,7 @@ exports.uploadPembayaran = async (req, res) => {
         tanggal_bayar: new Date(),
         nominal: tagihan.nominal, // Asumsi bayar full sesuai nominal tagihan
         bukti_bayar: req.file.filename,
-        metode_bayar: null,
+        metode_bayar: "Transfer",
         status: "Pending", // Default status
       },
     });

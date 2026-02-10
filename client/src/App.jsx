@@ -4,6 +4,7 @@ import Login from "./pages/Login"
 import SantriDashboard from "./pages/santri/dashboard"
 import SantriProfile from "./pages/santri/pendataan"
 import SantriKeuangan from "./pages/santri/keuangan"
+import SantriKegiatan from "./pages/santri/kegiatan"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
         <Route path="/santri" element={<SantriDashboard />} />
         <Route path="/santri/profil" element={<SantriProfile />} />
         <Route path="/santri/keuangan" element={<SantriKeuangan />} />
+        <Route path="/santri/kegiatan" element={<SantriKegiatan />} />
 
       </Routes>
     </BrowserRouter>
