@@ -196,7 +196,7 @@ exports.getDashboardData = async (req, res) => {
 
             // Menu Cepat (Static)
             menu_cepat: [
-                { id: 1, nama: "Pendataan Diri", icon: "user", endpoint: "/santri/profile", accessible: true },
+                { id: 1, nama: "Pendataan Diri", icon: "user", endpoint: "/santri/profil", accessible: true },
                 { id: 2, nama: "Tagihan & Keuangan", icon: "credit-card", endpoint: "/santri/keuangan", accessible: true },
                 { id: 3, nama: "Kegiatan", icon: "calendar", endpoint: "/santri/kegiatan", accessible: true },
                 { id: 4, nama: "Pengaduan", icon: "alert-circle", endpoint: "/santri/pengaduan", accessible: true },
