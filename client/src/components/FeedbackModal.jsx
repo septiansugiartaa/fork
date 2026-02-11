@@ -1,36 +1,68 @@
-import { useState } from "react";
-import { X, Star, Loader2 } from "lucide-react";
+import { useState, useEffect } from "react";
+import { X, Star, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
 
-export default function FeedbackModal({ isOpen, onClose, kegiatan, onSubmit, saving }) {
+// PERUBAHAN: props 'kegiatan' diganti jadi 'item' biar universal
+export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving }) {
   const [rating, setRating] = useState(0);
-  const [hoverRating, setHoverRating] = useState(0); // Efek hover bintang
+  const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState("");
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-  if (!isOpen || !kegiatan) return null;
+  // Reset state saat modal dibuka
+  useEffect(() => {
+    if (isOpen) {
+        setRating(0);
+        setReview("");
+        setMessage({ type: "", text: "" });
+    }
+  }, [isOpen, item]);
+
+  // PERUBAHAN: Cek 'item' bukan 'kegiatan'
+  if (!isOpen || !item) return null;
+
+  const showAlert = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
+  };
 
   const handleSubmit = () => {
     if (rating === 0) {
-      alert("Silakan beri rating bintang terlebih dahulu.");
+      showAlert("error", "Silakan beri rating bintang terlebih dahulu.");
       return;
     }
     if (!review.trim()) {
-      alert("Silakan isi ulasan pengalaman Anda.");
+      showAlert("error", "Silakan isi ulasan pengalaman Anda.");
       return;
     }
-    onSubmit(kegiatan.id, rating, review);
+    // Kirim ID ke parent
+    onSubmit(item.id, rating, review);
   };
+
+  // LOGIC JUDUL: Cek apakah ini Kegiatan (punya .nama) atau Layanan (punya .nama_layanan)
+  const displayTitle = item.nama || item.nama_layanan || "Item";
 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl overflow-hidden flex flex-col p-6 relative">
         
+        {/* Alert Component */}
+        {message.text && (
+            <div className={`absolute top-4 left-4 right-4 z-[10001] p-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-top-2 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-green-50 border-green-500 text-green-700'}`}>
+                <div className={`flex-shrink-0 p-1 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
+                    {message.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
+                </div>
+                <p className="text-xs font-medium flex-1">{message.text}</p>
+                <button onClick={() => setMessage({type:"", text:""})} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
+            </div>
+        )}
+
         <button onClick={onClose} className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition">
             <X size={24} />
         </button>
 
-        <div className="text-center mb-6">
+        <div className="text-center mb-6 mt-4">
             <h3 className="text-xl font-bold text-gray-900">Berikan Umpan Balik</h3>
-            <p className="text-gray-500 text-sm mt-1">{kegiatan.nama}</p>
+            <p className="text-gray-500 text-sm mt-1">{displayTitle}</p>
         </div>
 
         {/* Rating Bintang */}
@@ -57,7 +89,7 @@ export default function FeedbackModal({ isOpen, onClose, kegiatan, onSubmit, sav
         {/* Textarea */}
         <textarea 
             className="w-full p-4 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm resize-none h-32 mb-6 transition"
-            placeholder="Ceritakan pengalaman Anda mengikuti kegiatan ini..."
+            placeholder="Ceritakan pengalaman Anda..."
             value={review}
             onChange={(e) => setReview(e.target.value)}
         ></textarea>
@@ -75,7 +107,7 @@ export default function FeedbackModal({ isOpen, onClose, kegiatan, onSubmit, sav
                 disabled={saving}
                 className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition disabled:bg-blue-300 flex items-center justify-center"
             >
-                {saving ? <Loader2 className="animate-spin mr-2" size={20} /> : "Kirim Umpan Balik"}
+                {saving ? <Loader2 className="animate-spin mr-2" size={20} /> : "Kirim"}
             </button>
         </div>
 
