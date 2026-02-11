@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { User, X, Search, Loader2, CheckCircle, Plus } from "lucide-react";
+import { User, X, Search, Loader2, CheckCircle, Plus, AlertTriangle } from "lucide-react";
 
 export default function OrtuModal({
   isOpen,
@@ -16,6 +16,7 @@ export default function OrtuModal({
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearchingUser, setIsSearchingUser] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" }); // Alert State
 
   // Data Form
   const [formData, setFormData] = useState({
@@ -25,27 +26,31 @@ export default function OrtuModal({
     id_user_wali: null,
   });
 
+  const showAlert = (type, text) => {
+    setMessage({ type, text });
+    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
+  };
+
   // Reset atau Isi Data saat Modal Dibuka/Edit Data Berubah
   useEffect(() => {
     if (isOpen) {
       if (isEditing && editData) {
-        // Mode Edit: Langsung ke Form, isi data, mode manual (bisa edit semua)
         setFormData({
           nama: editData.nama,
           hubungan: editData.hubungan,
           no_hp: editData.no_hp,
-          id_user_wali: editData.id_user_wali, // ID user existing
+          id_user_wali: editData.id_user_wali, 
         });
         setFormStep(2);
         setIsManualInput(true);
       } else {
-        // Mode Tambah: Reset bersih
         setFormData({ nama: "", hubungan: "", no_hp: "", id_user_wali: null });
         setSearchQuery("");
         setSearchResults([]);
         setFormStep(1);
         setIsManualInput(false);
       }
+      setMessage({ type: "", text: "" });
     }
   }, [isOpen, isEditing, editData]);
 
@@ -93,7 +98,7 @@ export default function OrtuModal({
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.nama || !formData.hubungan || !formData.no_hp) {
-      alert("Semua field wajib diisi");
+      showAlert("error", "Semua field wajib diisi");
       return;
     }
     // Kirim data ke Parent Component
@@ -104,7 +109,19 @@ export default function OrtuModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh]">
+      <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 flex flex-col max-h-[90vh] relative">
+        
+        {/* Alert Component */}
+        {message.text && (
+            <div className={`absolute top-4 left-4 right-4 z-[60] p-3 rounded-lg shadow-lg flex items-center gap-2 animate-in slide-in-from-top-2 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-green-50 border-green-500 text-green-700'}`}>
+                <div className={`flex-shrink-0 p-1 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
+                    {message.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
+                </div>
+                <p className="text-xs font-medium flex-1">{message.text}</p>
+                <button onClick={() => setMessage({type:"", text:""})} className="text-gray-400 hover:text-gray-600"><X size={16} /></button>
+            </div>
+        )}
+
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50">
           <h3 className="font-bold text-gray-800 text-lg flex items-center">
