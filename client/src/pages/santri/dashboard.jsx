@@ -193,19 +193,19 @@ export default function SantriDashboard() {
     santri, 
     keuangan, 
     kegiatan_hari_ini = [], 
-    pengumuman = [], 
     aktivitas_terakhir = {},
     statistik = {},
     menu_cepat = []
   } = dashboardData;
 
   // Format aktivitas terakhir menjadi array
+  // 1. Ambil list pengaduan (Pastikan array)
+  const pengaduanList = Array.isArray(aktivitas_terakhir.pengaduan) 
+    ? aktivitas_terakhir.pengaduan 
+    : [];
+
+  // 2. Definisikan aktivitasArray (Gabungan Observasi + Screening)
   const aktivitasArray = [
-    ...(aktivitas_terakhir.pengaduan ? [{
-      ...aktivitas_terakhir.pengaduan,
-      jenis: "pengaduan",
-      tanggal: formatDate(aktivitas_terakhir.pengaduan.waktu)
-    }] : []),
     ...(aktivitas_terakhir.observasi ? [{
       ...aktivitas_terakhir.observasi,
       jenis: "observasi",
@@ -216,7 +216,7 @@ export default function SantriDashboard() {
       jenis: "screening",
       tanggal: formatDate(aktivitas_terakhir.screening.tanggal)
     }] : [])
-  ];
+  ].sort((a, b) => new Date(b.waktu || b.tanggal) - new Date(a.waktu || a.tanggal));
 
   // Default menu jika tidak ada dari backend
   const defaultMenu = [
@@ -249,17 +249,13 @@ export default function SantriDashboard() {
                 <Bell size={24} />
               </button>
               <div className="hidden md:flex items-center space-x-2">
-                <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center">
-                  <User size={24} />
-                </div>
-                {/* Profil Dropdown Desktop */}
                 <div className="relative hidden md:block">
                   <button 
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                   >
-                    <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center border border-white/20">
-                      <User size={20} />
+                    <div className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
+                      <User size={24} />
                     </div>
                     <div>
                       <p className="font-medium leading-tight">{santri.nama}</p>
@@ -403,60 +399,53 @@ export default function SantriDashboard() {
                 </button>
               </div>
 
-              {/* Announcements */}
+              {/* Riwayat Pengaduan */}
               <div className="bg-white rounded-2xl shadow-md p-6">
                 <div className="flex items-center justify-between mb-4">
                   <h3 className="text-xl font-bold text-gray-800 flex items-center">
-                    <Bell className="mr-2" size={24} />
-                    Pengumuman Terbaru
+                    <AlertCircle className="mr-2" size={24} />
+                    Riwayat Pengaduan
                   </h3>
-                  {pengumuman.length > 0 && (
-                    <span className="text-sm text-blue-600 font-medium">{pengumuman.length} baru</span>
+                  {pengaduanList.length > 0 && (
+                    <span className="text-sm text-blue-600 font-medium">{pengaduanList.length} total</span>
                   )}
                 </div>
                 
-                {pengumuman.length > 0 ? (
+                {/* LOGIC BARU: Cek panjang array pengaduanList */}
+                {pengaduanList.length > 0 ? (
                   <div className="space-y-4">
-                    {pengumuman.map((item) => (
-                      <div key={item.id} className="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
-                        <p className="font-medium text-gray-800 mb-1">{item.judul}</p>
-                        <p className="text-gray-600 text-sm mb-2">{item.isi}</p>
-                        <p className="text-xs text-gray-500">
-                          {formatDate(item.waktu || item.tanggal)}
-                        </p>
+                    {pengaduanList.slice(0, 3).map((item) => (
+                      <div key={item.id} className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
+                        <div className="flex justify-between items-start mb-2">
+                           <h4 className="font-bold text-gray-800 text-sm line-clamp-1">{item.deskripsi}</h4>
+                           <span className={`px-2 py-1 rounded text-[10px] font-bold uppercase ${getStatusColor(item.status)}`}>
+                              {item.status}
+                           </span>
+                        </div>
+                        <div className="flex justify-between items-center mt-2">
+                           <span className="text-xs text-gray-500">{formatDate(item.waktu)}</span>
+                           <button 
+                              onClick={() => navigate("/santri/pengaduan")} 
+                              className="text-xs font-semibold text-blue-600 hover:underline"
+                           >
+                              Lihat Detail
+                           </button>
+                        </div>
                       </div>
                     ))}
                   </div>
                 ) : (
                   <div className="text-center py-8">
-                    <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Tidak ada pengumuman</p>
+                    <AlertCircle className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                    <p className="text-gray-500">Tidak ada pengaduan</p>
                   </div>
                 )}
                 
-                {/* Latest Complaint Status */}
-                {aktivitas_terakhir.length && (
-                  <div className="mt-6">
-                    <h4 className="font-bold text-gray-800 mb-3">Status Pengaduan Terakhir</h4>
-                    <div className="p-4 bg-blue-50 border border-blue-200 rounded-xl">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-medium text-blue-800 truncate max-w-xs">
-                            {aktivitas_terakhir.pengaduan.deskripsi}
-                          </p>
-                          <div className="flex items-center mt-1">
-                            <span className="text-sm text-blue-600 mr-2">Status:</span>
-                            <span className={`px-2 py-1 rounded text-xs ${getStatusColor(aktivitas_terakhir.pengaduan.status)}`}>
-                              {aktivitas_terakhir.pengaduan.status}
-                            </span>
-                          </div>
-                        </div>
-                        <button onClick={() => navigate("/santri/pengaduan")} className="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 whitespace-nowrap">
-                          Lihat
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                {/* Tombol Lihat Semua hanya muncul jika ada data */}
+                {pengaduanList.length > 0 && (
+                    <button onClick={() => navigate("/santri/pengaduan")} className="w-full mt-4 py-2 text-blue-600 text-sm font-medium hover:bg-blue-50 rounded-lg transition">
+                      Lihat Semua Pengaduan
+                    </button>
                 )}
               </div>
 
@@ -595,8 +584,8 @@ export default function SantriDashboard() {
                   <span className="text-xs mt-1">Beranda</span>
                 </button>
                 <button onClick={() => navigate("/santri/profil")} className="flex flex-col items-center p-2 text-gray-600 hover:text-blue-600">
-                  <Settings size={24} />
-                  <span className="text-xs mt-1">Edit Profil</span>
+                  <User size={24} />
+                  <span className="text-xs mt-1">Profil</span>
                 </button>
                 <button onClick={handleLogout} className="flex flex-col items-center p-2 text-gray-600 hover:text-red-600">
                   <LogOut size={24} />

@@ -1,27 +1,76 @@
-const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.register = async (req, res) => {
-    const { nip, nama, password, confirmPassword } = req.body;
+    const { nip, nama, password, confirmPassword, no_hp } = req.body;
+
+    // 1. Validasi Input Dasar
+    if (!nip || !nama || !password || !confirmPassword) {
+        return res.status(400).json({ message: 'Semua field wajib diisi' });
+    }
 
     if (password !== confirmPassword) {
-        return res.status(400).json({ message: 'Password and confirm password do not match' });
+        return res.status(400).json({ message: 'Password dan konfirmasi password tidak cocok' });
     }
 
     try {
-        const existingUser = await prisma.users.findFirst({ where: { nip } });
-        if (existingUser) return res.status(400).json({ message: 'NIS already registered' });
+        // 2. Cek apakah NIP sudah terdaftar
+        const existingUser = await prisma.users.findFirst({ 
+            where: { nip: nip } 
+        });
+        
+        if (existingUser) {
+            return res.status(400).json({ message: 'NIP sudah terdaftar' });
+        }
 
-        const hashedPassword = await bcrypt.hash(password, 10);
-        const user = await prisma.users.create({
-            data: { nip, nama, password: hashedPassword }
+        // 3. Cari Role 'Santri' (Default Role)
+        const santriRole = await prisma.role.findFirst({
+            where: { role: 'Santri' } // Pastikan di DB tabel role sudah ada isinya 'Santri'
         });
 
-        res.status(201).json({ id: user.id, nip: user.nip });
+        if (!santriRole) {
+            return res.status(500).json({ message: 'Sistem Error: Role Santri belum disetting di database' });
+        }
+
+        // 4. Hash Password
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // 5. Transaction: Create User & Assign Role sekaligus
+        // Kita gunakan transaction agar kalau salah satu gagal, semuanya dibatalkan
+        const newUser = await prisma.$transaction(async (tx) => {
+            // A. Buat User
+            const user = await tx.users.create({
+                data: {
+                    nip,
+                    nama,
+                    password: hashedPassword,
+                    no_hp: no_hp || null,
+                    is_active: true
+                }
+            });
+
+            // B. Buat User Role
+            await tx.user_role.create({
+                data: {
+                    id_user: user.id,
+                    id_role: santriRole.id,
+                    is_active: true
+                }
+            });
+
+            return user;
+        });
+
+        res.status(201).json({ 
+            success: true,
+            message: 'Registrasi berhasil',
+            data: { id: newUser.id, nip: newUser.nip, nama: newUser.nama } 
+        });
+
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        console.error("Register Error:", err);
+        res.status(500).json({ message: 'Gagal melakukan registrasi' });
     }
 };
 
@@ -41,11 +90,10 @@ exports.login = async (req, res) => {
                     { nip: identifier },
                     { no_hp: identifier }
                 ],
-                // Pastikan hanya user aktif yang bisa login
-                is_active: true
+                is_active: true // Hanya user aktif yang boleh login
             },
             include: {
-                // Include Role untuk keperluan redirect di frontend
+                // Include Role agar frontend tahu dia login sebagai apa
                 user_role: {
                     include: {
                         role: true
@@ -65,27 +113,35 @@ exports.login = async (req, res) => {
             return res.status(401).json({ message: 'Password salah' });
         }
 
-        // 3. Generate Token JWT
+        // 3. Ekstrak Role User (Flattening)
+        // Ambil role pertama dari array user_role. Jika kosong default ke 'user'
+        const roleName = user.user_role.length > 0 && user.user_role[0].role 
+            ? user.user_role[0].role.role 
+            : 'user';
+
+        // 4. Generate Token JWT
         const token = jwt.sign(
             { 
                 id: user.id, 
-                nama: user.nama 
+                nama: user.nama,
+                role: roleName // PENTING: Masukkan role ke dalam token
             }, 
             process.env.JWT_SECRET, 
             { expiresIn: '1d' } // Token berlaku 1 hari
         );
-        
-        // 4. Siapkan data user untuk dikirim ke frontend
-        // Ambil nama role dari array user_role (mengambil yang pertama jika ada)
-        const userRole = user.user_role.length > 0 ? user.user_role[0].role.role.toLowerCase() : 'santri';
 
-        // Buang data sensitif
-        const { password: _, ...userWithoutPassword } = user;
+        // 5. Siapkan Response (Buang password dari object user)
+        const { password: _, ...userData } = user;
         
-        // Tambahkan properti 'role' flat ke object user agar mudah dibaca frontend
+        // Buat object user yang bersih dan mudah dibaca Frontend
         const finalUser = {
-            ...userWithoutPassword,
-            role: userRole
+            id: userData.id,
+            nip: userData.nip,
+            nama: userData.nama,
+            email: userData.email,
+            no_hp: userData.no_hp,
+            foto_profil: userData.foto_profil,
+            role: roleName.toLowerCase() // Kirim role sebagai string lowercase (contoh: 'santri')
         };
         
         res.json({ 
