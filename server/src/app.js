@@ -21,6 +21,9 @@ app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
 app.use('/api/santri/keuangan', require('./routes/santri/keuanganRoutes'));
 app.use('/api/santri/kegiatan', require('./routes/santri/kegiatanRoutes'));
+app.use('/api/santri/pengaduan', require('./routes/santri/pengaduanRoutes'));
+app.use('/api/santri/layanan', require('./routes/santri/layananRoutes'));
+app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
