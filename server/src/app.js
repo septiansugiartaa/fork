@@ -25,6 +25,8 @@ app.use('/api/santri/pengaduan', require('./routes/santri/pengaduanRoutes'));
 app.use('/api/santri/layanan', require('./routes/santri/layananRoutes'));
 app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRoutes'));
 
+app.use('/api/pengurus/santri', require('./routes/pengurus/santriRoutes'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
