@@ -37,6 +37,7 @@ function App() {
           <Route index element={<PengurusDashboard />} />
           <Route path="data-santri" element={<PengurusSantri />} />
           <Route path="data-ustadz" element={<PengurusUstadz />} />
+          <Route path="data-kelas" element={<PengurusKelas />} />
         </Route>
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
              <Route path="/orangtua" element={<OrangtuaDashboard />} />
