@@ -14,6 +14,7 @@ import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
 import PengurusLayout from "./components/Layout"
 import PengurusDashboard from "./pages/pengurus/dashboard"
 import PengurusSantri from "./pages/pengurus/dataSantri"
+import PengurusUstadz from "./pages/pengurus/dataUstadz"
 function App() {
   return (
     <BrowserRouter>
@@ -35,6 +36,7 @@ function App() {
         <Route path="/pengurus" element={<PengurusLayout />}>
           <Route index element={<PengurusDashboard />} />
           <Route path="data-santri" element={<PengurusSantri />} />
+          <Route path="data-ustadz" element={<PengurusUstadz />} />
         </Route>
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
              <Route path="/orangtua" element={<OrangtuaDashboard />} />
