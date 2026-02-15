@@ -2,6 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoutes";
+
 import SantriDashboard from "./pages/santri/dashboard"
 import SantriProfile from "./pages/santri/pendataan"
 import SantriKeuangan from "./pages/santri/keuangan"
@@ -10,6 +11,10 @@ import SantriPengaduan from "./pages/santri/pengaduan"
 import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
 
+import PengurusLayout from "./components/Layout"
+import PengurusDashboard from "./pages/pengurus/dashboard"
+import PengurusSantri from "./pages/pengurus/dataSantri"
+import PengurusUstadz from "./pages/pengurus/dataUstadz"
 function App() {
   return (
     <BrowserRouter>
@@ -28,6 +33,12 @@ function App() {
           <Route path="/santri/layanan/riwayat" element={<SantriRiwayatLayanan />} />
         </Route>
 
+        <Route path="/pengurus" element={<PengurusLayout />}>
+          <Route index element={<PengurusDashboard />} />
+          <Route path="data-santri" element={<PengurusSantri />} />
+          <Route path="data-ustadz" element={<PengurusUstadz />} />
+          <Route path="data-kelas" element={<PengurusKelas />} />
+        </Route>
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
              <Route path="/orangtua" element={<OrangtuaDashboard />} />
         </Route> */}
