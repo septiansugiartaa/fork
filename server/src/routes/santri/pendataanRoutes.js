@@ -45,9 +45,6 @@ const upload = multer({
   },
 });
 
-// --- Middleware Global ---
-router.use(pendataanController.verifyToken);
-
 // --- Routes ---
 router.get("/", pendataanController.getProfile);
 router.put("/update", pendataanController.updateProfile);

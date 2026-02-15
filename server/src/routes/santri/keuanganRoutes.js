@@ -29,8 +29,6 @@ const upload = multer({
   },
 });
 
-router.use(keuanganController.verifyToken);
-
 router.get("/", keuanganController.getKeuanganDashboard);
 
 // Route Upload Pembayaran

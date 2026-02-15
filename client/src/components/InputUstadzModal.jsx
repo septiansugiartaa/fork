@@ -7,6 +7,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
     nama: "",
     email: "",
     no_hp: "",
+    jenis_kelamin: "",
     alamat: "",
     password: "" 
   };
@@ -21,6 +22,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
           nip: editData.nip || "", // Handle null value dari DB
           email: editData.email || "",
           no_hp: editData.no_hp || "",
+          jenis_kelamin: editData.jenis_kelamin || "",
           alamat: editData.alamat || "",
           password: "" 
         });
@@ -62,33 +64,30 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
         {/* Form Content */}
         <div className="p-6 overflow-y-auto">
           <form id="ustadzForm" onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* NIP & Nama */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">NIP (Opsional)</label>
-                <div className="relative">
-                    <input 
-                        type="text" name="nip" 
-                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                        value={formData.nip} onChange={handleChange}
-                        placeholder="Nomor Induk Pegawai"
-                    />
-                    <Briefcase className="absolute left-3 top-3 text-gray-400" size={16} />
-                </div>
-            </div>
-            
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
-                <input 
-                    type="text" name="nama" required
-                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    value={formData.nama} onChange={handleChange}
-                    placeholder="Nama Ustadz/Ustadzah"
-                />
-            </div>
 
-            {/* Email & No HP (Tidak Required) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">NIP (Opsional)</label>
+                    <div className="relative">
+                        <input 
+                            type="text" name="nip" 
+                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            value={formData.nip} onChange={handleChange}
+                            placeholder="Nomor Induk Pegawai"
+                        />
+                        <Briefcase className="absolute left-3 top-3 text-gray-400" size={16} />
+                    </div>
+                </div>
+                
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
+                    <input 
+                        type="text" name="nama" required
+                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        value={formData.nama} onChange={handleChange}
+                        placeholder="Nama Ustadz/Ustadzah"
+                    />
+                </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <div className="relative">
@@ -114,6 +113,19 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
                         <Phone className="absolute left-3 top-3 text-gray-400" size={16} />
                     </div>
                 </div>
+            </div>
+
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                <select 
+                    name="jenis_kelamin"
+                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white"
+                    value={formData.jenis_kelamin} onChange={handleChange}
+                >
+                    <option value="" disabled>Pilih Jenis Kelamin</option>
+                    <option value="Laki_laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
             </div>
 
             {/* Alamat */}
