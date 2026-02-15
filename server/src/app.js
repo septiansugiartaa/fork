@@ -12,13 +12,13 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-app.get("/", (req, res) => {
 app.get("/api", (req, res) => {
   res.send("PPDNY");
 });
 
-// app.use(verifyToken);
 app.use('/api/auth', require('./routes/authRoutes'));
+
+// app.use(verifyToken);
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
