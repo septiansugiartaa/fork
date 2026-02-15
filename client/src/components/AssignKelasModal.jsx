@@ -69,7 +69,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
             <School className="text-blue-600" size={20} />
-            {isEditing ? "Pindah Kelas Santri" : "Tambah Santri ke Kelas"}
+            {"Tambah Santri ke Kelas"}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={24} /></button>
         </div>

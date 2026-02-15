@@ -15,6 +15,7 @@ import PengurusLayout from "./components/Layout"
 import PengurusDashboard from "./pages/pengurus/dashboard"
 import PengurusSantri from "./pages/pengurus/dataSantri"
 import PengurusUstadz from "./pages/pengurus/dataUstadz"
+import PengurusKelas from "./pages/pengurus/dataKelas"
 function App() {
   return (
     <BrowserRouter>
