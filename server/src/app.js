@@ -28,7 +28,9 @@ app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRo
 app.use('/api/pengurus/santri', require('./routes/pengurus/santriRoutes'));
 app.use('/api/pengurus/ustadz', require('./routes/pengurus/ustadzRoutes'));
 app.use('/api/pengurus/kelas', require('./routes/pengurus/kelasRoutes'));
+app.use('/api/pengurus/kamar', require('./routes/pengurus/kamarRoutes'));
 app.use('/api/pengurus/penempatan-kelas', require('./routes/pengurus/assignKelasRoutes'));
+app.use('/api/pengurus/penempatan-kamar', require('./routes/pengurus/assignKamarRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
