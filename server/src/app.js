@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const {verifyToken} = require('../src/middleware/verifyToken');
 
 dotenv.config();
 
@@ -12,9 +13,11 @@ app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.get("/", (req, res) => {
+app.get("/api", (req, res) => {
   res.send("PPDNY");
 });
 
+// app.use(verifyToken);
 app.use('/api/auth', require('./routes/authRoutes'));
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
