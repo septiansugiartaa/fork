@@ -104,11 +104,11 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
             ) : filteredList.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {filteredList.map(santri => (
-                        <div key={santri.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-xl hover:bg-gray-50 transition group">
+                        <div key={santri.id} className="flex items-center justify-between px-3 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition group">
                             
                             {/* Info Santri */}
                             <div className="flex items-center gap-3 overflow-hidden">
-                                <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
+                                <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                                     {santri.foto_profil ? (
                                         <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                                     ) : (
@@ -117,7 +117,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
                                 </div>
                                 <div className="min-w-0">
                                     <p className="font-medium text-gray-800 truncate">{santri.nama}</p>
-                                    <p className="text-xs text-gray-500">{santri.nip || "Tanpa NIP"}</p>
+                                    <p className="text-xs text-gray-500">{santri.nip || "Tanpa NIS"}</p>
                                 </div>
                             </div>
 

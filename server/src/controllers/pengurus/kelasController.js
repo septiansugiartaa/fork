@@ -127,9 +127,6 @@ exports.removeSantriFromKelas = async (req, res) => {
     const { idKelas, idSantri } = req.params;
 
     try {
-        // Cari record aktif berdasarkan id_kelas dan id_santri
-        // Karena id di tabel kelas_santri mungkin tidak kita ketahui dari frontend list santri
-        // Kita cari berdasarkan kombinasi foreign key-nya
         const record = await prisma.kelas_santri.findFirst({
             where: {
                 id_kelas: parseInt(idKelas),
@@ -142,7 +139,6 @@ exports.removeSantriFromKelas = async (req, res) => {
             return res.status(404).json({ success: false, message: "Santri tidak ditemukan di kelas ini" });
         }
 
-        // Soft delete (set is_active = false)
         await prisma.kelas_santri.update({
             where: { id: record.id },
             data: { is_active: false }
@@ -186,11 +182,13 @@ exports.getOptions = async (req, res) => {
             where: { 
                 is_active: true,
                 user_role: {
-                    some: {
-                        id_role: 1
+                    some: { id_role: 1 }
+                },
+                kelas_santri: {
+                    none: {
+                        is_active: true
                     }
                 }
-
             },
             select: { id: true, nama: true, nip: true },
             orderBy: { nama: 'asc' }
@@ -199,8 +197,10 @@ exports.getOptions = async (req, res) => {
             where: { is_active: true },
             orderBy: { kelas: 'asc' }
         });
+
         res.json({ success: true, santri, kelas });
     } catch (error) {
+        console.error(error);
         res.status(500).json({ success: false, message: "Gagal memuat options" });
     }
 };

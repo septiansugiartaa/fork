@@ -161,19 +161,3 @@ exports.uploadPembayaran = async (req, res) => {
       .json({ success: false, message: "Gagal memproses pembayaran" });
   }
 };
-
-// Middleware Token (Gunakan ulang yang dari profileController juga bisa, atau buat utils terpisah)
-exports.verifyToken = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token)
-      return res.status(401).json({ success: false, message: "Token missing" });
-
-    const jwt = require("jsonwebtoken");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res.status(401).json({ success: false, message: "Token invalid" });
-  }
-};

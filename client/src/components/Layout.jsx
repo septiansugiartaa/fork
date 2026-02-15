@@ -11,16 +11,12 @@ export default function PengurusLayout() {
   const menus = [
     { name: 'Dashboard', path: '/pengurus', icon: LayoutDashboard },
     // --- MASTER DATA ---
-    { category: 'MASTER' },
+    { category: 'PENDATAAN' },
     { name: 'Data Santri', path: '/pengurus/data-santri', icon: Users },
     { name: 'Data Ustadz', path: '/pengurus/data-ustadz', icon: Users },
     { name: 'Data Kelas', path: '/pengurus/data-kelas', icon: BookOpen },
     { name: 'Data Kamar', path: '/pengurus/data-kamar', icon: BedDouble },
     { name: 'Jenis Layanan', path: '/pengurus/jenis-layanan', icon: List },
-    // --- ASSIGNMENT ---
-    { category: 'MANAJEMEN PENEMPATAN' },
-    { name: 'Penempatan Kelas', path: '/pengurus/penempatan-kelas', icon: School },
-    { name: 'Penempatan Kamar', path: '/pengurus/penempatan-kamar', icon: Home },
     // --- LAYANAN ---
     { category: 'LAYANAN & TRANSAKSI' },
     { name: 'Riwayat Layanan', path: '/pengurus/riwayat-layanan', icon: FileText },

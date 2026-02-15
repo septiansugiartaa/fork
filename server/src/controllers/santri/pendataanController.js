@@ -105,7 +105,7 @@ exports.updateProfile = async (req, res) => {
       where: { id: userId },
       data: {
         nama: nama_lengkap,
-        jenis_kelamin: jenis_kelamin || undefined, // undefined agar tidak update jika kosong
+        jenis_kelamin: jenis_kelamin,
         tempat_lahir,
         tanggal_lahir: tanggal_lahir ? new Date(tanggal_lahir) : undefined,
         email,
@@ -422,28 +422,7 @@ exports.deleteOrangTua = async (req, res) => {
   }
 };
 
-// 7. Middleware Token Verification
-exports.verifyToken = async (req, res, next) => {
-  try {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (!token) {
-      return res
-        .status(401)
-        .json({ success: false, message: "Token tidak ditemukan" });
-    }
-
-    const jwt = require("jsonwebtoken");
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded;
-    next();
-  } catch (err) {
-    return res
-      .status(401)
-      .json({ success: false, message: "Token tidak valid" });
-  }
-};
-
-// 8. Cari User (Untuk Modal Tambah Orang Tua)
+// 7. Cari User (Untuk Modal Tambah Orang Tua)
 exports.searchUser = async (req, res) => {
   try {
     const { q } = req.query; // Query search (nama atau no_hp)

@@ -66,7 +66,6 @@ export default function DataKelas() {
     setIsSaving(true);
     try {
         const token = localStorage.getItem("token");
-        // Endpoint assign santri (pastikan route ini ada di backend assignKelasRoutes)
         await axios.post("http://localhost:3000/api/pengurus/penempatan-kelas", formData, { 
             headers: { Authorization: `Bearer ${token}` } 
         });
@@ -74,9 +73,6 @@ export default function DataKelas() {
         setModalAssign({ ...modalAssign, isOpen: false });
         setRefreshListKey(prev => prev + 1);
         
-        // Refresh list santri di modal list jika sedang terbuka
-        // Note: KelasSantriModal akan refetch sendiri karena props isOpen/data berubah, 
-        // tapi untuk UX lebih baik tutup modal assign lalu buka modal list lagi (opsional)
     } catch (err) {
         showAlert("error", "Gagal assign santri");
     } finally {
@@ -84,16 +80,12 @@ export default function DataKelas() {
     }
   };
 
-  // Handler Buka Modal List Santri
   const handleOpenListSantri = (kelas) => {
     setKelasSantriModal({ isOpen: true, data: kelas });
   };
 
-  // Handler Buka Modal Assign (Dari dalam Modal List Santri)
   const handleOpenAssign = (kelasData) => {
-    // Kita tutup modal list dulu biar gak numpuk UI-nya (opsional, bisa juga ditumpuk)
-    // setKelasSantriModal({ ...modalListSantri, isOpen: false }); 
-    setModalAssign({ isOpen: true, data: { kelas: kelasData } }); // Kirim data kelas biar auto-select di modal assign
+    setModalAssign({ isOpen: true, data: { kelas: kelasData } });
   };
 
   return (
@@ -107,49 +99,44 @@ export default function DataKelas() {
 
       {/* Header */}
       <div className="flex justify-between items-center">
-        <div><h1 className="text-2xl font-bold text-gray-800">Data Kelas</h1><p className="text-gray-500 text-sm">Master data kelas & tahun ajaran</p></div>
+        <div><h1 className="text-2xl font-bold text-gray-800">Data Kelas</h1><p className="text-gray-500 text-sm">Kelola data kelas & tahun ajaran</p></div>
         <button onClick={() => setKelasModal({ isOpen: true, isEditing: false, data: null })} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"><Plus size={20} className="mr-2"/> Tambah Kelas</button>
       </div>
 
       {/* Search */}
       <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-                <input type="text" placeholder="Cari Kelas..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
-              </div>
-            </div>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+          <input type="text" placeholder="Cari Kelas..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
+        </div>
+      </div>
 
       {/* Table */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         {loading ? <div className="p-12 text-center"><Loader2 className="animate-spin text-blue-500 mx-auto mb-2"/><p>Loading...</p></div> : (
-            <table className="w-full text-left border-collapse">
-                <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4">Nama Kelas</th><th className="p-4">Tahun Ajaran</th><th className="p-4">Wali Kelas</th><th className="p-4 text-center">Aksi</th></tr></thead>
-                <tbody className="divide-y divide-gray-100">
-                    {dataList.length > 0 ? dataList.map(item => (
-                        <tr key={item.id} className="hover:bg-gray-50">
-                            <td className="p-4 font-semibold text-gray-800">{item.kelas}</td>
-                            <td className="p-4"><span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">{item.tahun_ajaran}</span></td>
-                            <td className="p-4 text-gray-600">
-                                {item.users ? (
-                                    <div className="flex flex-col"><span className="font-medium text-gray-800">{item.users.nama}</span>{item.users.nip && <span className="text-xs text-gray-400">{item.users.nip}</span>}</div>
-                                ) : <span className="text-gray-400 italic text-sm">Belum ditentukan</span>}
-                            </td>
-                            <td className="p-4 text-center">
-                                <div className="flex justify-center gap-2">
-                                    {/* 1. Edit */}
-                                    <button onClick={() => setKelasModal({ isOpen: true, isEditing: true, data: item })} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit Kelas"><Edit2 size={18}/></button>
-                                    
-                                    {/* 2. List Santri */}
-                                    <button onClick={() => handleOpenListSantri(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Lihat Santri"><Users size={18}/></button>
-                                    
-                                    {/* 3. Delete */}
-                                    <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Hapus Kelas"><Trash2 size={18}/></button>
-                                </div>
-                            </td>
-                        </tr>
-                    )) : <tr><td colSpan="4" className="p-8 text-center text-gray-500">Data kosong.</td></tr>}
-                </tbody>
-            </table>
+          <table className="w-full text-left border-collapse">
+            <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4">Nama Kelas</th><th className="p-4">Tahun Ajaran</th><th className="p-4">Wali Kelas</th><th className="p-4 text-center">Aksi</th></tr></thead>
+            <tbody className="divide-y divide-gray-100">
+              {dataList.length > 0 ? dataList.map(item => (
+                <tr key={item.id} className="hover:bg-gray-50">
+                  <td className="p-4 font-semibold text-gray-800">{item.kelas}</td>
+                  <td className="p-4"><span className="bg-blue-100 text-blue-700 px-2 py-1 rounded text-xs font-bold">{item.tahun_ajaran}</span></td>
+                  <td className="p-4 text-gray-600">
+                    {item.users ? (
+                      <div className="flex flex-col"><span className="font-medium text-gray-800">{item.users.nama}</span>{item.users.nip && <span className="text-xs text-gray-400">{item.users.nip}</span>}</div>
+                    ) : <span className="text-gray-400 italic text-sm">Belum ditentukan</span>}
+                  </td>
+                  <td className="p-4 text-center">
+                    <div className="flex justify-center gap-2">
+                      <button onClick={() => setKelasModal({ isOpen: true, isEditing: true, data: item })} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg" title="Edit Kelas"><Edit2 size={18}/></button>
+                      <button onClick={() => handleOpenListSantri(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg" title="Lihat Santri"><Users size={18}/></button>
+                      <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg" title="Hapus Kelas"><Trash2 size={18}/></button>
+                    </div>
+                  </td>
+                </tr>
+              )) : <tr><td colSpan="4" className="p-8 text-center text-gray-500">Data kosong.</td></tr>}
+            </tbody>
+          </table>
         )}
       </div>
 
