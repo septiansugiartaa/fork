@@ -100,7 +100,7 @@ export default function DataKelas() {
       {/* Header */}
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-800">Data Kelas</h1><p className="text-gray-500 text-sm">Kelola data kelas & tahun ajaran</p></div>
-        <button onClick={() => setKelasModal({ isOpen: true, isEditing: false, data: null })} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"><Plus size={20} className="mr-2"/> Tambah Kelas</button>
+        <button onClick={() => setKelasModal({ isOpen: true, isEditing: false, data: null })} className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"><Plus size={20}/><p className="ml-2 hidden md:block">Tambah Kelas</p></button>
       </div>
 
       {/* Search */}
@@ -112,7 +112,7 @@ export default function DataKelas() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-x-auto">
         {loading ? <div className="p-12 text-center"><Loader2 className="animate-spin text-blue-500 mx-auto mb-2"/><p>Loading...</p></div> : (
           <table className="w-full text-left border-collapse">
             <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4">Nama Kelas</th><th className="p-4">Tahun Ajaran</th><th className="p-4">Wali Kelas</th><th className="p-4 text-center">Aksi</th></tr></thead>

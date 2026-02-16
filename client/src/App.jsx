@@ -19,6 +19,7 @@ import PengurusSantri from "./pages/pengurus/dataSantri"
 import PengurusUstadz from "./pages/pengurus/dataUstadz"
 import PengurusKelas from "./pages/pengurus/dataKelas"
 import PengurusKamar from "./pages/pengurus/dataKamar"
+import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
 
 function App() {
   return (
@@ -46,6 +47,7 @@ function App() {
           <Route path="data-ustadz" element={<PengurusUstadz />} />
           <Route path="data-kelas" element={<PengurusKelas />} />
           <Route path="data-kamar" element={<PengurusKamar />} />
+          <Route path="jenis-layanan" element={<PengurusJenisLayanan />} />
         </Route>
 
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
