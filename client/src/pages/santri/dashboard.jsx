@@ -255,8 +255,8 @@ export default function SantriDashboard() {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                   >
-                    <div className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
-                      <User size={24} />
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
+                     <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                     </div>
                     <div>
                       <p className="font-medium leading-tight">{santri.nama}</p>
@@ -311,9 +311,6 @@ export default function SantriDashboard() {
           {/* Welcome Card */}
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-2xl">
             <div className="flex items-center mb-4">
-              <div className="w-16 h-16 rounded-full bg-white/30 flex items-center justify-center mr-4">
-                <User size={32} />
-              </div>
               <div>
                 <p className="text-blue-100 mb-1">Selamat datang kembali</p>
                 <h2 className="text-2xl font-bold">{santri.nama}</h2>
