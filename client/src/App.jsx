@@ -10,6 +10,8 @@ import SantriKegiatan from "./pages/santri/kegiatan"
 import SantriPengaduan from "./pages/santri/pengaduan"
 import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
+import MateriView from "./pages/viewMateri"
+import DetailMateri from "./pages/detailMateri" 
 
 import PengurusLayout from "./components/Layout"
 import PengurusDashboard from "./pages/pengurus/dashboard"
@@ -34,6 +36,8 @@ function App() {
           <Route path="/santri/pengaduan" element={<SantriPengaduan />} />
           <Route path="/santri/layanan" element={<SantriLayanan />} />
           <Route path="/santri/layanan/riwayat" element={<SantriRiwayatLayanan />} />
+          <Route path="/santri/scabies/viewMateri" element={<MateriView />}/>
+          <Route path="/santri/scabies/viewMateri/:id" element={<DetailMateri />}/>
         </Route>
 
         <Route path="/pengurus" element={<PengurusLayout />}>

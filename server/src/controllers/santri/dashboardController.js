@@ -166,7 +166,8 @@ exports.getDashboardData = async (req, res) => {
                 { id: 2, nama: "Tagihan & Keuangan", icon: "credit-card", endpoint: "/santri/keuangan", accessible: true },
                 { id: 3, nama: "Kegiatan", icon: "calendar", endpoint: "/santri/kegiatan", accessible: true },
                 { id: 4, nama: "Pengaduan", icon: "alert-circle", endpoint: "/santri/pengaduan", accessible: true },
-                { id: 5, nama: "Riwayat Layanan", icon: "history", endpoint: "/santri/layanan", accessible: true }
+                { id: 5, nama: "Riwayat Layanan", icon: "history", endpoint: "/santri/layanan", accessible: true },
+                { id: 6, nama: "Scabies", icon: "cross", endpoint: "/santri/scabies", accessible: true }
             ]
         };
 

@@ -17,8 +17,9 @@ app.get("/api", (req, res) => {
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
+app.use(verifyToken);
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
-// app.use(verifyToken);
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
@@ -27,6 +28,8 @@ app.use('/api/santri/kegiatan', require('./routes/santri/kegiatanRoutes'));
 app.use('/api/santri/pengaduan', require('./routes/santri/pengaduanRoutes'));
 app.use('/api/santri/layanan', require('./routes/santri/layananRoutes'));
 app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRoutes'));
+
+app.use('/api/global/viewMateri', require('./routes/viewMateriRoutes'))
 
 app.use('/api/pengurus/santri', require('./routes/pengurus/santriRoutes'));
 app.use('/api/pengurus/ustadz', require('./routes/pengurus/ustadzRoutes'));
