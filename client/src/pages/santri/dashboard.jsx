@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown } from "lucide-react";
+import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown, Cross } from "lucide-react";
 
 export default function SantriDashboard() {
   const [loading, setLoading] = useState(true);
@@ -225,15 +225,16 @@ export default function SantriDashboard() {
     { id: 3, nama: "Kegiatan", ikon: Calendar, warna: "bg-purple-500" },
     { id: 4, nama: "Pengaduan", ikon: AlertCircle, warna: "bg-orange-500" },
     { id: 5, nama: "Laporan", ikon: FileText, warna: "bg-red-500" },
-    { id: 6, nama: "Riwayat", ikon: History, warna: "bg-indigo-500" }
+    { id: 6, nama: "Riwayat", ikon: History, warna: "bg-indigo-500" },
+    { id: 7, nama: "Scabies", ikon: Cross, warna: "bg-red-500" }
   ];
 
   const menuToDisplay = menu_cepat.length > 0 ? menu_cepat.map((menu, index) => ({
     ...menu,
-    ikon: [User, CreditCard, Calendar, AlertCircle, FileText, History][index] || User,
-    warna: ["bg-blue-500", "bg-green-500", "bg-purple-500", "bg-orange-500", "bg-red-500", "bg-indigo-500"][index] || "bg-gray-500"
+    ikon: [User, CreditCard, Calendar, AlertCircle, FileText, Cross][index] || User,
+    warna: ["bg-blue-500", "bg-green-500", "bg-purple-500", "bg-orange-500", "bg-red-500", "bg-teal-500"][index] || "bg-gray-500"
   })) : defaultMenu;
-
+  
   return (
     <div className="min-h-screen bg-gray-50 pb-24">
       {/* Header */}
@@ -254,8 +255,8 @@ export default function SantriDashboard() {
                     onClick={() => setIsProfileOpen(!isProfileOpen)}
                     className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                   >
-                    <div className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
-                      <User size={24} />
+                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
+                     <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                     </div>
                     <div>
                       <p className="font-medium leading-tight">{santri.nama}</p>
@@ -310,9 +311,6 @@ export default function SantriDashboard() {
           {/* Welcome Card */}
           <div className="bg-white/20 backdrop-blur-sm rounded-2xl p-6 max-w-2xl">
             <div className="flex items-center mb-4">
-              <div className="w-16 h-16 rounded-full bg-white/30 flex items-center justify-center mr-4">
-                <User size={32} />
-              </div>
               <div>
                 <p className="text-blue-100 mb-1">Selamat datang kembali</p>
                 <h2 className="text-2xl font-bold">{santri.nama}</h2>
