@@ -18,7 +18,7 @@ app.get("/api", (req, res) => {
 
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// app.use(verifyToken);
+app.use(verifyToken);
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
@@ -34,6 +34,7 @@ app.use('/api/pengurus/kelas', require('./routes/pengurus/kelasRoutes'));
 app.use('/api/pengurus/kamar', require('./routes/pengurus/kamarRoutes'));
 app.use('/api/pengurus/penempatan-kelas', require('./routes/pengurus/assignKelasRoutes'));
 app.use('/api/pengurus/penempatan-kamar', require('./routes/pengurus/assignKamarRoutes'));
+app.use('/api/pengurus/jenis-layanan', require('./routes/pengurus/jenisLayananRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

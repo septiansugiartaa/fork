@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
-  Plus, Search, Edit2, Trash2, User, Loader2, Mail, Phone, 
-  AlertTriangle, CheckCircle, X, MapPin 
+  Plus, Search, Edit2, Trash2, List, Loader2, FileText, Tag, 
+  AlertTriangle, CheckCircle, X, CreditCard 
 } from "lucide-react";
-import InputUstadzModal from "../../components/InputUstadzModal";
+import InputJenisLayananModal from "../../components/InputJenisLayananModal";
 
-export default function DataUstadz() {
-  const [ustadzList, setUstadzList] = useState([]);
+export default function JenisLayanan() {
+  const [layananList, setLayananList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
@@ -20,7 +20,7 @@ export default function DataUstadz() {
   // State Alert Inline
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/pengurus/ustadz";
+  const API_URL = "http://localhost:3000/api/pengurus/jenis-layanan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -28,17 +28,17 @@ export default function DataUstadz() {
   };
 
   // 1. Fetch Data
-  const fetchUstadz = async () => {
+  const fetchLayanan = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(`${API_URL}?search=${search}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      setUstadzList(res.data.data);
+      setLayananList(res.data.data);
     } catch (err) {
       console.error(err);
-      showAlert("error", "Gagal memuat data ustadz");
+      showAlert("error", "Gagal memuat data layanan");
     } finally {
       setLoading(false);
     }
@@ -46,7 +46,7 @@ export default function DataUstadz() {
 
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
-        fetchUstadz();
+        fetchLayanan();
     }, 500);
     return () => clearTimeout(delayDebounce);
   }, [search]);
@@ -73,15 +73,15 @@ export default function DataUstadz() {
         await axios.put(`${API_URL}/${selectedData.id}`, formData, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        showAlert("success", "Data ustadz diperbarui");
+        showAlert("success", "Jenis layanan berhasil diperbarui");
       } else {
         await axios.post(API_URL, formData, {
             headers: { Authorization: `Bearer ${token}` }
         });
-        showAlert("success", "Ustadz baru ditambahkan");
+        showAlert("success", "Layanan baru berhasil ditambahkan");
       }
       setIsModalOpen(false);
-      fetchUstadz(); 
+      fetchLayanan();
     } catch (err) {
       console.error(err);
       showAlert("error", err.response?.data?.message || "Terjadi kesalahan");
@@ -92,15 +92,15 @@ export default function DataUstadz() {
 
   // 4. Delete Handler
   const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menonaktifkan akun ini?")) return;
+    if (!window.confirm("Apakah Anda yakin ingin menghapus layanan ini?")) return;
 
     const token = localStorage.getItem("token");
     try {
       await axios.delete(`${API_URL}/${id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      showAlert("success", "Akun berhasil dinonaktifkan");
-      fetchUstadz();
+      showAlert("success", "Layanan berhasil dihapus");
+      fetchLayanan();
     } catch (err) {
       console.error(err);
       showAlert("error", "Gagal menghapus data");
@@ -121,27 +121,33 @@ export default function DataUstadz() {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex justify-between items-center">
+      {/* Header Page */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-            <h1 className="text-2xl font-bold text-gray-800">Data Ustadz</h1>
-            <p className="text-gray-500 text-sm">Kelola data tenaga pengajar</p>
+            <h1 className="text-2xl font-bold text-gray-800">Jenis Layanan</h1>
+            <p className="text-gray-500 text-sm">Master data layanan dan biaya</p>
         </div>
         <button 
             onClick={handleAdd}
             className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center shadow-lg hover:shadow-blue-500/30 transition"
         >
-            <Plus size={20}/><p className="ml-2 hidden md:block">Tambah Ustadz</p>
+            <Plus size={20}/><p className="ml-2 hidden md:block">Tambah Jenis Layanan</p>
         </button>
       </div>
 
       {/* Filter & Search Bar */}
-            <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
-              <div className="relative flex-1">
-                <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-                <input type="text" placeholder="Cari nama atau NIP..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
-              </div>
-            </div>
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+            <input 
+                type="text" 
+                placeholder="Cari nama layanan..." 
+                className="w-full pl-10 pr-4 py-2.5 outline-none"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+            />
+        </div>
+      </div>
 
       {/* Table Section */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -155,44 +161,29 @@ export default function DataUstadz() {
                 <table className="w-full text-left border-collapse">
                     <thead>
                         <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                            <th className="p-4 font-semibold">Nama & NIP</th>
-                            <th className="p-4 font-semibold">Kontak</th>
-                            <th className="p-4 font-semibold">Alamat</th>
+                            <th className="p-4 font-semibold">Nama Layanan</th>
+                            <th className="p-4 font-semibold">Estimasi Waktu Pengerjaan</th>
+                            <th className="p-4 font-semibold">Deskripsi</th>
                             <th className="p-4 font-semibold text-center">Aksi</th>
                         </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-100">
-                        {ustadzList.length > 0 ? (
-                            ustadzList.map((item) => (
+                        {layananList.length > 0 ? (
+                            layananList.map((item) => (
                                 <tr key={item.id} className="hover:bg-gray-50 transition">
                                     <td className="p-4">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold text-sm">
-                                                {item.nama.charAt(0)}
+                                            <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                                                <List size={20} />
                                             </div>
-                                            <div>
-                                                <p className="font-semibold text-gray-800">{item.nama}</p>
-                                                <p className="text-xs text-gray-500">{item.nip || "Tanpa NIP"}</p>
-                                            </div>
+                                            <p className="font-semibold text-gray-800">{item.nama_layanan}</p>
                                         </div>
                                     </td>
-                                    <td className="p-4">
-                                        <div className="text-sm text-gray-600 space-y-1">
-                                            <div className="flex items-center gap-2">
-                                                <Mail size={14} /> {item.email || "-"}
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Phone size={14} /> {item.no_hp || "-"}
-                                            </div>
-                                        </div>
+                                    <td className="p-4 text-sm text-gray-600 max-w-sm truncate">
+                                        {item.estimasi || "-"} Hari
                                     </td>
-                                    <td className="p-4 text-sm text-gray-600 max-w-xs truncate">
-                                        {item.alamat ? (
-                                            <div className="flex items-center gap-2">
-                                                <MapPin size={14} className="flex-shrink-0"/> 
-                                                <span className="truncate">{item.alamat}</span>
-                                            </div>
-                                        ) : "-"}
+                                    <td className="p-4 text-sm text-gray-600 max-w-sm truncate">
+                                        {item.deskripsi || "-"}
                                     </td>
                                     <td className="p-4 text-center">
                                         <div className="flex items-center justify-center gap-2">
@@ -206,7 +197,7 @@ export default function DataUstadz() {
                                             <button 
                                                 onClick={() => handleDelete(item.id)}
                                                 className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition"
-                                                title="Nonaktifkan"
+                                                title="Hapus"
                                             >
                                                 <Trash2 size={18} />
                                             </button>
@@ -217,7 +208,7 @@ export default function DataUstadz() {
                         ) : (
                             <tr>
                                 <td colSpan="4" className="p-8 text-center text-gray-500">
-                                    Data tidak ditemukan.
+                                    Data layanan tidak ditemukan.
                                 </td>
                             </tr>
                         )}
@@ -227,7 +218,8 @@ export default function DataUstadz() {
         )}
       </div>
 
-      <InputUstadzModal 
+      {/* Modal Form */}
+      <InputJenisLayananModal 
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         isEditing={isEditing}

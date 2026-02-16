@@ -126,7 +126,7 @@ export default function DataSantri() {
       )}
 
       {/* Header Page */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+      <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Data Santri</h1>
           <p className="text-gray-500 text-sm">Kelola data seluruh santri aktif</p>
@@ -134,7 +134,7 @@ export default function DataSantri() {
         <button 
           onClick={handleAdd}
           className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl font-medium flex items-center shadow-lg hover:shadow-blue-500/30 transition">
-            <Plus size={20} className="mr-2" /> Tambah Santri
+            <Plus size={20}/><p className="ml-2 hidden md:block">Tambah Santri</p>
         </button>
       </div>
 
