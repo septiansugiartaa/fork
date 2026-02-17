@@ -37,7 +37,7 @@ model absensi_detail {
 model detail_materi {
   id_detail_materi Int     @id @default(autoincrement())
   id_materi        Int
-  isi_materi       String? @db.VarChar(100)
+  isi_materi       String? @db.Text
   is_active        Boolean
   materi           materi  @relation(fields: [id_materi], references: [id_materi], onDelete: NoAction, onUpdate: NoAction, map: "detail_materi_materi_FK")
 
@@ -183,7 +183,10 @@ model kelas {
   kelas        String?        @db.VarChar(100)
   tahun_ajaran String?        @db.VarChar(100)
   is_active    Boolean
+  users        users          @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kelas_users_FK")
   kelas_santri kelas_santri[]
+
+  @@index([id_wali], map: "kelas_users_FK")
 }
 
 model kelas_santri {
@@ -203,6 +206,8 @@ model materi {
   judul_materi  String          @db.VarChar(100)
   penulis       String?         @db.VarChar(100)
   is_active     Boolean
+  gambar        String          @db.VarChar(1000)
+  ringkasan     String          @db.VarChar(1000)
   detail_materi detail_materi[]
 }
 
@@ -259,7 +264,7 @@ model pengaduan {
   judul                             String?           @db.VarChar(100)
   deskripsi                         String?           @db.Text
   status                            pengaduan_status?
-  is_active                         Boolean?
+  is_active                         Boolean?          @default(true)
   users_pengaduan_id_pelaporTousers users?            @relation("pengaduan_id_pelaporTousers", fields: [id_pelapor], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "pengaduan_users_FK")
   users_pengaduan_id_santriTousers  users?            @relation("pengaduan_id_santriTousers", fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "pengaduan_users_FK_1")
   tanggapan_aduan                   tanggapan_aduan[]
@@ -315,7 +320,7 @@ model riwayat_layanan_detail {
 model role {
   id        Int         @id @default(autoincrement())
   role      String?     @db.VarChar(100)
-  is_active String?     @db.VarChar(100)
+  is_active String?     @default("1") @db.VarChar(100)
   user_role user_role[]
 }
 
@@ -356,7 +361,7 @@ model tanggapan_aduan {
   id_user         Int?
   waktu_tanggapan DateTime?  @db.DateTime(0)
   tanggapan       String?    @db.Text
-  is_active       Boolean?
+  is_active       Boolean?   @default(true)
   pengaduan       pengaduan? @relation(fields: [id_aduan], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tanggapan_aduan_pengaduan_FK")
   users           users?     @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "tanggapan_aduan_users_FK")
 
@@ -368,7 +373,7 @@ model user_role {
   id        Int      @id @default(autoincrement())
   id_user   Int
   id_role   Int
-  is_active Boolean?
+  is_active Boolean? @default(true)
   role      role     @relation(fields: [id_role], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_role_role_FK")
   users     users    @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "user_role_users_FK")
 
@@ -394,6 +399,7 @@ model users {
   heading_absensi                       heading_absensi[]
   kamar_santri                          kamar_santri[]
   kegiatan                              kegiatan[]
+  kelas                                 kelas[]
   kelas_santri                          kelas_santri[]
   observasi_observasi_id_santriTousers  observasi[]          @relation("observasi_id_santriTousers")
   observasi_observasi_id_timkesTousers  observasi[]          @relation("observasi_id_timkesTousers")

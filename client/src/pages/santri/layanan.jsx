@@ -56,7 +56,7 @@ export default function LayananList() {
   const handleFormSuccess = () => {
     showAlert("success", "Pengajuan berhasil dikirim!");
     setTimeout(() => {
-        navigate("/santri/riwayat"); 
+        navigate("/santri/layanan/riwayat"); 
     }, 1500);
   };
 
