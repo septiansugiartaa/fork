@@ -21,6 +21,7 @@ import PengurusKelas from "./pages/pengurus/dataKelas"
 import PengurusKamar from "./pages/pengurus/dataKamar"
 import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
 import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
+import PengurusKeuangan from "./pages/pengurus/keuangan"
 
 function App() {
   return (
@@ -51,6 +52,7 @@ function App() {
             <Route path="data-kamar" element={<PengurusKamar />} />
             <Route path="jenis-layanan" element={<PengurusJenisLayanan />} />
             <Route path="riwayat-layanan" element={<PengurusRiwayatLayanan />} />
+            <Route path="keuangan" element={<PengurusKeuangan />} />
           </Route>
         </Route>
 
