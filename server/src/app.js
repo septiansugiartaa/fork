@@ -38,6 +38,7 @@ app.use('/api/pengurus/penempatan-kelas', require('./routes/pengurus/assignKelas
 app.use('/api/pengurus/penempatan-kamar', require('./routes/pengurus/assignKamarRoutes'));
 app.use('/api/pengurus/jenis-layanan', require('./routes/pengurus/jenisLayananRoutes'));
 app.use('/api/pengurus/riwayat-layanan', require('./routes/pengurus/riwayatLayananRoutes'));
+app.use('/api/pengurus/keuangan', require('./routes/pengurus/keuanganRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
