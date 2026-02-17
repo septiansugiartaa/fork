@@ -20,6 +20,7 @@ import PengurusUstadz from "./pages/pengurus/dataUstadz"
 import PengurusKelas from "./pages/pengurus/dataKelas"
 import PengurusKamar from "./pages/pengurus/dataKamar"
 import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
+import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
 
 function App() {
   return (
@@ -41,13 +42,16 @@ function App() {
           <Route path="/santri/scabies/viewMateri/:id" element={<DetailMateri />}/>
         </Route>
 
-        <Route path="/pengurus" element={<PengurusLayout />}>
-          <Route index element={<PengurusDashboard />} />
-          <Route path="data-santri" element={<PengurusSantri />} />
-          <Route path="data-ustadz" element={<PengurusUstadz />} />
-          <Route path="data-kelas" element={<PengurusKelas />} />
-          <Route path="data-kamar" element={<PengurusKamar />} />
-          <Route path="jenis-layanan" element={<PengurusJenisLayanan />} />
+        <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>
+          <Route path="/pengurus" element={<PengurusLayout />}>
+            <Route index element={<PengurusDashboard />} />
+            <Route path="data-santri" element={<PengurusSantri />} />
+            <Route path="data-ustadz" element={<PengurusUstadz />} />
+            <Route path="data-kelas" element={<PengurusKelas />} />
+            <Route path="data-kamar" element={<PengurusKamar />} />
+            <Route path="jenis-layanan" element={<PengurusJenisLayanan />} />
+            <Route path="riwayat-layanan" element={<PengurusRiwayatLayanan />} />
+          </Route>
         </Route>
 
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
