@@ -126,17 +126,6 @@ export default function PengurusLayout() {
                 {menus.find(m => m.path === location.pathname)?.name || 'Dashboard'}
             </h2>
           </div>
-
-          <div className="flex items-center gap-3">
-             {/* Profile / Admin Info kecil di kanan atas */}
-             <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-700">Admin Pengurus</p>
-                <p className="text-xs text-gray-500">Pengurus</p>
-             </div>
-             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold border border-blue-200">
-                A
-             </div>
-          </div>
         </header>
 
         {/* Page Content (Scrollable) */}
