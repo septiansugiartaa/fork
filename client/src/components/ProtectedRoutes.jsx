@@ -52,6 +52,8 @@ const ProtectedRoute = ({ allowedRoles }) => {
         return <Navigate to="/ustadz" replace />;
     } else if (userRole === 'admin' || userRole === 'administrator') {
         return <Navigate to="/admin" replace />;
+    } else if (userRole === 'timkes') {
+        return <Navigate to="/timkes" replace />;
     } else {
         // Fallback jika role tidak dikenali
         return <Navigate to="/login" replace />;

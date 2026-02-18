@@ -11,7 +11,8 @@ import SantriPengaduan from "./pages/santri/pengaduan"
 import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
 import MateriView from "./pages/viewMateri"
-import DetailMateri from "./pages/detailMateri" 
+import DetailMateri from "./pages/detailMateri"
+import MateriManage from "./pages/manageMateri" 
 
 import PengurusLayout from "./components/Layout"
 import PengurusDashboard from "./pages/pengurus/dashboard"
@@ -22,6 +23,8 @@ import PengurusKamar from "./pages/pengurus/dataKamar"
 import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
 import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
 import PengurusKeuangan from "./pages/pengurus/keuangan"
+
+import TimkesDashboard from "./pages/timkesehatan/dashboard"
 
 function App() {
   return (
@@ -41,6 +44,9 @@ function App() {
           <Route path="/santri/layanan/riwayat" element={<SantriRiwayatLayanan />} />
           <Route path="/santri/scabies/viewMateri" element={<MateriView />}/>
           <Route path="/santri/scabies/viewMateri/:id" element={<DetailMateri />}/>
+          <Route path="/timkesehatan" element={<TimkesDashboard />}/>
+          <Route path="/timkesehatan/manageMateri" element={<MateriManage />}/>
+          <Route path="/timkesehatan/manageMateri/:id" element={<DetailMateri />}/>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>

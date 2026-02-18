@@ -13,32 +13,32 @@ export default function MateriView (){
     const [search, setSearch] = useState("");
     const navigate = useNavigate();
     
-    
-    useEffect(() => {
-        const fetchMateri = async () => {
-            try {
-                const token = localStorage.getItem("token");
-
-                const res = await fetch(
-                    "http://localhost:3000/api/global/viewMateri",
-                    {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }}
-                );
-                const result = await res.json();
-
+    const fetchMateri = async () => {
+        
+        try {
+            const token = localStorage.getItem("token");
+            const res = await fetch(
+                "http://localhost:3000/api/global/viewMateri",
+                {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    "Cache-Control": "no-cache"
+                }}
+            );
+            const result = await res.json();
                 if (result.success) {
                     setMateri(result.data.list_materi);
                 } else {
                     console.error(result.message);
                     setMateri([]);
                 }
-            } catch (err) {
-                console.error("Fetch error:", err);
-            }
-        };
-    fetchMateri();
+        } catch (err) {
+            console.error("Fetch error:", err);
+        }
+    };
+    
+    useEffect(() => {
+        fetchMateri();
     }, []);
 
     const filteredMateri = materi.filter((item) =>
@@ -66,16 +66,16 @@ export default function MateriView (){
             </div>
 
             {/* SEARCH INPUT */}
-            <div className="bg-white max-w-280 mx-auto -mt-16 mb-8 rounded-2xl">
-                <div className="relative">
-                    <Search className="absolute left-3 top-3 text-gray-400" size={18} />
+            <div className="max-w-6xl mx-auto -mt-16 mb-8 px-4">
+                <div className="bg-white rounded-2xl relative">
+                    <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
                         type="text"
                         placeholder="Cari berdasarkan judul materi..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-3 rounded-xl shadow-md 
-                                focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        className="w-full pl-12 pr-12 py-3 rounded-xl
+                                    focus:outline-none focus:ring-2 focus:ring-blue-500"
                     />
                     {search && (
                         <button
@@ -94,7 +94,7 @@ export default function MateriView (){
             <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 pb-10">
                {filteredMateri.length > 0 ? (
                     filteredMateri.map((item) => (
-                        <CardMateri key={item.id} materi={item} />
+                        <CardMateri key={item.id} materi={item} detailBasePath="/santri/scabies/viewMateri" />
                     ))
                     ) : (
                     <p className="col-span-full text-center text-gray-500">
