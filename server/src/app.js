@@ -31,6 +31,7 @@ app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRo
 app.use('/api/global/viewMateri', require('./routes/viewMateriRoutes'));
 app.use('/api/global/manageMateri', require('./routes/manageMateriRoutes'));
 
+app.use('/api/pengurus/dashboard', require('./routes/pengurus/dashboardRoutes'));
 app.use('/api/pengurus/santri', require('./routes/pengurus/santriRoutes'));
 app.use('/api/pengurus/ustadz', require('./routes/pengurus/ustadzRoutes'));
 app.use('/api/pengurus/kelas', require('./routes/pengurus/kelasRoutes'));
