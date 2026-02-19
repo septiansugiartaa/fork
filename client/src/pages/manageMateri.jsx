@@ -19,10 +19,12 @@ export default function MateriManage (){
     const [deleteId, setDeleteId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [loadingDelete, setLoadingDelete] = useState(false);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     
     const fetchMateri = async () => {
             try {
+                setLoading(true);
                 const token = localStorage.getItem("token");
 
                 const res = await fetch(
@@ -41,12 +43,27 @@ export default function MateriManage (){
                     }
             } catch (err) {
                 console.error("Fetch error:", err);
+            } finally {
+                setLoading(false);
             }
         };
 
     useEffect(() => {
         fetchMateri();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <p className="mt-4 text-gray-600 font-medium">
+                    Memuat data...
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     const filteredMateri = materi.filter((item) =>
         item.judul.toLowerCase().includes(search.toLowerCase())

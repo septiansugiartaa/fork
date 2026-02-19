@@ -41,76 +41,78 @@ exports.getViewMateri = async (req, res) => {
 };
 
 exports.postManageMateri = async (req, res) => {
-    try {
-        const { judul_materi, ringkasan, penulis, gambar, is_active } = req.body;
+  try {
+    const judul_materi = req.body?.judul_materi;
+    const ringkasan = req.body?.ringkasan;
+    const penulis = req.body?.penulis;
 
-        console.log("BODY:", req.body);
+    const gambar = req.file ? req.file.filename : null;
 
-        const newMateri = await prisma.materi.create({
-        data: {
-            judul_materi: judul_materi,
-            ringkasan: ringkasan,
-            gambar: gambar,
-            penulis: penulis,
-            is_active: true
-        }
-        });
+    const newMateri = await prisma.materi.create({
+      data: {
+        judul_materi,
+        ringkasan,
+        penulis,
+        gambar,
+        is_active: true
+      }
+    });
 
-        res.status(201).json({
-        success: true,
-        message: "Materi berhasil dibuat",
-        data: newMateri
-        });
+    res.status(201).json({
+      success: true,
+      message: "Materi berhasil dibuat",
+      data: newMateri
+    });
 
-    } catch (error) {
-        console.error("ERROR CREATE MATERI:", error); // WAJIB ADA
-        res.status(500).json({
-        success: false,
-        message: error.message
-        });
-    }
+  } catch (error) {
+    console.error("ERROR CREATE MATERI:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 };
+
     
 exports.putManageMateri = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const { judul_materi, ringkasan, penulis, gambar, is_active } = req.body;
+  try {
+    const { id } = req.params;
+    const { judul_materi, ringkasan, penulis } = req.body;
 
-        const existingMateri = await prisma.materi.findUnique({
-            where: { id_materi: Number(id) }
-        });
+    const existingMateri = await prisma.materi.findUnique({
+      where: { id_materi: Number(id) }
+    });
 
-        if (!existingMateri) {
-            return res.status(404).json({
-                success: false,
-                message: "Materi tidak ditemukan"
-            });
-        }
-
-        const updatedMateri = await prisma.materi.update({
-            where: { id_materi: Number(id) },
-            data: {
-                judul_materi,
-                ringkasan,
-                penulis,
-                gambar,
-                is_active
-            }
-        });
-
-        res.status(200).json({
-            success: true,
-            message: "Materi berhasil diupdate",
-            data: updatedMateri
-        });
-
-    } catch (error) {
-        console.error("ERROR UPDATE MATERI:", error);
-        res.status(500).json({
-            success: false,
-            message: error.message
-        });
+    if (!existingMateri) {
+      return res.status(404).json({
+        success: false,
+        message: "Materi tidak ditemukan"
+      });
     }
+
+    const updatedMateri = await prisma.materi.update({
+      where: { id_materi: Number(id) },
+      data: {
+        judul_materi,
+        ringkasan,
+        penulis,
+        gambar: req.file ? req.file.filename : existingMateri.gambar
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Materi berhasil diupdate",
+      data: updatedMateri
+    });
+
+  } catch (error) {
+    console.error("ERROR UPDATE MATERI:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
 };
 
 exports.deleteManageMateri = async (req, res) => {

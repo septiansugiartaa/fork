@@ -44,9 +44,6 @@ function App() {
           <Route path="/santri/layanan/riwayat" element={<SantriRiwayatLayanan />} />
           <Route path="/santri/scabies/viewMateri" element={<MateriView />}/>
           <Route path="/santri/scabies/viewMateri/:id" element={<DetailMateri />}/>
-          <Route path="/timkesehatan" element={<TimkesDashboard />}/>
-          <Route path="/timkesehatan/manageMateri" element={<MateriManage />}/>
-          <Route path="/timkesehatan/manageMateri/:id" element={<DetailMateri />}/>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>
@@ -60,6 +57,12 @@ function App() {
             <Route path="riwayat-layanan" element={<PengurusRiwayatLayanan />} />
             <Route path="keuangan" element={<PengurusKeuangan />} />
           </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['timkes']} />}>
+          <Route path="/timkesehatan" element={<TimkesDashboard />}/>
+          <Route path="/timkesehatan/manageMateri" element={<MateriManage />}/>
+          <Route path="/timkesehatan/manageMateri/:id" element={<DetailMateri />}/>
         </Route>
 
         {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>

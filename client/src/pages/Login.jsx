@@ -38,6 +38,7 @@ export default function Login() {
                 else if (role === 'pimpinan') navigate('/pimpinan', { replace: true });
                 else if (role === 'ustadz') navigate('/ustadz', { replace: true });
                 else if (role === 'admin') navigate('/admin/dashboard', { replace: true });
+                else if (role === 'timkes') navigate('/timkesehatan', { replace: true });
                 
             } catch (e) {
                 localStorage.removeItem('token');
@@ -86,6 +87,7 @@ export default function Login() {
             else if (role === 'pimpinan') navigate('/pimpinan');
             else if (role === 'ustadz') navigate('/ustadz');
             else if (role === 'admin') navigate('/admin/dashboard');
+            else if (role === 'timkes') navigate('/timkesehatan');            
             else navigate('/santri');
             
         } catch (err) {
