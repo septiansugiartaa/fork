@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, FileText } from "lucide-react";
+import { X } from "lucide-react";
 import axios from "axios";
 
 const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => {
@@ -256,7 +256,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2 rounded-xl bg-gray-200 hover:bg-gray-300"
+              className="py-2.5 px-5 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm gap-2 active:scale-95 hover:bg-blue-100 transition duration-200 cursor-pointer"
             >
               Batal
             </button>
@@ -265,14 +265,14 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
               type="submit"
               disabled={loading}
               className={
-                `px-5 py-2 rounded-xl text-white transition
+                `px-5 py-2 font-semibold rounded-xl text-white transition
                   ${
                     loading
                       ? "bg-blue-400 cursor-not-allowed"
                       : "bg-blue-600 hover:bg-blue-700"
                   }`}
             >
-              {loading ? "Menyimpan..." : "Simpan"}
+              {loading ? "Menyimpan..." : materiToEdit ? "Simpan" : "Buat"}
             </button>
           </div>
         </form>

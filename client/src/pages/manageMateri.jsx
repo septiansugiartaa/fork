@@ -118,7 +118,7 @@ export default function MateriManage (){
 
             {/* SEARCH INPUT */}
             <div className="flex max-w-6xl mx-auto -mt-16 mb-8 px-4 gap-2.5">
-                <div className="w-9/10 bg-white rounded-2xl shadow-lg relative">
+                <div className="w-9/10 bg-white rounded-xl shadow-lg relative">
                     <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-400" size={18}/>
                     <input
                         type="text"
@@ -139,7 +139,8 @@ export default function MateriManage (){
                     )}
                 </div>
                 <div className='w-1/10'>
-                    <button className='h-full w-full flex justify-center items-center shadow-lg font-semibold bg-green-50 text-green-600 rounded-2xl text-black hover:bg-green-500 hover:text-white transition duration-200 cursor-pointer' onClick={()=> setIsCreateOpen(true)}><Plus size={18} /> Create</button>
+                    <button className='h-full w-full flex justify-center items-center shadow-lg font-semibold bg-green-50 text-green-600 rounded-xl text-black hover:bg-green-500 hover:text-white transition duration-200 cursor-pointer' onClick={()=> setIsCreateOpen(true)}><Plus size={18} /> 
+                    <span className="hidden md:inline">Buat</span></button>
                 </div>
             </div>
             
