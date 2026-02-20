@@ -159,7 +159,7 @@ function StatCard({ title, value, icon, color, isUrgent }) {
     orange: "bg-orange-50 text-orange-600"
   };
   return (
-    <div className={`p-5 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center gap-4 ${isUrgent ? 'ring-2 ring-red-400 ring-offset-2 animate-bounce' : ''}`}>
+    <div className={`p-5 rounded-xl bg-white border border-gray-100 shadow-sm flex items-center gap-4 ${isUrgent ? 'ring-2 ring-red-400 ring-offset-2 animate-pulse pointer-events-none' : ''}`}>
       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center ${colors[color]}`}>{icon}</div>
       <div>
         <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{title}</p>

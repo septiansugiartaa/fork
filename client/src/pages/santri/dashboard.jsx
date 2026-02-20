@@ -226,7 +226,7 @@ export default function SantriDashboard() {
     { id: 4, nama: "Pengaduan", ikon: AlertCircle, warna: "bg-orange-500" },
     { id: 5, nama: "Laporan", ikon: FileText, warna: "bg-red-500" },
     { id: 6, nama: "Riwayat", ikon: History, warna: "bg-indigo-500" },
-    { id: 7, nama: "Scabies", ikon: Cross, warna: "bg-red-500" }
+    { id: 7, nama: "Scabies", ikon: Cross, warna: "bg-teal-500" }
   ];
 
   const menuToDisplay = menu_cepat.length > 0 ? menu_cepat.map((menu, index) => ({
@@ -256,7 +256,7 @@ export default function SantriDashboard() {
                     className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
-                     <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
+                     <img src={`http://localhost:3000/foto-profil/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                     </div>
                     <div>
                       <p className="font-medium leading-tight">{santri.nama}</p>

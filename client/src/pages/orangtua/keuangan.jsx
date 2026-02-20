@@ -28,7 +28,7 @@ export default function KeuanganSantri() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/santri/keuangan";
+  const API_URL = "http://localhost:3000/api/orangtua/keuangan";
 
   const api = axios.create({
     baseURL: API_URL,
@@ -391,7 +391,7 @@ export default function KeuanganSantri() {
         onClose={() => setIsDetailOpen(false)}
         data={selectedTagihan}
         onPayClick={handleOpenBayar}
-        userRole={"santri"}
+        userRole={"orangtua"}
       />
 
       <BayarModal

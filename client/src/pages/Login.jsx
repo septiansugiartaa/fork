@@ -37,7 +37,7 @@ export default function Login() {
                 else if (role === 'pengurus') navigate('/pengurus', { replace: true });
                 else if (role === 'pimpinan') navigate('/pimpinan', { replace: true });
                 else if (role === 'ustadz') navigate('/ustadz', { replace: true });
-                else if (role === 'admin') navigate('/admin/dashboard', { replace: true });
+                else if (role === 'admin') navigate('/admin', { replace: true });
                 else if (role === 'timkes') navigate('/timkesehatan', { replace: true });
                 
             } catch (e) {
@@ -88,7 +88,7 @@ export default function Login() {
             else if (role === 'ustadz') navigate('/ustadz');
             else if (role === 'admin') navigate('/admin/dashboard');
             else if (role === 'timkes') navigate('/timkesehatan');            
-            else navigate('/santri');
+            else navigate('/login');
             
         } catch (err) {
             console.error('Login error:', err);
@@ -105,9 +105,7 @@ export default function Login() {
         <div className="min-h-screen flex bg-gradient-to-br from-blue-600 to-blue-500 lg:bg-none">
             
             {/* --- KOLOM KIRI (DESKTOP) --- */}
-            {/* Hanya muncul di layar besar (lg:flex), isinya Banner Biru */}
             <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-blue-500 text-white flex-col justify-center items-center px-12 relative overflow-hidden">
-                {/* Hiasan Background Circle (Opsional) */}
                 <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
 
@@ -123,15 +121,9 @@ export default function Login() {
             </div>
 
             {/* --- KOLOM KANAN (FORM LOGIN) --- */}
-            {/* Di Mobile: Full Width, Center, Padding */}
             <div className="flex w-full lg:w-1/2 justify-center items-center px-4 sm:px-6 lg:bg-white">
                 
-                {/* --- CARD LOGIN --- */}
-                {/* Mobile: Glassmorphism (bg-white/10 + backdrop-blur) */}
-                {/* Desktop: Polos (bg-transparent / shadow-none) */}
                 <div className="w-full max-w-lg bg-white/20 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none p-8 rounded-3xl shadow-lg lg:shadow-none border border-white/20 lg:border-none">
-                    
-                    {/* Header Khusus Mobile (Logo Kecil & Judul Putih) */}
                     <div className="lg:hidden text-center mb-8">
                         <div className="w-16 h-16 mx-auto rounded-xl bg-white/20 flex items-center justify-center mb-4 shadow-inner border border-white/30">
                             <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
@@ -142,7 +134,6 @@ export default function Login() {
                         <p className="text-blue-100 text-sm mt-1">Sistem Informasi Manajemen Pesantren</p>
                     </div>
 
-                    {/* Header Desktop (Judul Hitam) */}
                     <div className="hidden lg:block mb-8">
                         <h2 className="text-3xl font-bold text-gray-800 mb-2">Selamat Datang</h2>
                         <p className="text-gray-500">Silakan masuk menggunakan akun Anda</p>
@@ -161,11 +152,11 @@ export default function Login() {
                         <div>
                             {/* Label: Putih di Mobile, Abu di Desktop */}
                             <label className="block text-sm font-semibold text-blue-100 lg:text-gray-700 mb-2 ml-1">
-                                NIS / Nomor HP
+                                NIS / No. HP / Email
                             </label>
                             <input 
                                 type="text" 
-                                placeholder="Masukkan NIS atau No. HP Anda" 
+                                placeholder="Masukkan NIS atau No. HP atau Email Anda" 
                                 className="w-full px-4 py-3 rounded-xl bg-white/20 lg:bg-white border border-white/30 lg:border-gray-300 text-white lg:text-gray-900 placeholder-blue-200 lg:placeholder-gray-400 focus:ring-2 focus:ring-white/50 lg:focus:ring-blue-500 focus:border-transparent lg:focus:border-blue-500 outline-none transition-all"
                                 value={identifier}
                                 onChange={(e) => setIdentifier(e.target.value)}

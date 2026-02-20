@@ -173,7 +173,7 @@ export default function RiwayatLayanan() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                                                 {item.users.foto_profil ? (
-                                                    <img src={`http://localhost:3000/uploads/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
+                                                    <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                                 ) : (
                                                     <span className="text-blue-600 font-bold text-sm bg-blue-100 w-full h-full flex items-center justify-center">
                                                         {item.users.nama.charAt(0).toUpperCase()}
@@ -225,7 +225,7 @@ export default function RiwayatLayanan() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                     {item.users.foto_profil ? (
-                                        <img src={`http://localhost:3000/uploads/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
+                                        <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold">{item.users.nama.charAt(0)}</div>
                                     )}

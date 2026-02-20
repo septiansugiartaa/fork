@@ -1,4 +1,4 @@
-import { X, Calendar, Clock, MapPin, MessageSquare } from "lucide-react";
+import { X, Calendar, Clock, MapPin, MessageSquare, Star } from "lucide-react";
 
 export default function DetailKegiatanModal({ isOpen, onClose, data, onFeedbackClick }) {
   if (!isOpen || !data) return null;
@@ -21,9 +21,9 @@ export default function DetailKegiatanModal({ isOpen, onClose, data, onFeedbackC
         <div className="p-6 overflow-y-auto">
           {/* Judul */}
           <h2 className="text-2xl font-bold text-gray-900 mb-6">{data.nama}</h2>
-          
-          {/* Tombol Feedback (Kondisional) */}
-          {data.can_feedback && (
+                    
+          {/* Skenario 1: Santri belum feedback (Cuma muncul kalau ada fungsi onFeedbackClick & flag can_feedback) */}
+          {onFeedbackClick && data.can_feedback && (
             <div className="bg-blue-50 p-4 rounded-xl flex items-center justify-between border border-blue-100 mb-6">
                 <div>
                     <p className="text-blue-800 font-bold text-sm">Bagaimana kegiatan ini?</p>
@@ -31,18 +31,27 @@ export default function DetailKegiatanModal({ isOpen, onClose, data, onFeedbackC
                 </div>
                 <button 
                     onClick={() => onFeedbackClick(data)}
-                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center shadow-sm"
-                >
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition flex items-center shadow-sm">
                     <MessageSquare size={16} className="mr-2" /> Berikan Feedback
                 </button>
             </div>
           )}
-          
-          {/* Info jika sudah feedback */}
-          {data.feedback_status === "Sudah Memberi Feedback" && (
-             <div className="p-4 bg-green-50 rounded-xl border border-green-100 text-green-700 text-sm font-medium mb-6">
-                 Anda sudah memberikan feedback untuk kegiatan ini. Terima kasih!
-             </div>
+
+          {/* Skenario 2: Data Feedback Sudah Ada */}
+          {data.feedback_data && (
+            <div className="p-4 bg-gray-50 rounded-xl border border-gray-100 mb-6">
+                <div className="flex justify-between items-center mb-2">
+                    <p className="text-xs font-bold text-gray-400 uppercase tracking-widest">Penilaian Santri</p>
+                    <p className="text-[10px] text-gray-400">{data.feedback_data.tanggal}</p>
+                </div>
+                <div className="flex items-center gap-1 mb-2">
+                    {[1, 2, 3, 4, 5].map((star) => (
+                        <Star key={star} size={16} className={star <= data.feedback_data.rating ? "text-yellow-400 fill-yellow-400" : "text-gray-300"} />
+                    ))}
+                    <span className="text-xs font-bold text-yellow-600 ml-2">{data.feedback_data.rating}/5</span>
+                </div>
+                <p className="text-sm text-gray-700 italic">"{data.feedback_data.isi_text}"</p>
+            </div>
           )}
 
           {/* Info Grid */}

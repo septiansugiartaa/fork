@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
     // 1. Cari User berdasarkan NIP ATAU No HP
     const user = await prisma.users.findFirst({
       where: {
-        OR: [{ nip: identifier }, { no_hp: identifier }],
+        OR: [{ nip: identifier }, { no_hp: identifier }, { email: identifier }],
         is_active: true, // Hanya user aktif yang boleh login
       },
       include: {

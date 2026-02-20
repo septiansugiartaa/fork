@@ -20,22 +20,15 @@ const ProtectedRoute = ({ allowedRoles }) => {
     return <Navigate to="/login" replace />;
   }
   
-  // --- PERBAIKAN DI SINI: GUNAKAN LOGIC PARSING YANG KUAT ---
   let userRole = "";
 
-  // Cek apakah role sudah string langsung (hasil controller yang sudah dirapikan)
   if (typeof user.role === 'string') {
       userRole = user.role.toLowerCase();
   } 
-  // Cek apakah role masih bersarang di array user_role (data mentah Prisma)
   else if (user.user_role && Array.isArray(user.user_role) && user.user_role.length > 0) {
       userRole = user.user_role[0]?.role?.role?.toLowerCase() || "";
   }
 
-  // Debugging (Opsional, bisa dihapus nanti)
-  // console.log("Protected Route Check:", { userRole, allowedRoles });
-
-  // 3. Cek Role: Apakah role user ada di daftar allowedRoles?
   if (allowedRoles.includes(userRole)) {
     return <Outlet />;
   } else {
@@ -53,7 +46,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     } else if (userRole === 'admin' || userRole === 'administrator') {
         return <Navigate to="/admin" replace />;
     } else if (userRole === 'timkes') {
-        return <Navigate to="/timkes" replace />;
+        return <Navigate to="/timkesehatan" replace />;
     } else {
         // Fallback jika role tidak dikenali
         return <Navigate to="/login" replace />;

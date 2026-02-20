@@ -26,6 +26,12 @@ import PengurusKeuangan from "./pages/pengurus/keuangan"
 
 import TimkesDashboard from "./pages/timkesehatan/dashboard"
 
+import OrangtuaDashboard from "./pages/orangtua/dashboard"
+import OrangtuaProfile from "./pages/orangtua/pendataan"
+import OrangtuaKegiatan from "./pages/orangtua/kegiatan"
+import OrangtuaKeuangan from "./pages/orangtua/keuangan"
+import OrangtuaPengaduan from "./pages/orangtua/pengaduan"
+
 function App() {
   return (
     <BrowserRouter>
@@ -35,15 +41,21 @@ function App() {
         <Route path="/login" element={<Login />} />
 
         <Route element={<ProtectedRoute allowedRoles={['santri']} />}>
-          <Route path="/santri" element={<SantriDashboard />} />
-          <Route path="/santri/profil" element={<SantriProfile />} />
-          <Route path="/santri/keuangan" element={<SantriKeuangan />} />
-          <Route path="/santri/kegiatan" element={<SantriKegiatan />} />
-          <Route path="/santri/pengaduan" element={<SantriPengaduan />} />
-          <Route path="/santri/layanan" element={<SantriLayanan />} />
-          <Route path="/santri/layanan/riwayat" element={<SantriRiwayatLayanan />} />
-          <Route path="/santri/scabies/viewMateri" element={<MateriView />}/>
-          <Route path="/santri/scabies/viewMateri/:id" element={<DetailMateri />}/>
+          <Route path="/santri">
+            <Route index element={<SantriDashboard />} />
+            <Route path="profil" element={<SantriProfile />} />
+            <Route path="keuangan" element={<SantriKeuangan />} />
+            <Route path="kegiatan" element={<SantriKegiatan />} />
+            <Route path="pengaduan" element={<SantriPengaduan />} />
+            <Route path="layanan">
+              <Route index element={<SantriLayanan />} />
+              <Route path="riwayat" element={<SantriRiwayatLayanan />} />
+            </Route>
+            <Route path="scabies">
+              <Route path="viewMateri" element={<MateriView />} />
+              <Route path="viewMateri/:id" element={<DetailMateri />} />
+            </Route>
+          </Route>
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>
@@ -65,9 +77,15 @@ function App() {
           <Route path="/timkesehatan/manageMateri/:id" element={<DetailMateri />}/>
         </Route>
 
-        {/* <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
-             <Route path="/orangtua" element={<OrangtuaDashboard />} />
-        </Route> */}
+        <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
+          <Route path="/orangtua">
+            <Route index element={<OrangtuaDashboard />} />
+            <Route path="profil" element={<OrangtuaProfile />} />
+            <Route path="kegiatan" element={<OrangtuaKegiatan />} />
+            <Route path="keuangan" element={<OrangtuaKeuangan />} />
+            <Route path="pengaduan" element={<OrangtuaPengaduan />} />
+          </Route>
+        </Route>
 
       </Routes>
     </BrowserRouter>

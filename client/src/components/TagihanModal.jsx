@@ -1,6 +1,6 @@
 import { X, Plus, FileText } from "lucide-react";
 
-export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
+export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRole }) {
   if (!isOpen || !data) return null;
 
   const isLunas = data.status === "Lunas";
@@ -19,17 +19,11 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "Lunas":
-      case "Diterima":
-      case "Terverifikasi":
-      case "Berhasil":
+      case "Lunas":case "Diterima":case "Terverifikasi":case "Berhasil":
         return "bg-green-100 text-green-700 border border-green-200";
-      case "Ditolak":
-      case "Gagal":
+      case "Ditolak":case "Gagal":
         return "bg-red-100 text-red-700 border border-red-200";
-      case "Menunggu Verifikasi":
-      case "Sedang Diproses":
-      case "Pending":
+      case "Menunggu Verifikasi":case "Sedang Diproses":case "Pending":
         return "bg-yellow-100 text-yellow-700 border border-yellow-200";
       default:
         return "bg-gray-100 text-gray-600 border border-gray-200";
@@ -83,7 +77,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
               <h4 className="text-lg font-bold text-gray-800">
                 Riwayat Pembayaran
               </h4>
-              {!isLunas && (
+              {!isLunas && userRole==="orangtua" && (
                 <button
                   onClick={() => onPayClick(data)}
                   className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm"

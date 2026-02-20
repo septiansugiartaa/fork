@@ -177,7 +177,7 @@ export default function DataSantri() {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                               {item.foto_profil ? (
-                                <img src={`http://localhost:3000/uploads/${item.foto_profil}`} alt={item.nama} className="w-full h-full object-cover"/>
+                                <img src={`http://localhost:3000/foto-profil/${item.foto_profil}`} alt={item.nama} className="w-full h-full object-cover"/>
                               ) : (
                                 <span className="text-blue-600 font-bold text-sm bg-blue-100 w-full h-full flex items-center justify-center">
                                   {item.nama.charAt(0).toUpperCase()}
@@ -221,7 +221,7 @@ export default function DataSantri() {
                         <div className="flex items-start gap-3">
                             <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                 {item.foto_profil ? (
-                                    <img src={`http://localhost:3000/uploads/${item.foto_profil}`} className="w-full h-full object-cover"/>
+                                    <img src={`http://localhost:3000/foto-profil/${item.foto_profil}`} className="w-full h-full object-cover"/>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold">{item.nama.charAt(0)}</div>
                                 )}

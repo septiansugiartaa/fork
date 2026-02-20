@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+app.use('/foto-profil', express.static(path.join(__dirname, '../public/uploads/profil')));
 
 app.get("/api", (req, res) => {
   res.send("PPDNY");
@@ -41,6 +42,12 @@ app.use('/api/pengurus/penempatan-kamar', require('./routes/pengurus/assignKamar
 app.use('/api/pengurus/jenis-layanan', require('./routes/pengurus/jenisLayananRoutes'));
 app.use('/api/pengurus/riwayat-layanan', require('./routes/pengurus/riwayatLayananRoutes'));
 app.use('/api/pengurus/keuangan', require('./routes/pengurus/keuanganRoutes'));
+
+app.use('/api/orangtua/dashboard', require('./routes/orangtua/dashboardRoutes'));
+app.use('/api/orangtua/profile', require('./routes/orangtua/pendataanRoutes'));
+app.use('/api/orangtua/kegiatan', require('./routes/orangtua/kegiatanRoutes'));
+app.use('/api/orangtua/keuangan', require('./routes/orangtua/keuanganRoutes'));
+app.use('/api/orangtua/pengaduan', require('./routes/orangtua/pengaduanRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

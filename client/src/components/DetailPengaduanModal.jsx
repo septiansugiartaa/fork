@@ -2,14 +2,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import { X, Send, User, Loader2, Lock, AlertTriangle, CheckCircle } from 'lucide-react';
 
-// --- HELPER: FORMAT JAM MENIT (HH:mm) ---
 const formatTime = (dateString) => {
   if (!dateString) return "";
   return new Date(dateString).toLocaleTimeString('id-ID', {
-    hour: '2-digit', 
-    minute: '2-digit', 
-    hour12: false,
-    timeZone: 'UTC'
+    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC'
   });
 };
 
@@ -18,11 +14,25 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
   const [loading, setLoading] = useState(true);
   const [tanggapan, setTanggapan] = useState("");
   const [sending, setSending] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" }); // Alert State
+  const [message, setMessage] = useState({ type: "", text: "" }); 
   const chatContainerRef = useRef(null);
   
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const currentUserId = currentUser.id;
+  // Deteksi role dari localStorage (huruf kecil semua agar aman)
+  const currentRole = (currentUser.role || "").toLowerCase().replace(/\s/g, ''); 
+  
+  // Kondisi: Hanya Ortu (atau Ustadz/Pengurus) yang boleh balas
+  const canReply = currentRole === 'orangtua';
+  
+  const textareaRef = useRef(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  }, [tanggapan]);
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -32,7 +42,11 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
   const fetchDetail = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3000/api/santri/pengaduan/${idAduan}`, {
+      // Karena modal ini bisa diakses dari page Ortu atau Santri, endpoint harus dinamis
+      // Di sini kita pakai prefix berdasarkan role 
+      const apiPrefix = canReply ? 'orangtua' : 'santri'; 
+
+      const res = await axios.get(`http://localhost:3000/api/${apiPrefix}/pengaduan/${idAduan}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setDetail(res.data.data);
@@ -55,11 +69,11 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
   }, [detail]);
 
   const handleKirim = async () => {
-    if (!tanggapan.trim()) return;
+    if (!tanggapan.trim() || !canReply) return;
     setSending(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.post('http://localhost:3000/api/pengaduan/tanggapan', {
+      await axios.post('http://localhost:3000/api/orangtua/pengaduan/tanggapan', {
         id_aduan: idAduan,
         isi_tanggapan: tanggapan
       }, {
@@ -69,7 +83,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
       setTanggapan("");
       fetchDetail(); 
     } catch (err) {
-      showAlert("error", "Gagal mengirim pesan");
+      showAlert("error", err.response?.data?.message || "Gagal mengirim pesan");
     } finally {
       setSending(false);
     }
@@ -80,7 +94,6 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       
-      {/* Alert Component inside Modal */}
       {message.text && (
         <div className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-[60] w-11/12 max-w-sm p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
@@ -93,8 +106,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
         
-        {/* Header Modal */}
-        <div className="p-4 border-b flex justify-between items-center bg-white z-10">
+        <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
           <div>
             <h3 className="font-bold text-gray-800 text-lg">Rincian Laporan</h3>
             <p className="text-xs text-gray-500">Diskusi penyelesaian masalah</p>
@@ -104,7 +116,6 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
           </button>
         </div>
 
-        {/* Content Area */}
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
           {loading ? (
             <div className="flex justify-center py-10"><Loader2 className="animate-spin text-blue-600" /></div>
@@ -117,7 +128,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                         {detail.users_pengaduan_id_pelaporTousers?.foto_profil ? (
-                          <img src={detail.users_pengaduan_id_pelaporTousers.foto_profil} className="w-full h-full object-cover" alt="Pelapor"/>
+                          <img src={`http://localhost:3000/uploads/profil/${detail.users_pengaduan_id_pelaporTousers.foto_profil}`} className="w-full h-full object-cover" alt="Pelapor"/>
                         ) : (
                           <User size={20} className="text-gray-500" />
                         )}
@@ -156,19 +167,18 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
               {/* List Percakapan */}
               {detail.tanggapan_aduan.map((chat) => {
                 const isMe = chat.users?.id === currentUserId;
-                
                 const rawRole = chat.users?.user_role?.[0]?.role?.role;
                 const hubungan = chat.users?.orangtua_orangtua_id_orangtuaTousers?.[0]?.hubungan;
                 
-                const isOrangTua = rawRole?.toLowerCase() === 'orang tua' || rawRole?.toLowerCase() === 'orangtua';
-                const roleLabel = isOrangTua ? (hubungan || "Wali") : null;
+                const isOrangTuaChat = rawRole?.toLowerCase().replace(/\s/g, '') === 'orangtua';
+                const roleLabel = isOrangTuaChat ? (hubungan || "Wali") : null;
 
                 return (
                   <div key={chat.id} className={`flex gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold shadow-sm overflow-hidden
                       ${isMe ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
                       {chat.users?.foto_profil ? (
-                         <img src={chat.users.foto_profil} className="w-full h-full object-cover" alt="User"/>
+                         <img src={`http://localhost:3000/uploads/profil/${chat.users.foto_profil}`} className="w-full h-full object-cover" alt="User"/>
                       ) : (
                          chat.users?.nama?.charAt(0)
                       )}
@@ -208,18 +218,41 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
           )}
         </div>
 
-        {/* Footer Read-Only (Info) */}
-        <div className="p-4 bg-white border-t flex flex-col items-center justify-center text-center">
-            <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center mb-2">
-                <Lock size={14} className="text-gray-500" />
+        {/* Footer: Form Chat ATAU Blocked Info */}
+        <div className="p-4 bg-white border-t border-gray-100">
+          {canReply && detail?.status !== 'Selesai' ? (
+            <div className="flex items-end gap-2">
+              <textarea 
+                ref={textareaRef}
+                value={tanggapan}
+                onChange={(e) => setTanggapan(e.target.value)}
+                placeholder="Tulis tanggapan Anda..." 
+                rows="1"
+                className="flex-1 min-h-[44px] max-h-[124px] overflow-y-auto p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-sm bg-gray-50 transition-all duration-200 [scrollbar-width:none]"
+              />
+              <button 
+                onClick={handleKirim}
+                disabled={sending || !tanggapan.trim()}
+                className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 transition flex-shrink-0 flex items-center text-center justify-center shadow-md shadow-blue-200"
+              >
+                {sending ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} /> }
+              </button>
             </div>
-            <p className="text-xs font-semibold text-gray-600">
-              Balasan Dinonaktifkan
-            </p>
-            <p className="text-[10px] text-gray-400 mt-0.5">
-              Hanya Orang Tua/Wali Santri dan Ustadz yang dapat berdiskusi di sini.
-            </p>
+          ) : (
+            <div className="flex flex-col items-center justify-center text-center">
+              <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center mb-1">
+                  <Lock size={14} className="text-gray-500" />
+              </div>
+              <p className="text-xs font-semibold text-gray-600">
+                {detail?.status === 'Selesai' ? 'Laporan Telah Ditutup' : 'Balasan Dinonaktifkan'}
+              </p>
+              <p className="text-[10px] text-gray-400 mt-0.5">
+                {detail?.status === 'Selesai' ? 'Kasus ini sudah diselesaikan.' : 'Hanya Orang Tua/Wali Santri dan Ustadz yang dapat berdiskusi di sini.'}
+              </p>
+            </div>
+          )}
         </div>
+        
       </div>
     </div>
   );
