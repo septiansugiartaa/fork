@@ -156,7 +156,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
               }}
               
               className={
-                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.judul_materi ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-blue-500"}`
+                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.judul_materi ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-green-500"}`
               }
             />
             {errors.judul_materi && (
@@ -179,7 +179,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
               }}
               
               className={
-                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.penulis ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-blue-500"}`
+                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.penulis ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-green-500"}`
               }
             />
             {errors.penulis && (
@@ -202,7 +202,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
               }}
               
               className={
-                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.ringkasan ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-blue-500"}`
+                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.ringkasan ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-green-500"}`
               }
             />
             {errors.ringkasan && (
@@ -241,7 +241,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
                 setGambar(file);
               }}
               className={
-                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${gambarError ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-blue-500"}`
+                `w-full mt-1 px-4 py-2 border rounded-xl outline-none ${gambarError ? "border-red-500 focus:ring-red-500" : "focus:ring-2 focus:ring-green-500"}`
               }
             />
             {gambarError && (
@@ -256,7 +256,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
             <button
               type="button"
               onClick={onClose}
-              className="py-2.5 px-5 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm gap-2 active:scale-95 hover:bg-blue-100 transition duration-200 cursor-pointer"
+              className="py-2.5 px-5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm gap-2 active:scale-95 hover:bg-green-100 transition duration-200 cursor-pointer"
             >
               Batal
             </button>
@@ -268,8 +268,8 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
                 `px-5 py-2 font-semibold rounded-xl text-white transition
                   ${
                     loading
-                      ? "bg-blue-400 cursor-not-allowed"
-                      : "bg-blue-600 hover:bg-blue-700"
+                      ? "bg-green-400 cursor-not-allowed"
+                      : "bg-green-600 hover:bg-green-700"
                   }`}
             >
               {loading ? "Menyimpan..." : materiToEdit ? "Simpan" : "Buat"}

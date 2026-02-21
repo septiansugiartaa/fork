@@ -23,7 +23,7 @@ export default function Dashboard() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="h-96 flex items-center justify-center"><Loader2 className="animate-spin text-blue-600" size={40}/></div>;
+  if (loading) return <div className="h-96 flex items-center justify-center"><Loader2 className="animate-spin text-green-600" size={40}/></div>;
 
   const { stats, chartData, recentLayanan } = data;
 
@@ -54,8 +54,8 @@ export default function Dashboard() {
                     <AreaChart data={chartData}>
                         <defs>
                             <linearGradient id="colorNominal" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor="#2563eb" stopOpacity={0.1}/>
-                                <stop offset="95%" stopColor="#2563eb" stopOpacity={0}/>
+                                <stop offset="5%" stopColor="#00a63e" stopOpacity={0.1}/>
+                                <stop offset="95%" stopColor="#00a63e" stopOpacity={0}/>
                             </linearGradient>
                         </defs>
                         <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
@@ -65,7 +65,7 @@ export default function Dashboard() {
                             contentStyle={{ borderRadius: '16px', border: 'none', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}
                             formatter={(value) => [`Rp ${value.toLocaleString()}`, 'Pemasukan']}
                         />
-                        <Area type="monotone" dataKey="nominal" stroke="#2563eb" strokeWidth={3} fillOpacity={1} fill="url(#colorNominal)" />
+                        <Area type="monotone" dataKey="nominal" stroke="#00a63e" strokeWidth={3} fillOpacity={1} fill="url(#colorNominal)" />
                     </AreaChart>
                 </ResponsiveContainer>
             </div>
@@ -75,7 +75,7 @@ export default function Dashboard() {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 relative">
             <h3 className="font-bold text-gray-800 mb-6">Status Keuangan</h3>
             <div className="space-y-4">
-                <div className="p-5 bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl text-white">
+                <div className="p-5 bg-gradient-to-br from-green-600 to-green-700 rounded-2xl text-white">
                     <p className="text-xs opacity-80 mb-1">Total Tagihan Lunas</p>
                     <h2 className="text-2xl font-black">Rp {stats.keuangan.terbayar.toLocaleString('id-ID')}</h2>
                 </div>
@@ -95,12 +95,12 @@ export default function Dashboard() {
                     {/* Hover Card Detail Piutang */}
                     {showPiutangList && stats.keuangan.userPiutang.length > 0 && (
                         <div className="absolute left-0 right-0 top-full -mt-2 mx-6 z-10 bg-white rounded-2xl shadow-2xl border border-gray-100 p-4 animate-in fade-in slide-in-from-top-2 max-h-60 overflow-y-auto">
-                            <p className="text-[10px] font-bold text-blue-600 mb-3 uppercase tracking-widest">Daftar Tunggakan Tagihan</p>
+                            <p className="text-[10px] font-bold text-green-600 mb-3 uppercase tracking-widest">Daftar Tunggakan Tagihan</p>
                             <div className="space-y-3">
                                 {stats.keuangan.userPiutang.map((up, i) => (
                                     <div key={i} className="flex justify-between items-center border-b border-gray-50 pb-2 last:border-0">
                                         <div className="flex items-center gap-2">
-                                            <div className="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-[10px] text-blue-600 font-bold">{up.nama.charAt(0)}</div>
+                                            <div className="w-6 h-6 rounded-full bg-green-50 flex items-center justify-center text-[10px] text-green-600 font-bold">{up.nama.charAt(0)}</div>
                                             <span className="text-xs font-semibold text-gray-700 truncate max-w-[100px]">{up.nama}</span>
                                         </div>
                                         <span className="text-xs font-bold text-red-500">Rp {up.total.toLocaleString()}</span>
@@ -127,24 +127,35 @@ export default function Dashboard() {
 
         {/* Layanan Terakhir */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="p-6 border-b border-gray-50 flex justify-between items-center">
-                <h3 className="font-bold text-gray-800">Antrean Layanan Terbaru</h3>
-            </div>
-            <div className="divide-y divide-gray-50">
-                {recentLayanan.map((item) => (
-                    <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition">
-                        <div className="flex items-center gap-3">
-                            <div className="w-10 h-10 flex items-center justify-center font-bold">
-                                {item.status_sesudah === 'Selesai' ? <CheckCircle size={20} className="text-green-500"/> : <Clock size={20} className="text-orange-400 animate-pulse"/>}
-                            </div>
-                            <div>
-                                <p className="text-sm font-bold text-gray-800">{item.jenis_layanan.nama_layanan}</p>
-                                <p className="text-[10px] text-gray-400 font-medium uppercase">{item.users.nama}</p>
-                            </div>
-                        </div>
+        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+            <h3 className="font-bold text-gray-800">Antrean Layanan Terbaru</h3>
+        </div>
+        <div className="divide-y divide-gray-50">
+            {recentLayanan && recentLayanan.length > 0 ? (
+            recentLayanan.map((item) => (
+                <div key={item.id} className="p-4 flex items-center justify-between hover:bg-gray-50 transition">
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 flex items-center justify-center font-bold">
+                    {item.status_sesudah === 'Selesai' ? (
+                        <CheckCircle size={20} className="text-green-500" />
+                    ) : (
+                        <Clock size={20} className="text-orange-400 animate-pulse" />
+                    )}
                     </div>
-                ))}
+                    <div>
+                    <p className="text-sm font-bold text-gray-800">{item.jenis_layanan.nama_layanan}</p>
+                    <p className="text-[10px] text-gray-400 font-medium uppercase">{item.users.nama}</p>
+                    </div>
+                </div>
+                </div>
+            ))
+            ) : (
+            <div className="p-10 text-center flex flex-col items-center justify-center">
+                <Clock size={32} className="text-gray-300 mb-3" />
+                <p className="text-sm font-medium text-gray-500">Belum ada antrean layanan</p>
             </div>
+            )}
+        </div>
         </div>
       </div>
     </div>

@@ -25,9 +25,7 @@ exports.getDaftarPengaduan = async (req, res) => {
             }
           }
         },
-        _count: {
-          select: { tanggapan_aduan: true }
-        }
+        _count: { select: { tanggapan_aduan: { where: { is_active:true } } } }
       }
     });
 
@@ -67,6 +65,7 @@ exports.getDetailPengaduan = async (req, res) => {
           }
         },
         tanggapan_aduan: {
+          where: { is_active: true },
           orderBy: { waktu_tanggapan: 'asc' },
           include: {
             users: {

@@ -5,7 +5,6 @@
     font-family: "Geist", sans-serif;
 }
 
-@keyframes blink-hard {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
+.simtren{
+    font-family: 'Gotham', sans-serif;
 }

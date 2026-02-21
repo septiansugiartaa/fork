@@ -88,7 +88,7 @@ export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving 
 
         {/* Textarea */}
         <textarea 
-            className="w-full p-4 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-sm resize-none h-32 mb-6 transition"
+            className="w-full p-4 border border-gray-200 rounded-xl bg-gray-50 focus:bg-white focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none text-sm resize-none h-32 mb-6 transition"
             placeholder="Ceritakan pengalaman Anda..."
             value={review}
             onChange={(e) => setReview(e.target.value)}
@@ -105,7 +105,7 @@ export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving 
             <button 
                 onClick={handleSubmit}
                 disabled={saving}
-                className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition disabled:bg-blue-300 flex items-center justify-center"
+                className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition disabled:bg-green-300 flex items-center justify-center"
             >
                 {saving ? <Loader2 className="animate-spin mr-2" size={20} /> : "Kirim"}
             </button>

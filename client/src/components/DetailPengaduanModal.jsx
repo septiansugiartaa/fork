@@ -118,12 +118,12 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
           {loading ? (
-            <div className="flex justify-center py-10"><Loader2 className="animate-spin text-blue-600" /></div>
+            <div className="flex justify-center py-10"><Loader2 className="animate-spin text-green-600" /></div>
           ) : detail ? (
             <>
               {/* Info Pengaduan Utama */}
-              <div className="bg-white p-5 rounded-xl shadow-sm border border-blue-100 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+              <div className="bg-white p-5 rounded-xl shadow-sm border border-green-100 relative overflow-hidden">
+                <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -149,7 +149,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                         {detail.status || 'Aktif'}
                       </span>
                     </div>
-                    <h4 className="font-bold text-blue-700 text-md mb-1">{detail.judul}</h4>
+                    <h4 className="font-bold text-green-700 text-md mb-1">{detail.judul}</h4>
                     <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
                       {detail.deskripsi}
                     </p>
@@ -176,7 +176,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                 return (
                   <div key={chat.id} className={`flex gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 text-[10px] font-bold shadow-sm overflow-hidden
-                      ${isMe ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
+                      ${isMe ? 'bg-green-600 text-white' : 'bg-white text-gray-600 border border-gray-200'}`}>
                       {chat.users?.foto_profil ? (
                          <img src={`http://localhost:3000/uploads/profil/${chat.users.foto_profil}`} className="w-full h-full object-cover" alt="User"/>
                       ) : (
@@ -186,12 +186,12 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
                     <div className={`max-w-[80%] p-3 shadow-sm text-sm relative
                       ${isMe 
-                        ? 'bg-blue-600 text-white rounded-l-xl rounded-tr-xl rounded-br-[2px]' 
+                        ? 'bg-green-600 text-white rounded-l-xl rounded-tr-xl rounded-br-[2px]' 
                         : 'bg-white text-gray-700 border border-gray-100 rounded-r-xl rounded-tl-xl rounded-bl-[2px]'
                       }`}>
                       
                       {!isMe && (
-                        <p className="text-[10px] font-bold text-blue-600 mb-1">
+                        <p className="text-[10px] font-bold text-green-600 mb-1">
                           {chat.users?.nama} 
                           {roleLabel && <span className="text-gray-400 font-normal ml-1">({roleLabel})</span>}
                         </p>
@@ -199,7 +199,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
                       <p className="whitespace-pre-wrap">{chat.tanggapan}</p>
                       
-                      <p className={`text-[9px] mt-1 text-right ${isMe ? 'text-blue-200' : 'text-gray-400'}`}>
+                      <p className={`text-[9px] mt-1 text-right ${isMe ? 'text-green-200' : 'text-gray-400'}`}>
                         {formatTime(chat.waktu_tanggapan)}
                       </p>
                     </div>
@@ -228,12 +228,12 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                 onChange={(e) => setTanggapan(e.target.value)}
                 placeholder="Tulis tanggapan Anda..." 
                 rows="1"
-                className="flex-1 min-h-[44px] max-h-[124px] overflow-y-auto p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none resize-none text-sm bg-gray-50 transition-all duration-200 [scrollbar-width:none]"
+                className="flex-1 min-h-[44px] max-h-[124px] overflow-y-auto p-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none text-sm bg-gray-50 transition-all duration-200 [scrollbar-width:none]"
               />
               <button 
                 onClick={handleKirim}
                 disabled={sending || !tanggapan.trim()}
-                className="p-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 transition flex-shrink-0 flex items-center text-center justify-center shadow-md shadow-blue-200"
+                className="p-3 bg-green-600 text-white rounded-xl hover:bg-green-700 disabled:opacity-50 transition flex-shrink-0 flex items-center text-center justify-center shadow-md shadow-green-200"
               >
                 {sending ? <Loader2 size={20} className="animate-spin" /> : <Send size={20} /> }
               </button>

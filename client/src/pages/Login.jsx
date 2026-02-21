@@ -102,21 +102,22 @@ export default function Login() {
 
     return (
         // Wrapper Utama: Di Mobile jadi background biru gradient, di Desktop Row biasa
-        <div className="min-h-screen flex bg-gradient-to-br from-blue-600 to-blue-500 lg:bg-none">
+        <div className="min-h-screen flex bg-gradient-to-br from-green-600 to-green-500">
+            <div className="min-h-screen absolute inset-0 bg-[url('../src/assets/header.png')] bg-cover bg-left md:hidden"></div>
             
             {/* --- KOLOM KIRI (DESKTOP) --- */}
-            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-600 to-blue-500 text-white flex-col justify-center items-center px-12 relative overflow-hidden">
-                <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
-                <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-blue-400/20 rounded-full blur-3xl"></div>
+            <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-green-600 to-green-500 to-green-600 text-white flex-col justify-center items-center px-12 relative overflow-hidden bg-login">
+                <div className="absolute inset-0 bg-[url('../src/assets/header.png')] opacity-80 bg-cover bg-left "></div>
 
-                <div className="flex flex-col items-center text-center max-w-md relative z-10">
-                    <div className="w-28 h-28 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center mb-8 shadow-inner border border-white/30 ring-4 ring-white/10">
-                        <svg width="52" height="52" viewBox="0 0 24 24" fill="white">
-                            <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
-                        </svg>
+                <div className="flex flex-col items-center text-center max-w-md relative z-10 -mt-16">
+                    <div className="p-30 w-144 h-144 rounded-full flex items-center justify-center bg-[radial-gradient(circle,rgba(255,255,255,0.3)_0%,rgba(0,0,0,0)_60%)]">
+                        <img src="../src/assets/logo.png" alt="" />
                     </div>
-                    <h1 className="text-4xl font-bold mb-3 tracking-tight">SIM-Tren</h1>
-                    <p className="text-lg font-medium mb-6 text-blue-100">Sistem Informasi Manajemen Pesantren</p>
+                    <span className="text-5xl -mt-28 z-5 mb-3 tracking-tight simtren flex">
+                        <h1 className="font-black pr-4">S I M</h1>
+                        <h1 className="font-light">- T r e n</h1>
+                    </span>
+                    <p className="text-lg font-medium mb-6 z-5 text-green-100">Sistem Informasi Manajemen Pesantren</p>
                 </div>
             </div>
 
@@ -125,13 +126,14 @@ export default function Login() {
                 
                 <div className="w-full max-w-lg bg-white/20 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none p-8 rounded-3xl shadow-lg lg:shadow-none border border-white/20 lg:border-none">
                     <div className="lg:hidden text-center mb-8">
-                        <div className="w-16 h-16 mx-auto rounded-xl bg-white/20 flex items-center justify-center mb-4 shadow-inner border border-white/30">
-                            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
-                                <path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z" />
-                            </svg>
+                        <div className="w-24 h-24 mx-auto flex items-center justify-center mb-4">
+                            <img src="../src/assets/logo.png" alt="" />
                         </div>
-                        <h2 className="text-2xl font-bold text-white">SIM-Tren</h2>
-                        <p className="text-blue-100 text-sm mt-1">Sistem Informasi Manajemen Pesantren</p>
+                        <span>
+                            <h2 className="text-2xl font-black text-white inline">SIM</h2>
+                            <h2 className="text-2xl font-normal text-white inline">-Tren</h2>
+                        </span>
+                        <p className="text-green-100 text-sm mt-1">Sistem Informasi Manajemen Pesantren</p>
                     </div>
 
                     <div className="hidden lg:block mb-8">
@@ -151,13 +153,13 @@ export default function Login() {
                     <form onSubmit={handleSubmit} className="space-y-5">
                         <div>
                             {/* Label: Putih di Mobile, Abu di Desktop */}
-                            <label className="block text-sm font-semibold text-blue-100 lg:text-gray-700 mb-2 ml-1">
+                            <label className="block text-sm font-semibold text-green-100 lg:text-gray-700 mb-2 ml-1">
                                 NIS / No. HP / Email
                             </label>
                             <input 
                                 type="text" 
                                 placeholder="Masukkan NIS atau No. HP atau Email Anda" 
-                                className="w-full px-4 py-3 rounded-xl bg-white/20 lg:bg-white border border-white/30 lg:border-gray-300 text-white lg:text-gray-900 placeholder-blue-200 lg:placeholder-gray-400 focus:ring-2 focus:ring-white/50 lg:focus:ring-blue-500 focus:border-transparent lg:focus:border-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-white/20 lg:bg-white border border-white/30 lg:border-gray-300 text-white lg:text-gray-900 placeholder-green-200 lg:placeholder-gray-400 focus:ring-2 focus:ring-white/50 lg:focus:ring-green-500 focus:border-transparent lg:focus:border-green-500 outline-none transition-all"
                                 value={identifier}
                                 onChange={(e) => setIdentifier(e.target.value)}
                                 disabled={loading}
@@ -166,12 +168,12 @@ export default function Login() {
 
                         <div>
                             <div className="flex justify-between mb-2 ml-1">
-                                <label className="text-sm font-semibold text-blue-100 lg:text-gray-700">
+                                <label className="text-sm font-semibold text-green-100 lg:text-gray-700">
                                     Kata Sandi
                                 </label>
                                 <button 
                                     type="button"
-                                    className="text-white lg:text-blue-600 hover:text-blue-200 lg:hover:text-blue-700 hover:underline text-sm font-medium transition-colors"
+                                    className="text-white lg:text-green-600 hover:text-green-200 lg:hover:text-green-700 hover:underline text-sm font-medium transition-colors"
                                     onClick={() => alert("Silakan hubungi administrator pondok untuk reset password.")}
                                 >
                                     Lupa kata sandi?
@@ -180,7 +182,7 @@ export default function Login() {
                             <input 
                                 type="password" 
                                 placeholder="Masukkan Kata Sandi" 
-                                className="w-full px-4 py-3 rounded-xl bg-white/20 lg:bg-white border border-white/30 lg:border-gray-300 text-white lg:text-gray-900 placeholder-blue-200 lg:placeholder-gray-400 focus:ring-2 focus:ring-white/50 lg:focus:ring-blue-500 focus:border-transparent lg:focus:border-blue-500 outline-none transition-all"
+                                className="w-full px-4 py-3 rounded-xl bg-white/20 lg:bg-white border border-white/30 lg:border-gray-300 text-white lg:text-gray-900 placeholder-green-200 lg:placeholder-gray-400 focus:ring-2 focus:ring-white/50 lg:focus:ring-green-500 focus:border-transparent lg:focus:border-green-500 outline-none transition-all"
                                 value={password}
                                 onChange={(e) => setPassword(e.target.value)}
                                 disabled={loading}
@@ -189,7 +191,7 @@ export default function Login() {
 
                         <button 
                             type="submit" 
-                            className="w-full py-3.5 rounded-xl font-bold text-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center mt-6 bg-white text-blue-600 hover:bg-blue-50 shadow-lg hover:shadow-xl lg:bg-blue-600 lg:text-white lg:hover:bg-blue-700 lg:hover:shadow-blue-500/30"
+                            className="w-full py-3.5 rounded-xl font-bold text-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center mt-6 bg-white text-green-600 hover:bg-green-50 shadow-lg hover:shadow-xl lg:bg-green-600 lg:text-white lg:hover:bg-green-700 lg:hover:shadow-green-500/30"
                             disabled={loading}
                         >
                             {loading ? (
@@ -205,11 +207,11 @@ export default function Login() {
                     </form>
 
                     <div className="mt-8 text-center">
-                        <p className="text-blue-100 lg:text-gray-500 text-sm">
+                        <p className="text-green-100 lg:text-gray-500 text-sm">
                             Belum punya akun?{" "}
                             <button 
                                 onClick={() => setOpenRegister(true)} 
-                                className="text-white lg:text-blue-600 hover:text-blue-200 lg:hover:text-blue-800 font-bold transition-colors underline decoration-2 underline-offset-4 decoration-white/30 lg:decoration-transparent"
+                                className="text-white lg:text-green-600 hover:text-green-200 lg:hover:text-green-800 font-bold transition-colors underline decoration-2 underline-offset-4 decoration-white/30 lg:decoration-transparent"
                                 disabled={loading}
                             >
                                 Daftar Sekarang

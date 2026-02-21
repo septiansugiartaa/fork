@@ -48,7 +48,7 @@ export default function MateriView (){
     return (
         <div className="min-h-screen bg-gray-50">
             {/* HEADER */}
-            <div className='bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg'>
+            <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
                 <div className="max-w-6xl mx-auto flex items-center gap-4">
                     <button
                         onClick={() => navigate("/santri")}
@@ -58,7 +58,7 @@ export default function MateriView (){
                     </button>
                     <div className="min-w-0">
                         <h1 className="text-2xl font-bold truncate">Daftar Materi</h1>
-                        <p className="text-blue-100 text-sm truncate">
+                        <p className="text-green-100 text-sm truncate">
                         Jendela Ilmu Pengetahuan Tentang Scabies
                         </p>
                     </div>
@@ -75,7 +75,7 @@ export default function MateriView (){
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full pl-12 pr-12 py-3 rounded-xl
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     {search && (
                         <button

@@ -100,7 +100,7 @@ export default function RiwayatLayanan() {
     const s = status || "Proses"; 
     const styles = {
         'Selesai': 'bg-green-100 text-green-700',
-        'Proses': 'bg-blue-100 text-blue-700',
+        'Proses': 'bg-green-100 text-green-700',
         'Batal': 'bg-red-100 text-red-700'
     };
     return (
@@ -130,7 +130,7 @@ export default function RiwayatLayanan() {
         </div>
       </div>
 
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
             <input 
@@ -144,7 +144,7 @@ export default function RiwayatLayanan() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center"><Loader2 className="animate-spin text-blue-500 mx-auto mb-2"/><p>Loading...</p></div>
+        <div className="p-12 text-center"><Loader2 className="animate-spin text-green-500 mx-auto mb-2"/><p>Loading...</p></div>
       ) : (
         <>
             {/* VIEW 1: TABLE (Desktop) */}
@@ -175,7 +175,7 @@ export default function RiwayatLayanan() {
                                                 {item.users.foto_profil ? (
                                                     <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                                 ) : (
-                                                    <span className="text-blue-600 font-bold text-sm bg-blue-100 w-full h-full flex items-center justify-center">
+                                                    <span className="text-green-600 font-bold text-sm bg-green-100 w-full h-full flex items-center justify-center">
                                                         {item.users.nama.charAt(0).toUpperCase()}
                                                     </span>
                                                 )}
@@ -202,7 +202,7 @@ export default function RiwayatLayanan() {
                                     <td className="p-4 text-center">
                                         <button 
                                             onClick={() => handleOpenDetail(item)}
-                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition border border-blue-100 hover:border-blue-300" 
+                                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition border border-green-100 hover:border-green-300" 
                                             title="Lihat Detail & Feedback"
                                         >
                                             <Eye size={18} />
@@ -227,7 +227,7 @@ export default function RiwayatLayanan() {
                                     {item.users.foto_profil ? (
                                         <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold">{item.users.nama.charAt(0)}</div>
+                                        <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold">{item.users.nama.charAt(0)}</div>
                                     )}
                                 </div>
                                 <div>
@@ -253,7 +253,7 @@ export default function RiwayatLayanan() {
 
                         <button 
                             onClick={() => handleOpenDetail(item)}
-                            className="w-full py-2.5 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"
+                            className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"
                         >
                             <Eye size={16}/> Lihat Detail
                         </button>

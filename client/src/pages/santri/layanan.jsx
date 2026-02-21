@@ -78,8 +78,8 @@ export default function LayananList() {
         </div>
       )}
 
-      {/* Header Gradient */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg relative">
+      {/* Header */}
+      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg relative">
         <div className="max-w-4xl mx-auto">
           <div className="flex justify-between items-center mb-4">
             <div className="flex items-center gap-4">
@@ -91,7 +91,7 @@ export default function LayananList() {
                 </button>
                 <div>
                     <h1 className="text-2xl font-bold">Daftar Layanan</h1>
-                    <p className="text-blue-100 text-sm">Pusat bantuan dan perizinan santri</p>
+                    <p className="text-green-100 text-sm">Pusat bantuan dan perizinan santri</p>
                 </div>
             </div>
             {/* Tombol History */}
@@ -109,7 +109,7 @@ export default function LayananList() {
             <input 
                 type="text" 
                 placeholder="Cari layanan (misal: Izin Bermalam)..."
-                className="w-full pl-12 pr-4 py-3.5 rounded-2xl text-gray-800 bg-white/95 backdrop-blur shadow-lg border-0 focus:ring-2 focus:ring-blue-300 outline-none transition placeholder-gray-400"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl text-gray-800 bg-white/95 backdrop-blur shadow-lg border-0 focus:ring-2 focus:ring-green-300 outline-none transition placeholder-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -123,7 +123,7 @@ export default function LayananList() {
         
         {loading ? (
             <div className="bg-white p-12 rounded-2xl shadow-sm text-center">
-                <Loader2 className="animate-spin h-8 w-8 text-blue-500 mx-auto mb-2"/>
+                <Loader2 className="animate-spin h-8 w-8 text-green-500 mx-auto mb-2"/>
                 <p className="text-gray-500">Memuat layanan...</p>
             </div>
         ) : (
@@ -136,15 +136,15 @@ export default function LayananList() {
                             onClick={() => handleItemClick(item)}
                         >
                             <div className="flex items-center gap-4 overflow-hidden">
-                                <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center text-blue-600 flex-shrink-0 group-hover:bg-blue-600 group-hover:text-white transition-colors duration-300">
+                                <div className="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center text-green-600 flex-shrink-0 group-hover:bg-green-600 group-hover:text-white transition-colors duration-300">
                                     <Briefcase size={24} />
                                 </div>
                                 <div className="min-w-0">
-                                    <h3 className="font-bold text-gray-800 text-lg truncate group-hover:text-blue-600 transition">{item.nama_layanan}</h3>
+                                    <h3 className="font-bold text-gray-800 text-lg truncate group-hover:text-green-600 transition">{item.nama_layanan}</h3>
                                     <p className="text-gray-500 text-sm truncate pr-4">{item.deskripsi || "Ketuk untuk melihat detail"}</p>
                                 </div>
                             </div>
-                            <div className="flex items-center text-blue-600 font-medium text-sm whitespace-nowrap bg-blue-50 px-3 py-1.5 rounded-lg group-hover:bg-blue-100 transition">
+                            <div className="flex items-center text-green-600 font-medium text-sm whitespace-nowrap bg-green-50 px-3 py-1.5 rounded-lg group-hover:bg-green-100 transition">
                                 Lihat Detail
                             </div>
                         </div>

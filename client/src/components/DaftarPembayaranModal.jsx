@@ -100,7 +100,7 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
         </div>
         
         <div className="p-6 overflow-y-auto flex-1">
-            {loading ? <div className="text-center py-10"><Loader2 className="animate-spin mx-auto text-blue-500"/></div> : (
+            {loading ? <div className="text-center py-10"><Loader2 className="animate-spin mx-auto text-green-500"/></div> : (
                 <table className="w-full text-left text-sm">
                     <thead>
                         <tr className="bg-gray-50 text-gray-600"><th className="p-3">Tanggal</th><th className="p-3">Nominal</th><th className="p-3">Metode</th><th className="p-3">Status</th><th className="p-3 text-center">Aksi</th></tr>
@@ -117,7 +117,7 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
                                     </span>
                                 </td>
                                 <td className="p-3 text-center">
-                                    <button onClick={() => openDetail(item)} className="text-blue-600 hover:text-blue-800 bg-blue-50 p-1.5 rounded-lg transition"><Eye size={16}/></button>
+                                    <button onClick={() => openDetail(item)} className="text-green-600 hover:text-green-800 bg-green-50 p-1.5 rounded-lg transition"><Eye size={16}/></button>
                                 </td>
                             </tr>
                         )) : <tr><td colSpan="5" className="p-8 text-center text-gray-500">Belum ada pembayaran.</td></tr>}

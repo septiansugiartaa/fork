@@ -53,13 +53,13 @@ export default function BayarModal({
         <div className="p-6 space-y-6">
           <div className="space-y-4">
             <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-blue-600/80 text-sm">Nominal</span>
+              <span className="text-green-600/80 text-sm">Nominal</span>
               <span className="font-semibold text-gray-800">
                 {tagihan.nominal}
               </span>
             </div>
             <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-blue-600/80 text-sm">
+              <span className="text-green-600/80 text-sm">
                 No. Rekening Pembayaran
               </span>
               <span className="font-semibold text-gray-800">
@@ -67,7 +67,7 @@ export default function BayarModal({
               </span>
             </div>
             <div className="flex justify-between py-2 border-b border-gray-100">
-              <span className="text-blue-600/80 text-sm">
+              <span className="text-green-600/80 text-sm">
                 Bank / Nama Penerima
               </span>
               <span className="font-semibold text-gray-800 text-right w-1/2">
@@ -141,7 +141,7 @@ export default function BayarModal({
           <button
             onClick={handleSubmit}
             disabled={saving || !file}
-            className="flex-1 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl transition disabled:bg-blue-300 flex items-center justify-center"
+            className="flex-1 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-xl transition disabled:bg-green-300 flex items-center justify-center"
           >
             {saving ? (
               <Loader2 className="animate-spin mr-2" size={20} />

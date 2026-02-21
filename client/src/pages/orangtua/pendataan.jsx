@@ -113,14 +113,14 @@ export default function OrangTuaProfile() {
     }
   };
 
-  if (loading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="h-10 w-10 animate-spin text-blue-600" /></div>;
+  if (loading) return <div className="min-h-screen bg-gray-50 flex items-center justify-center"><Loader2 className="h-10 w-10 animate-spin text-green-600" /></div>;
 
   return (
     <div className="min-h-screen bg-gray-50 pb-10 w-full overflow-x-hidden">
       
       {/* Toast Notification */}
       {message.text && (
-        <div className={`fixed top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto md:w-96 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
+        <div className={`z-101 fixed top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto md:w-96 z-50 p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
              {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
           </div>
@@ -130,12 +130,12 @@ export default function OrangTuaProfile() {
       )}
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-indigo-600 to-blue-500 text-white p-6 pb-24 shadow-lg">
+      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <button onClick={() => navigate("/orangtua")} className="flex-shrink-0 p-2 hover:bg-white/20 rounded-full transition"><ArrowLeft size={24} /></button>
           <div className="min-w-0">
             <h1 className="text-2xl font-bold truncate">Profil Wali Santri</h1>
-            <p className="text-blue-100 text-sm truncate">Kelola data pribadi dan informasi kontak</p>
+            <p className="text-green-100 text-sm truncate">Kelola data pribadi dan informasi kontak</p>
           </div>
         </div>
       </div>
@@ -145,11 +145,11 @@ export default function OrangTuaProfile() {
         {/* 1. Foto Profil */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 text-center">
           <div className="relative inline-block group mb-2">
-            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-blue-100 flex items-center justify-center border-4 border-white shadow-lg mx-auto overflow-hidden">
-              {fotoProfil ? <img src={fotoProfil} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : <User size={64} className="text-blue-400" />}
+            <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-green-100 flex items-center justify-center border-4 border-white shadow-lg mx-auto overflow-hidden">
+              {fotoProfil ? <img src={fotoProfil} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : <User size={64} className="text-green-400" />}
             </div>
             <input type="file" ref={fileInputRef} className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handlePhotoUpload} />
-            <button onClick={() => fileInputRef.current.click()} disabled={saving} className="absolute bottom-0 right-0 bg-blue-600 text-white p-2.5 rounded-full hover:bg-blue-700 shadow-md transition border-2 border-white cursor-pointer">
+            <button onClick={() => fileInputRef.current.click()} disabled={saving} className="absolute bottom-0 right-0 bg-green-600 text-white p-2.5 rounded-full hover:bg-green-700 shadow-md transition border-2 border-white cursor-pointer">
                 {saving ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}
             </button>
           </div>
@@ -160,20 +160,20 @@ export default function OrangTuaProfile() {
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Informasi Pribadi</h2>
-            <button type="button" onClick={() => setShowPasswordModal(true)} className="text-sm font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 px-4 py-2 rounded-xl transition flex items-center">
+            <button type="button" onClick={() => setShowPasswordModal(true)} className="text-sm font-bold text-green-600 bg-green-50 hover:bg-green-100 px-4 py-2 rounded-xl transition flex items-center">
                 <Lock size={16} className="mr-2" /> Ganti Sandi
             </button>
           </div>
           <form onSubmit={handleUpdateDataDiri} className="space-y-5">
             <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nama Lengkap</label>
-                <input type="text" value={dataDiri.nama_lengkap || ''} onChange={(e) => setDataDiri({...dataDiri, nama_lengkap: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                <input type="text" value={dataDiri.nama_lengkap || ''} onChange={(e) => setDataDiri({...dataDiri, nama_lengkap: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" />
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
               <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Jenis Kelamin</label>
-                  <select value={dataDiri.jenis_kelamin || ''} onChange={(e) => setDataDiri({...dataDiri, jenis_kelamin: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 bg-white transition">
+                  <select value={dataDiri.jenis_kelamin || ''} onChange={(e) => setDataDiri({...dataDiri, jenis_kelamin: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 bg-white transition">
                       <option value="" disabled>Pilih...</option>
                       <option value="Laki_laki">Laki-laki</option>
                       <option value="Perempuan">Perempuan</option>
@@ -181,22 +181,22 @@ export default function OrangTuaProfile() {
               </div>
               <div>
                   <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Email</label>
-                  <input type="email" value={dataDiri.email || ''} onChange={(e) => setDataDiri({...dataDiri, email: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                  <input type="email" value={dataDiri.email || ''} onChange={(e) => setDataDiri({...dataDiri, email: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" />
               </div>
             </div>
             
             <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Nomor Handphone (WhatsApp)</label>
-                <input type="text" value={dataDiri.no_hp || ''} onChange={(e) => setDataDiri({...dataDiri, no_hp: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none transition" />
+                <input type="text" value={dataDiri.no_hp || ''} onChange={(e) => setDataDiri({...dataDiri, no_hp: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none transition" />
             </div>
             
             <div>
                 <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Alamat Tinggal</label>
-                <textarea rows="3" value={dataDiri.alamat || ''} onChange={(e) => setDataDiri({...dataDiri, alamat: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none transition" />
+                <textarea rows="3" value={dataDiri.alamat || ''} onChange={(e) => setDataDiri({...dataDiri, alamat: e.target.value})} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none transition" />
             </div>
             
             <div className="pt-4 border-t border-gray-100">
-                <button type="submit" disabled={saving} className="w-full md:w-auto px-8 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition flex items-center justify-center disabled:bg-blue-300">
+                <button type="submit" disabled={saving} className="w-full md:w-auto px-8 py-3.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition flex items-center justify-center disabled:bg-green-300">
                     {saving ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />} Simpan Pembaruan
                 </button>
             </div>
@@ -221,7 +221,7 @@ export default function OrangTuaProfile() {
                   <div className="flex flex-wrap gap-2 mt-1.5">
                     <span className="text-[10px] font-bold bg-white border border-gray-200 text-gray-600 px-2 py-0.5 rounded-lg">NIS: {anak.nip}</span>
                     <span className="text-[10px] font-bold bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-lg">{anak.kelas}</span>
-                    <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-2 py-0.5 rounded-lg">{anak.hubungan}</span>
+                    <span className="text-[10px] font-bold bg-green-100 text-green-700 px-2 py-0.5 rounded-lg">{anak.hubungan}</span>
                   </div>
                 </div>
               </div>
@@ -241,21 +241,21 @@ export default function OrangTuaProfile() {
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
             <div className="bg-white rounded-3xl w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
               <div className="flex justify-between items-center p-6 border-b border-gray-100">
-                <h3 className="font-bold text-gray-800 text-xl flex items-center"><Lock className="mr-2 text-blue-600" size={24} /> Ganti Kata Sandi</h3>
+                <h3 className="font-bold text-gray-800 text-xl flex items-center"><Lock className="mr-2 text-green-600" size={24} /> Ganti Kata Sandi</h3>
                 <button onClick={() => setShowPasswordModal(false)} className="text-gray-400 hover:text-red-500 bg-gray-50 hover:bg-red-50 p-2 rounded-full transition"><X size={20} /></button>
               </div>
               <form onSubmit={handleChangePassword} className="p-6 space-y-4">
                 <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Kata Sandi Baru</label>
-                    <input type="password" placeholder="Minimal 6 karakter" value={passwordBaru} onChange={(e) => setPasswordBaru(e.target.value)} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="password" placeholder="Minimal 6 karakter" value={passwordBaru} onChange={(e) => setPasswordBaru(e.target.value)} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none" />
                 </div>
                 <div>
                     <label className="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Konfirmasi Kata Sandi</label>
-                    <input type="password" placeholder="Ulangi kata sandi baru" value={konfirmasiPassword} onChange={(e) => setKonfirmasiPassword(e.target.value)} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none" />
+                    <input type="password" placeholder="Ulangi kata sandi baru" value={konfirmasiPassword} onChange={(e) => setKonfirmasiPassword(e.target.value)} className="w-full p-3.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none" />
                 </div>
                 <div className="flex gap-3 pt-4">
                     <button type="button" onClick={() => setShowPasswordModal(false)} className="flex-1 px-4 py-3.5 bg-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-200 transition">Batal</button>
-                    <button type="submit" disabled={saving} className="flex-1 px-4 py-3.5 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition disabled:bg-blue-300">
+                    <button type="submit" disabled={saving} className="flex-1 px-4 py-3.5 bg-green-600 text-white font-bold rounded-xl hover:bg-green-700 transition disabled:bg-green-300">
                         {saving ? "Menyimpan..." : "Simpan Sandi"}
                     </button>
                 </div>

@@ -56,7 +56,7 @@ export default function MateriManage (){
         return (
             <div className="min-h-screen flex items-center justify-center bg-gray-50">
                 <div className="text-center">
-                    <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
                     <p className="mt-4 text-gray-600 font-medium">
                     Memuat data...
                     </p>
@@ -99,7 +99,7 @@ export default function MateriManage (){
     return (
         <div className="min-h-screen bg-gray-50">
             {/* HEADER */}
-            <div className='bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg'>
+            <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
                 <div className="max-w-6xl mx-auto flex items-center gap-4">
                     <button
                         onClick={() => navigate("/timkesehatan")}
@@ -109,7 +109,7 @@ export default function MateriManage (){
                     </button>
                     <div className="min-w-0">
                         <h1 className="text-2xl font-bold truncate">Daftar Materi</h1>
-                        <p className="text-blue-100 text-sm truncate">
+                        <p className="text-green-100 text-sm truncate">
                         Jendela Ilmu Pengetahuan Tentang Scabies
                         </p>
                     </div>
@@ -126,7 +126,7 @@ export default function MateriManage (){
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full pl-12 pr-12 py-3 rounded-xl
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     {search && (
                         <button

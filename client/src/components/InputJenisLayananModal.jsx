@@ -44,7 +44,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
         {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <List className="text-blue-600" size={20} />
+            <List className="text-green-600" size={20} />
             {isEditing ? "Edit Jenis Layanan" : "Tambah Layanan Baru"}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition">
@@ -62,7 +62,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                 <div className="relative">
                     <input 
                         type="text" name="nama_layanan" required
-                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                         value={formData.nama_layanan} onChange={handleChange}
                         placeholder="Contoh: Izin Bermalam"
                     />
@@ -79,7 +79,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                         name="estimasi" 
                         required
                         // Tambahkan 'pr-12' (padding right) agar angka tidak menumpuk dengan tulisan "Hari"
-                        className="w-full pl-9 pr-12 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                        className="w-full pl-9 pr-12 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                         value={formData.estimasi} 
                         onChange={handleChange}
                         placeholder="Contoh: 1"
@@ -101,7 +101,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                 <div className="relative">
                     <textarea 
                         name="deskripsi" rows="3"
-                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none"
                         value={formData.deskripsi} onChange={handleChange}
                         placeholder="Keterangan tambahan..."
                     />
@@ -117,7 +117,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
             <button onClick={onClose} type="button" className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition">
                 Batal
             </button>
-            <button form="layananForm" type="submit" disabled={saving} className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition flex items-center disabled:opacity-70">
+            <button form="layananForm" type="submit" disabled={saving} className="px-5 py-2.5 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition flex items-center disabled:opacity-70">
                 {saving ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
                 {saving ? "Menyimpan..." : "Simpan Data"}
             </button>

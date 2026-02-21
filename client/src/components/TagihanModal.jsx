@@ -59,7 +59,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRo
                   key={idx}
                   className="flex flex-col md:flex-row py-3 border-b border-gray-100"
                 >
-                  <div className="w-full md:w-1/3 text-sm text-blue-600/80 font-medium mb-1 md:mb-0">
+                  <div className="w-full md:w-1/3 text-sm text-green-600/80 font-medium mb-1 md:mb-0">
                     {item.label}
                   </div>
                   <div
@@ -80,7 +80,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRo
               {!isLunas && userRole==="orangtua" && (
                 <button
                   onClick={() => onPayClick(data)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm"
+                  className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm"
                 >
                   <Plus size={16} className="mr-2" /> Tambah Data Pembayaran
                 </button>
@@ -130,7 +130,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRo
                     <tr>
                       <td
                         colSpan="3"
-                        className="p-8 text-center text-blue-400/60 bg-blue-50/30"
+                        className="p-8 text-center text-green-400/60 bg-green-50/30"
                       >
                         <p className="text-sm">Belum Ada Riwayat Pembayaran</p>
                       </td>

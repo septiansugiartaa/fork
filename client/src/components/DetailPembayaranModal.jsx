@@ -46,7 +46,7 @@ export default function DetailPembayaranModal({ isOpen, onClose, data }) {
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-sm rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
         
-        <div className="p-5 border-b flex justify-between items-center">
+        <div className="p-5 border-b border-gray-100 flex justify-between items-center">
             <h3 className="font-bold text-gray-800">Detail Pembayaran</h3>
             <button onClick={onClose}><X size={20} className="text-gray-400"/></button>
         </div>
@@ -54,8 +54,8 @@ export default function DetailPembayaranModal({ isOpen, onClose, data }) {
         <div className="p-6 space-y-5 overflow-y-auto">
             {/* Info Utama */}
             <div className="text-center">
-                <p className="text-sm text-gray-500 mb-1">Total Dibayarkan (Input Santri)</p>
-                <h2 className="text-3xl font-bold text-blue-600">Rp {data.nominal.toLocaleString('id-ID')}</h2>
+                <p className="text-sm text-gray-500 mb-1">Total Dibayarkan</p>
+                <h2 className="text-3xl font-bold text-green-600">Rp {data.nominal.toLocaleString('id-ID')}</h2>
             </div>
             
             <div className="bg-gray-50 p-4 rounded-xl space-y-3 text-sm border border-gray-100">
@@ -108,7 +108,7 @@ export default function DetailPembayaranModal({ isOpen, onClose, data }) {
                         <label className="block text-xs font-medium text-gray-600 mb-1">Konfirmasi Nominal Masuk (Rp)</label>
                         <input 
                             type="number" 
-                            className="w-full p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none font-semibold text-gray-800"
+                            className="w-full p-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-green-500 outline-none font-semibold text-gray-800"
                             value={nominalKonfirmasi}
                             onChange={(e) => setNominalKonfirmasi(e.target.value)}
                         />
@@ -121,7 +121,7 @@ export default function DetailPembayaranModal({ isOpen, onClose, data }) {
             <button 
                 onClick={handleSave} 
                 disabled={saving} 
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center disabled:opacity-70"
+                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center disabled:opacity-70"
             >
                 {saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>}
                 Simpan Verifikasi

@@ -105,7 +105,7 @@ export default function RiwayatLayananList() {
       )}
 
       {/* Header Gradient */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg relative">
+      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg relative">
         <div className="max-w-4xl mx-auto">
           <div className="flex items-center gap-4 mb-6">
             <button 
@@ -116,7 +116,7 @@ export default function RiwayatLayananList() {
             </button>
             <div>
                 <h1 className="text-2xl font-bold">Riwayat Pengajuan</h1>
-                <p className="text-blue-100 text-sm">Status dan histori layanan anda</p>
+                <p className="text-green-100 text-sm">Status dan histori layanan anda</p>
             </div>
           </div>
 
@@ -124,7 +124,7 @@ export default function RiwayatLayananList() {
             <input 
                 type="text" 
                 placeholder="Cari riwayat..."
-                className="w-full pl-12 pr-4 py-3.5 rounded-2xl text-gray-800 bg-white/95 backdrop-blur shadow-lg border-0 focus:ring-2 focus:ring-blue-300 outline-none transition placeholder-gray-400"
+                className="w-full pl-12 pr-4 py-3.5 rounded-2xl text-gray-800 bg-white/95 backdrop-blur shadow-lg border-0 focus:ring-2 focus:ring-green-300 outline-none transition placeholder-gray-400"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -137,7 +137,7 @@ export default function RiwayatLayananList() {
       <div className="max-w-4xl mx-auto px-4 -mt-8 relative z-10">
         {loading ? (
             <div className="bg-white p-12 rounded-2xl shadow-sm text-center">
-                <Loader2 className="animate-spin h-8 w-8 text-blue-500 mx-auto mb-2"/>
+                <Loader2 className="animate-spin h-8 w-8 text-green-500 mx-auto mb-2"/>
                 <p className="text-gray-500">Memuat riwayat...</p>
             </div>
         ) : (
@@ -177,7 +177,7 @@ export default function RiwayatLayananList() {
                                 {(item.status.toLowerCase().includes('selesai') || item.status.toLowerCase().includes('diterima')) && !item.sudah_feedback && (
                                     <button 
                                         onClick={() => setFeedbackItem(item)}
-                                        className="flex-1 py-2 bg-blue-50 hover:bg-blue-100 text-blue-600 text-sm font-medium rounded-lg transition flex items-center justify-center"
+                                        className="flex-1 py-2 bg-green-50 hover:bg-green-100 text-green-600 text-sm font-medium rounded-lg transition flex items-center justify-center"
                                     >
                                         <Star size={16} className="mr-2" />
                                         Beri Ulasan

@@ -135,14 +135,14 @@ export default function JenisLayanan() {
         </div>
         <button 
             onClick={handleAdd}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg hover:shadow-blue-500/30 transition"
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg hover:shadow-green-500/30 transition"
         >
             <Plus size={20}/><span className="ml-2 hidden md:inline">Tambah Layanan</span>
         </button>
       </div>
 
       {/* Search Bar */}
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
             <input 
@@ -157,7 +157,7 @@ export default function JenisLayanan() {
 
       {loading ? (
         <div className="p-12 text-center flex flex-col items-center justify-center">
-            <Loader2 className="animate-spin text-blue-500 mb-2" size={32} />
+            <Loader2 className="animate-spin text-green-500 mb-2" size={32} />
             <p className="text-gray-500">Memuat data...</p>
         </div>
       ) : (
@@ -183,7 +183,7 @@ export default function JenisLayanan() {
                                         <td className="p-4 text-sm text-gray-600 max-w-sm truncate">{item.deskripsi || "-"}</td>
                                         <td className="p-4 text-center">
                                             <div className="flex items-center justify-center gap-2">
-                                                <button onClick={() => handleEdit(item)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit">
+                                                <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit">
                                                     <Edit2 size={18} />
                                                 </button>
                                                 <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus">
@@ -209,7 +209,7 @@ export default function JenisLayanan() {
                             <div className="flex justify-between items-start">
                                 <div>
                                     <h3 className="font-bold text-gray-800 text-lg">{item.nama_layanan}</h3>
-                                    <div className="flex items-center gap-2 mt-1 text-sm text-blue-600 font-medium bg-blue-50 px-2 py-1 rounded w-fit">
+                                    <div className="flex items-center gap-2 mt-1 text-sm text-green-600 font-medium bg-green-50 px-2 py-1 rounded w-fit">
                                         <Clock size={14} /> {item.estimasi || "-"} Hari
                                     </div>
                                 </div>
@@ -223,7 +223,7 @@ export default function JenisLayanan() {
                                 </div>
                             </div>
 
-                            <button onClick={() => handleEdit(item)} className="mt-1 py-2 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 active:scale-95 transition">
+                            <button onClick={() => handleEdit(item)} className="mt-1 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 active:scale-95 transition">
                                 <Edit2 size={16}/> Edit Layanan
                             </button>
                         </div>

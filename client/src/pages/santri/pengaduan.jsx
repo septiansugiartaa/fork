@@ -42,7 +42,7 @@ export default function PengaduanList() {
     <div className="min-h-screen bg-gray-50 pb-20">
       
       {/* 1. Header Gradient */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg relative">
+      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg relative">
         <div className="max-w-4xl mx-auto flex items-center gap-4">
           <button 
             onClick={() => navigate("/santri")} 
@@ -52,7 +52,7 @@ export default function PengaduanList() {
           </button>
           <div>
             <h1 className="text-2xl font-bold">Laporan Pengaduan</h1>
-            <p className="text-blue-100 text-sm">Daftar laporan yang ditujukan kepada anda</p>
+            <p className="text-green-100 text-sm">Daftar laporan yang ditujukan kepada anda</p>
           </div>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function PengaduanList() {
         <div className="space-y-4">
           {loading ? (
             <div className="bg-white p-8 rounded-2xl shadow-sm text-center">
-                <Loader2 className="animate-spin h-8 w-8 text-blue-500 mx-auto mb-2"/>
+                <Loader2 className="animate-spin h-8 w-8 text-green-500 mx-auto mb-2"/>
                 <p className="text-gray-500">Memuat data...</p>
             </div>
           ) : data.length > 0 ? (
@@ -81,11 +81,11 @@ export default function PengaduanList() {
                   
                   {/* Avatar Pelapor */}
                   <div className="flex-shrink-0 pt-1">
-                    <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center border border-blue-100 overflow-hidden">
+                    <div className="w-10 h-10 rounded-full bg-green-50 flex items-center justify-center border border-green-100 overflow-hidden">
                       {item.pelapor.foto ? (
                           <img src={`http://localhost:3000/foto-profil/${item.pelapor.foto}`} alt="ava" className="w-full h-full object-cover"/>
                       ) : (
-                          <User size={20} className="text-blue-500" />
+                          <User size={20} className="text-green-500" />
                       )}
                     </div>
                   </div>
@@ -100,7 +100,7 @@ export default function PengaduanList() {
                              {/* Waktu format baru */}
                              <span>{formatTime(item.waktu)}</span>
                           </p>
-                          <h3 className="text-base font-bold text-gray-900 line-clamp-1 group-hover:text-blue-600 transition">
+                          <h3 className="text-base font-bold text-gray-900 line-clamp-1 group-hover:text-green-600 transition">
                             {item.judul}
                           </h3>
                         </div>

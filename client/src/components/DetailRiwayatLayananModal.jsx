@@ -55,12 +55,12 @@ export default function DetailRiwayatLayananModal({ isOpen, onClose, idRiwayat }
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-6">
             {loading ? (
-                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-blue-600" /></div>
+                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-green-600" /></div>
             ) : detail ? (
                 <>
                     {/* Header Info */}
                     <div className="text-center mb-6">
-                        <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-50 rounded-full mb-3 text-blue-600">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-green-50 rounded-full mb-3 text-green-600">
                             <FileText size={32} />
                         </div>
                         <h2 className="text-xl font-bold text-gray-900">{detail.jenis_layanan?.nama_layanan}</h2>
@@ -94,9 +94,9 @@ export default function DetailRiwayatLayananModal({ isOpen, onClose, idRiwayat }
 
                     {/* Catatan Petugas (Jika ada) */}
                     {detail.catatan && (
-                        <div className="bg-blue-50 p-4 rounded-xl border border-blue-100">
-                            <p className="text-xs text-blue-600 font-bold mb-1">Catatan Sistem/Petugas:</p>
-                            <p className="text-sm text-blue-800">{detail.catatan}</p>
+                        <div className="bg-green-50 p-4 rounded-xl border border-green-100">
+                            <p className="text-xs text-green-600 font-bold mb-1">Catatan Sistem/Petugas:</p>
+                            <p className="text-sm text-green-800">{detail.catatan}</p>
                         </div>
                     )}
                 </>

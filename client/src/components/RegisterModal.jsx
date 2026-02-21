@@ -79,7 +79,7 @@ export default function RegisterModal({ open, onClose }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-blue-600 to-blue-500 lg:bg-black/60 lg:backdrop-blur-sm lg:from-transparent lg:to-transparent transition-all duration-300">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-gradient-to-br from-green-600 to-green-500 lg:bg-black/60 lg:backdrop-blur-sm lg:from-transparent lg:to-transparent transition-all duration-300">
       <div className="absolute inset-0 hidden lg:block" onClick={onClose} />
 
       {/* CARD MODAL */}
@@ -112,12 +112,12 @@ export default function RegisterModal({ open, onClose }) {
             
             {/* Input NIS */}
             <div>
-              <label className="block text-sm font-semibold mb-2 ml-1 text-blue-100 lg:text-gray-700">NIS</label>
+              <label className="block text-sm font-semibold mb-2 ml-1 text-green-100 lg:text-gray-700">NIS</label>
               <input 
                 type="text" 
                 name="nip" 
                 placeholder="Masukkan NIS" 
-                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-blue-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-blue-500 lg:focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-green-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-green-500 lg:focus:border-green-500"
                 value={formData.nip}
                 onChange={handleChange}
                 disabled={loading}
@@ -127,12 +127,12 @@ export default function RegisterModal({ open, onClose }) {
 
             {/* Input Nama */}
             <div>
-              <label className="block text-sm font-semibold mb-2 ml-1 text-blue-100 lg:text-gray-700">Nama</label>
+              <label className="block text-sm font-semibold mb-2 ml-1 text-green-100 lg:text-gray-700">Nama</label>
               <input 
                 type="text" 
                 name="nama" 
                 placeholder="Masukkan Nama Lengkap" 
-                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-blue-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-blue-500 lg:focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-green-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-green-500 lg:focus:border-green-500"
                 value={formData.nama}
                 onChange={handleChange}
                 disabled={loading}
@@ -142,12 +142,12 @@ export default function RegisterModal({ open, onClose }) {
 
             {/* Input Password */}
             <div>
-              <label className="block text-sm font-semibold mb-2 ml-1 text-blue-100 lg:text-gray-700">Kata Sandi</label>
+              <label className="block text-sm font-semibold mb-2 ml-1 text-green-100 lg:text-gray-700">Kata Sandi</label>
               <input 
                 type="password" 
                 name="password" 
                 placeholder="Masukkan Kata Sandi" 
-                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-blue-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-blue-500 lg:focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-green-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-green-500 lg:focus:border-green-500"
                 value={formData.password}
                 onChange={handleChange}
                 disabled={loading}
@@ -157,12 +157,12 @@ export default function RegisterModal({ open, onClose }) {
 
             {/* Input Confirm Password */}
             <div>
-              <label className="block text-sm font-semibold mb-2 ml-1 text-blue-100 lg:text-gray-700">Konfirmasi Kata Sandi</label>
+              <label className="block text-sm font-semibold mb-2 ml-1 text-green-100 lg:text-gray-700">Konfirmasi Kata Sandi</label>
               <input 
                 type="password" 
                 name="confirmPassword" 
                 placeholder="Ulangi Kata Sandi" 
-                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-blue-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-blue-500 lg:focus:border-blue-500"
+                className="w-full px-4 py-3 rounded-xl outline-none transition-all shadow-sm bg-white/20 border border-white/30 text-white placeholder-green-200 focus:ring-2 focus:ring-white/50 lg:bg-white lg:border-gray-300 lg:text-gray-900 lg:placeholder-gray-400 lg:focus:ring-green-500 lg:focus:border-green-500"
                 value={formData.confirmPassword}
                 onChange={handleChange}
                 disabled={loading}
@@ -175,7 +175,7 @@ export default function RegisterModal({ open, onClose }) {
           {/* Button Submit */}
           <button 
             type="submit" 
-            className="w-full mt-8 py-3.5 rounded-xl font-bold text-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center shadow-lg hover:shadow-xl bg-white text-blue-600 hover:bg-blue-50 lg:bg-blue-600 lg:text-white lg:hover:bg-blue-700 lg:hover:shadow-blue-500/30"
+            className="w-full mt-8 py-3.5 rounded-xl font-bold text-lg transition-all disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center shadow-lg hover:shadow-xl bg-white text-green-600 hover:bg-green-50 lg:bg-green-600 lg:text-white lg:hover:bg-green-700 lg:hover:shadow-green-500/30"
             disabled={loading}
           >
             {loading ? (

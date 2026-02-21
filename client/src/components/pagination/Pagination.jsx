@@ -16,7 +16,7 @@ export default function Pagination({ currentPage, totalPages, onNext, onPrev }) 
       </button>
       
       <span className="text-sm font-medium text-gray-600">
-        Halaman <span className="text-blue-600 font-bold">{currentPage}</span> dari {totalPages}
+        Halaman <span className="text-green-600 font-bold">{currentPage}</span> dari {totalPages}
       </span>
 
       <button 

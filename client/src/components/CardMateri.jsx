@@ -46,7 +46,7 @@ function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
             onClick={() =>
               navigate(`${detailBasePath}/${materi.id}`)
             }
-            className="w-full py-2.5 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm gap-2 active:scale-95 hover:bg-blue-800 hover:text-white transition duration-200 cursor-pointer"
+            className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm gap-2 active:scale-95 hover:bg-green-800 hover:text-white transition duration-200 cursor-pointer"
           >
             Baca Selengkapnya
           </button>

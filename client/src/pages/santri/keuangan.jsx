@@ -111,7 +111,7 @@ export default function KeuanganSantri() {
   if (loading)
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Loader2 className="h-10 w-10 animate-spin text-blue-600" />
+        <Loader2 className="h-10 w-10 animate-spin text-green-600" />
       </div>
     );
   if (!data) return null;
@@ -143,7 +143,7 @@ export default function KeuanganSantri() {
       )}
 
       {/* Header */}
-      <div className="bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg">
+      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
         <div className="max-w-6xl mx-auto flex items-center gap-4">
           <button
             onClick={() => navigate("/santri")}
@@ -153,7 +153,7 @@ export default function KeuanganSantri() {
           </button>
           <div className="min-w-0">
             <h1 className="text-2xl font-bold truncate">Daftar Tagihan</h1>
-            <p className="text-blue-100 text-sm truncate">
+            <p className="text-green-100 text-sm truncate">
               Informasi pembayaran dan riwayat transaksi
             </p>
           </div>
@@ -168,7 +168,7 @@ export default function KeuanganSantri() {
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
             <div>
-              <label className="block text-sm font-medium text-blue-600/80 mb-1">
+              <label className="block text-sm font-medium text-green-600/80 mb-1">
                 Nama Santri
               </label>
               <p className="text-gray-900 font-semibold text-lg truncate">
@@ -176,7 +176,7 @@ export default function KeuanganSantri() {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-blue-600/80 mb-1">
+              <label className="block text-sm font-medium text-green-600/80 mb-1">
                 NIS
               </label>
               <p className="text-gray-900 font-semibold text-lg">
@@ -184,7 +184,7 @@ export default function KeuanganSantri() {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-blue-600/80 mb-1">
+              <label className="block text-sm font-medium text-green-600/80 mb-1">
                 Kelas
               </label>
               <p className="text-gray-900 font-semibold text-lg">
@@ -192,7 +192,7 @@ export default function KeuanganSantri() {
               </p>
             </div>
             <div>
-              <label className="block text-sm font-medium text-blue-600/80 mb-1">
+              <label className="block text-sm font-medium text-green-600/80 mb-1">
                 Tagihan Aktif
               </label>
               <p className="text-red-600 font-bold text-lg flex items-center">
@@ -208,7 +208,7 @@ export default function KeuanganSantri() {
         {/* Tagihan Aktif */}
         <div className="space-y-4">
           <h2 className="text-xl font-bold text-gray-800 flex items-center">
-            <CreditCard className="mr-2 text-blue-600" size={24} /> Tagihan
+            <CreditCard className="mr-2 text-green-600" size={24} /> Tagihan
             Aktif
           </h2>
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -227,7 +227,7 @@ export default function KeuanganSantri() {
                     data.tagihan_aktif.map((item) => (
                       <tr
                         key={item.id}
-                        className="hover:bg-blue-50/50 transition"
+                        className="hover:bg-green-50/50 transition"
                       >
                         <td className="p-4 pl-6 text-gray-800 font-medium">
                           {item.nama_tagihan}
@@ -239,7 +239,7 @@ export default function KeuanganSantri() {
                         <td className="p-4 pr-6 text-right">
                           <button
                             onClick={() => handleOpenDetail(item)}
-                            className="mt-2 p-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                            className="mt-2 p-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition"
                           >
                             Lihat Detail
                           </button>
@@ -286,7 +286,7 @@ export default function KeuanganSantri() {
                   </div>
                   <button
                     onClick={() => handleOpenDetail(item)}
-                    className="w-full mt-2 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition"
+                    className="w-full mt-2 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 transition"
                   >
                     Lihat Detail
                   </button>
@@ -327,7 +327,7 @@ export default function KeuanganSantri() {
                         <td className="p-4 pr-6 text-right">
                           <button
                             onClick={() => handleOpenDetail(item)}
-                            className="mt-2 p-2 border border-blue-200 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition"
+                            className="mt-2 p-2 border border-green-200 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition"
                           >
                             Lihat Detail
                           </button>
@@ -374,7 +374,7 @@ export default function KeuanganSantri() {
                   </div>
                   <button
                     onClick={() => handleOpenDetail(item)}
-                    className="w-full mt-2 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm font-medium hover:bg-blue-50 transition"
+                    className="w-full mt-2 py-2 border border-green-200 text-green-600 rounded-lg text-sm font-medium hover:bg-green-50 transition"
                   >
                     Lihat Detail
                   </button>

@@ -55,11 +55,11 @@ export default function AssignKamarModal({ isOpen, onClose, isEditing, editData,
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-          <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><Home className="text-blue-600" size={20} /> {isEditing ? "Pindah Kamar Santri" : "Tambah Santri ke Kamar"}</h3>
+          <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><Home className="text-green-600" size={20} /> {isEditing ? "Pindah Kamar Santri" : "Tambah Santri ke Kamar"}</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={24} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            {loadingOptions ? <div className="text-center py-4"><Loader2 className="animate-spin mx-auto text-blue-500"/></div> : (
+            {loadingOptions ? <div className="text-center py-4"><Loader2 className="animate-spin mx-auto text-green-500"/></div> : (
                 <>
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Kamar Tujuan</label>
@@ -72,7 +72,7 @@ export default function AssignKamarModal({ isOpen, onClose, isEditing, editData,
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Santri</label>
                         <div className="relative">
-                            <select className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white disabled:bg-gray-100" value={formData.id_santri} onChange={(e) => setFormData({...formData, id_santri: e.target.value})} disabled={isEditing}>
+                            <select className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white disabled:bg-gray-100" value={formData.id_santri} onChange={(e) => setFormData({...formData, id_santri: e.target.value})} disabled={isEditing}>
                                 <option value="">-- Cari Nama Santri --</option>
                                 {santriOptions.map(s => <option key={s.id} value={s.id}>{s.nama} ({s.nip})</option>)}
                             </select>
@@ -83,7 +83,7 @@ export default function AssignKamarModal({ isOpen, onClose, isEditing, editData,
             )}
             <div className="pt-4 flex gap-3">
                 <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium transition">Batal</button>
-                <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex justify-center items-center font-medium shadow-lg transition">{saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>} Simpan</button>
+                <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 flex justify-center items-center font-medium shadow-lg transition">{saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>} Simpan</button>
             </div>
         </form>
       </div>
