@@ -4,7 +4,7 @@ const kelasController = require('../../controllers/pengurus/kelasController');
 
 router.get('/', kelasController.getKelas);
 router.get('/wali', kelasController.getWaliOptions);
-router.get('/:id/santri', kelasController.getSantriByKelas); // New Route
+router.get('/:id/santri', kelasController.getSantriByKelas);
 router.post('/', kelasController.createKelas);
 router.put('/:id', kelasController.updateKelas);
 router.delete('/:id', kelasController.deleteKelas);

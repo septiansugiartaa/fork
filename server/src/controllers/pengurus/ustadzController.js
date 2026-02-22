@@ -32,6 +32,7 @@ exports.getUstadz = async (req, res) => {
                 nama: true,
                 email: true,
                 no_hp: true,
+                jenis_kelamin: true,
                 alamat: true,
                 is_active: true
             }
@@ -47,7 +48,7 @@ exports.getUstadz = async (req, res) => {
 // 2. POST: Tambah Ustadz Baru
 exports.createUstadz = async (req, res) => {
     // Ambil data, jika kosong biarkan string kosong atau null (tergantung prisma schema)
-    const { nip, nama, email, no_hp, password, alamat } = req.body;
+    const { nip, nama, email, no_hp, jenis_kelamin, password, alamat } = req.body;
 
     try {
         // Cek NIP duplikat jika NIP diisi
@@ -66,6 +67,7 @@ exports.createUstadz = async (req, res) => {
                 nama,
                 email: email || null,
                 no_hp: no_hp || null,
+                jenis_kelamin: jenis_kelamin || null,
                 alamat: alamat || null,
                 password: hashedPassword,
                 is_active: true,
@@ -87,7 +89,7 @@ exports.createUstadz = async (req, res) => {
 // 3. PUT: Update Data Ustadz
 exports.updateUstadz = async (req, res) => {
     const { id } = req.params;
-    const { nip, nama, email, no_hp, alamat, password } = req.body;
+    const { nip, nama, email, no_hp, jenis_kelamin, alamat, password } = req.body;
 
     try {
         const updateData = {
@@ -95,6 +97,7 @@ exports.updateUstadz = async (req, res) => {
             nama,
             email: email || null,
             no_hp: no_hp || null,
+            jenis_kelamin: jenis_kelamin || null,
             alamat: alamat || null
         };
 

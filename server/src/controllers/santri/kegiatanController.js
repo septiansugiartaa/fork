@@ -55,15 +55,16 @@ exports.getKegiatan = async (req, res) => {
                 // Cek Feedback User Ini (Biar gak double feedback)
                 feedback: {
                     where: { id_user: userId },
-                    select: { id: true }
+                    select: { rating: true, isi_text: true, tanggal: true }
                 }
             }
         });
 
         // Mapping Data untuk Frontend
         const data = kegiatans.map(k => {
-            const hasAttended = k.absensi.length > 0; // Apakah user ada di list absensi?
-            const hasFeedback = k.feedback.length > 0; // Apakah user sudah kasih feedback?
+            const hasAttended = k.absensi.length > 0;
+            const hasFeedback = k.feedback.length > 0;
+            const feedbackSantri = k.feedback[0] || null;
 
             return {
                 id: k.id,
@@ -72,9 +73,13 @@ exports.getKegiatan = async (req, res) => {
                 waktu: formatTimeRange(k.waktu_mulai, k.waktu_selesai),
                 lokasi: k.lokasi,
                 deskripsi: k.deskripsi || "Tidak ada deskripsi.",
-                // Logic Tombol Feedback
                 can_feedback: hasAttended && !hasFeedback, 
-                feedback_status: hasFeedback ? "Sudah Memberi Feedback" : (hasAttended ? "Belum" : "Tidak Hadir")
+                feedback_status: hasFeedback ? "Sudah Memberi Feedback" : (hasAttended ? "Belum" : "Tidak Hadir"),
+                feedback_data: feedbackSantri ? {
+                    rating: feedbackSantri.rating,
+                    isi_text: feedbackSantri.isi_text,
+                    tanggal: formatFullDate(feedbackSantri.tanggal)
+                } : null
             };
         });
 
@@ -121,19 +126,5 @@ exports.submitFeedback = async (req, res) => {
     } catch (err) {
         console.error("Error submitFeedback:", err);
         res.status(500).json({ success: false, message: 'Gagal mengirim feedback' });
-    }
-};
-
-// Middleware Auth (Re-use)
-exports.verifyToken = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
-        if (!token) return res.status(401).json({ success: false, message: 'Token missing' });
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        next();
-    } catch (err) {
-        return res.status(401).json({ success: false, message: 'Token invalid' });
     }
 };
