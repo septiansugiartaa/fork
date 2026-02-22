@@ -7,6 +7,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
     nama: "",
     email: "",
     no_hp: "",
+    jenis_kelamin: "",
     alamat: "",
     password: "" 
   };
@@ -21,6 +22,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
           nip: editData.nip || "", // Handle null value dari DB
           email: editData.email || "",
           no_hp: editData.no_hp || "",
+          jenis_kelamin: editData.jenis_kelamin || "",
           alamat: editData.alamat || "",
           password: "" 
         });
@@ -51,7 +53,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
         {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <User className="text-blue-600" size={20} />
+            <User className="text-green-600" size={20} />
             {isEditing ? "Edit Data Ustadz" : "Tambah Ustadz Baru"}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition">
@@ -62,39 +64,36 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
         {/* Form Content */}
         <div className="p-6 overflow-y-auto">
           <form id="ustadzForm" onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* NIP & Nama */}
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">NIP (Opsional)</label>
-                <div className="relative">
-                    <input 
-                        type="text" name="nip" 
-                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                        value={formData.nip} onChange={handleChange}
-                        placeholder="Nomor Induk Pegawai"
-                    />
-                    <Briefcase className="absolute left-3 top-3 text-gray-400" size={16} />
-                </div>
-            </div>
-            
-            <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
-                <input 
-                    type="text" name="nama" required
-                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
-                    value={formData.nama} onChange={handleChange}
-                    placeholder="Nama Ustadz/Ustadzah"
-                />
-            </div>
 
-            {/* Email & No HP (Tidak Required) */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">NIP (Opsional)</label>
+                    <div className="relative">
+                        <input 
+                            type="text" name="nip" 
+                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+                            value={formData.nip} onChange={handleChange}
+                            placeholder="Nomor Induk Pegawai"
+                        />
+                        <Briefcase className="absolute left-3 top-3 text-gray-400" size={16} />
+                    </div>
+                </div>
+                
+                <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap <span className="text-red-500">*</span></label>
+                    <input 
+                        type="text" name="nama" required
+                        className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
+                        value={formData.nama} onChange={handleChange}
+                        placeholder="Nama Ustadz/Ustadzah"
+                    />
+                </div>
                 <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
                     <div className="relative">
                         <input 
                             type="email" name="email" 
-                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                             value={formData.email} onChange={handleChange}
                             placeholder="Opsional"
                         />
@@ -107,7 +106,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
                     <div className="relative">
                         <input 
                             type="text" name="no_hp"
-                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                            className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                             value={formData.no_hp} onChange={handleChange}
                             placeholder="Opsional"
                         />
@@ -116,13 +115,26 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
                 </div>
             </div>
 
+            <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
+                <select 
+                    name="jenis_kelamin"
+                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white"
+                    value={formData.jenis_kelamin} onChange={handleChange}
+                >
+                    <option value="" disabled>Pilih Jenis Kelamin</option>
+                    <option value="Laki_laki">Laki-laki</option>
+                    <option value="Perempuan">Perempuan</option>
+                </select>
+            </div>
+
             {/* Alamat */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Alamat Domisili</label>
                 <div className="relative">
                     <textarea 
                         name="alamat" rows="2"
-                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none resize-none"
+                        className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none"
                         value={formData.alamat} onChange={handleChange}
                         placeholder="Alamat lengkap (opsional)..."
                     />
@@ -137,7 +149,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
                 </label>
                 <input 
                     type="password" name="password"
-                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                    className="w-full p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                     value={formData.password} onChange={handleChange}
                     placeholder="******"
                 />
@@ -151,7 +163,7 @@ export default function UstadzModal({ isOpen, onClose, isEditing, editData, onSu
             <button onClick={onClose} type="button" className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition">
                 Batal
             </button>
-            <button form="ustadzForm" type="submit" disabled={saving} className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition flex items-center disabled:opacity-70">
+            <button form="ustadzForm" type="submit" disabled={saving} className="px-5 py-2.5 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition flex items-center disabled:opacity-70">
                 {saving ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
                 {saving ? "Menyimpan..." : "Simpan Data"}
             </button>

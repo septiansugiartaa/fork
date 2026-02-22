@@ -11,16 +11,12 @@ export default function PengurusLayout() {
   const menus = [
     { name: 'Dashboard', path: '/pengurus', icon: LayoutDashboard },
     // --- MASTER DATA ---
-    { category: 'MASTER' },
+    { category: 'PENDATAAN' },
     { name: 'Data Santri', path: '/pengurus/data-santri', icon: Users },
     { name: 'Data Ustadz', path: '/pengurus/data-ustadz', icon: Users },
     { name: 'Data Kelas', path: '/pengurus/data-kelas', icon: BookOpen },
     { name: 'Data Kamar', path: '/pengurus/data-kamar', icon: BedDouble },
     { name: 'Jenis Layanan', path: '/pengurus/jenis-layanan', icon: List },
-    // --- ASSIGNMENT ---
-    { category: 'MANAJEMEN PENEMPATAN' },
-    { name: 'Penempatan Kelas', path: '/pengurus/penempatan-kelas', icon: School },
-    { name: 'Penempatan Kamar', path: '/pengurus/penempatan-kamar', icon: Home },
     // --- LAYANAN ---
     { category: 'LAYANAN & TRANSAKSI' },
     { name: 'Riwayat Layanan', path: '/pengurus/riwayat-layanan', icon: FileText },
@@ -50,11 +46,11 @@ export default function PengurusLayout() {
       <aside className={`
         fixed lg:static inset-y-0 left-0 z-50 w-64 transition-transform duration-300 transform 
         ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-        bg-gradient-to-b from-blue-700 to-blue-600 text-white shadow-xl flex flex-col
+        bg-gradient-to-b from-green-700 to-green-600 text-white shadow-xl flex flex-col
       `}>
         
         {/* Sidebar Header */}
-        <div className="h-16 flex items-center justify-between px-6 border-b border-blue-500/30">
+        <div className="h-16 flex items-center justify-between px-6 border-b border-green-500/30">
           <h1 className="text-xl font-bold tracking-wide">SIM-Tren </h1>
           <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-white/80 hover:text-white">
             <X size={24} />
@@ -89,8 +85,8 @@ export default function PengurusLayout() {
                 }}
                 className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium
                   ${isActive 
-                    ? 'bg-white text-blue-700 shadow-md translate-x-1' 
-                    : 'text-blue-100 hover:bg-blue-600/50 hover:text-white'
+                    ? 'bg-white text-green-700 shadow-md translate-x-1' 
+                    : 'text-green-100 hover:bg-green-600/50 hover:text-white'
                   }
                 `}
               >
@@ -102,10 +98,10 @@ export default function PengurusLayout() {
         </nav>
 
         {/* Sidebar Footer (Logout) */}
-        <div className="p-4 border-t border-blue-500/30">
+        <div className="p-4 border-t border-green-500/30">
           <button 
             onClick={handleLogout}
-            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-blue-100 hover:bg-red-500/20 hover:text-red-100 transition-colors"
+            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-green-100 hover:bg-red-500/30 hover:text-red-300 transition-colors"
           >
             <LogOut size={20} />
             <span>Keluar</span>
@@ -129,17 +125,6 @@ export default function PengurusLayout() {
             <h2 className="text-lg font-semibold text-gray-800">
                 {menus.find(m => m.path === location.pathname)?.name || 'Dashboard'}
             </h2>
-          </div>
-
-          <div className="flex items-center gap-3">
-             {/* Profile / Admin Info kecil di kanan atas */}
-             <div className="text-right hidden sm:block">
-                <p className="text-sm font-bold text-gray-700">Admin Pengurus</p>
-                <p className="text-xs text-gray-500">Pengurus</p>
-             </div>
-             <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold border border-blue-200">
-                A
-             </div>
           </div>
         </header>
 

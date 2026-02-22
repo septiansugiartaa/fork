@@ -97,6 +97,7 @@ exports.getDashboardData = async (req, res) => {
             santri: {
                 nama: pengguna.nama || '-',
                 nip: pengguna.nip || '-',
+                foto_profil: pengguna.foto_profil || '-',
                 kelas: pengguna.kelas_santri[0]?.kelas?.kelas || '-',
                 kamar: pengguna.kamar_santri[0]?.kamar?.kamar || '-', 
                 status: pengguna.is_active ? 'Aktif' : 'Tidak Aktif'
@@ -165,7 +166,8 @@ exports.getDashboardData = async (req, res) => {
                 { id: 2, nama: "Tagihan & Keuangan", icon: "credit-card", endpoint: "/santri/keuangan", accessible: true },
                 { id: 3, nama: "Kegiatan", icon: "calendar", endpoint: "/santri/kegiatan", accessible: true },
                 { id: 4, nama: "Pengaduan", icon: "alert-circle", endpoint: "/santri/pengaduan", accessible: true },
-                { id: 5, nama: "Riwayat Layanan", icon: "history", endpoint: "/santri/layanan", accessible: true }
+                { id: 5, nama: "Riwayat Layanan", icon: "history", endpoint: "/santri/layanan", accessible: true },
+                { id: 6, nama: "Scabies", icon: "cross", endpoint: "/santri/scabies", accessible: true }
             ]
         };
 
@@ -181,32 +183,6 @@ exports.getDashboardData = async (req, res) => {
             success: false, 
             message: 'Terjadi kesalahan sistem',
             error: process.env.NODE_ENV === 'development' ? err.message : undefined 
-        });
-    }
-};
-
-// Middleware untuk verifikasi token (sama seperti sebelumnya)
-exports.verifyToken = async (req, res, next) => {
-    try {
-        const token = req.headers.authorization?.split(' ')[1];
-        
-        if (!token) {
-            return res.status(401).json({ 
-                success: false,
-                message: 'Token tidak ditemukan' 
-            });
-        }
-
-        const jwt = require('jsonwebtoken');
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
-        
-        next();
-    } catch (err) {
-        return res.status(401).json({ 
-            success: false,
-            message: 'Token tidak valid',
-            error: err.message 
         });
     }
 };

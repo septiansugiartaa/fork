@@ -47,7 +47,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit, saving }) {
 
         <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50">
           <h3 className="font-bold text-gray-800 text-lg flex items-center">
-            <Lock className="mr-2 text-blue-600" size={20} /> Ganti Kata Sandi
+            <Lock className="mr-2 text-green-600" size={20} /> Ganti Kata Sandi
           </h3>
           <button
             onClick={onClose}
@@ -67,7 +67,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit, saving }) {
               placeholder="Minimal 6 karakter"
               value={passwordBaru}
               onChange={(e) => setPasswordBaru(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
             />
           </div>
           <div>
@@ -79,7 +79,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit, saving }) {
               placeholder="Ulangi kata sandi baru"
               value={konfirmasiPassword}
               onChange={(e) => setKonfirmasiPassword(e.target.value)}
-              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+              className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
             />
           </div>
 
@@ -94,7 +94,7 @@ export default function PasswordModal({ isOpen, onClose, onSubmit, saving }) {
             <button
               type="submit"
               disabled={saving}
-              className="flex-1 px-4 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition disabled:bg-blue-300 flex justify-center items-center"
+              className="flex-1 px-4 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition disabled:bg-green-300 flex justify-center items-center"
             >
               {saving ? (
                 <Loader2 className="animate-spin mr-2" size={18} />
