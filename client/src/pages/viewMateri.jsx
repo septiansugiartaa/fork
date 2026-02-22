@@ -14,7 +14,6 @@ export default function MateriView (){
     const navigate = useNavigate();
     
     const fetchMateri = async () => {
-        
         try {
             const token = localStorage.getItem("token");
             const res = await fetch(

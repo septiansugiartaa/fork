@@ -25,7 +25,8 @@ export default function TimkesDashboard() {
             <h3 className="text-lg font-medium text-gray-600">Area Konten Dashboard</h3>
             <p className="text-sm mt-1">Belum ada widget atau statistik yang ditampilkan.</p>
         </div>
-        <div className='flex justify-center items-center'>
+        <div className='flex justify-center items-center gap-5'>
+          <button onClick={()=> navigate("manageMateri")} className='px-3 py-3 font-semibold bg-green-50 text-green-500 rounded-xl hover:bg-green-500 hover:text-white cursor_pointer transition duration-200'>Manage Materi</button>
           <button onClick={handleLogout} className='px-3 py-3 font-semibold bg-red-50 text-red-500 rounded-xl hover:bg-red-500 hover:text-white cursor_pointer transition duration-200'>Logout</button>
         </div>
       </div>
