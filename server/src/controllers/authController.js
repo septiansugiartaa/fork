@@ -135,7 +135,7 @@ exports.login = async (req, res) => {
         role: roleName, // PENTING: Masukkan role ke dalam token
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }, // Token berlaku 1 hari
+      { expiresIn: "8h" }, // Token berlaku 1 hari
     );
 
     // 5. Siapkan Response (Buang password dari object user)
