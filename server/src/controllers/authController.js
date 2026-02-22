@@ -1,6 +1,6 @@
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-const { PrismaClient } = require("@prisma/client");
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 exports.register = async (req, res) => {
@@ -94,7 +94,7 @@ exports.login = async (req, res) => {
     // 1. Cari User berdasarkan NIP ATAU No HP
     const user = await prisma.users.findFirst({
       where: {
-        OR: [{ nip: identifier }, { no_hp: identifier }],
+        OR: [{ nip: identifier }, { no_hp: identifier }, { email: identifier }],
         is_active: true, // Hanya user aktif yang boleh login
       },
       include: {
@@ -135,7 +135,7 @@ exports.login = async (req, res) => {
         role: roleName, // PENTING: Masukkan role ke dalam token
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1d" }, // Token berlaku 1 hari
+      { expiresIn: "8h" }, // Token berlaku 1 hari
     );
 
     // 5. Siapkan Response (Buang password dari object user)
