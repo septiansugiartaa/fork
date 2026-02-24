@@ -36,6 +36,7 @@ import UstadzDashboard from "./pages/ustadz/dashboard"
 import UstadzProfile from "./pages/ustadz/pendataan"
 import UstadzKegiatan from "./pages/ustadz/kegiatan"
 import UstadzSantri from "./pages/ustadz/daftarSantri"
+import UstadzPengaduan from "./pages/ustadz/pengaduan"
 
 function App() {
   return (
@@ -98,6 +99,7 @@ function App() {
             <Route path="profil" element={<UstadzProfile />} />
             <Route path="kegiatan" element={<UstadzKegiatan />} />
             <Route path="daftar-santri" element={<UstadzSantri />} />
+            <Route path="pengaduan" element={<UstadzPengaduan />} />
           </Route>
         </Route>
 

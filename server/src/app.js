@@ -53,6 +53,7 @@ app.use('/api/ustadz/dashboard', require('./routes/ustadz/dashboardRoutes'));
 app.use('/api/ustadz/profile', require('./routes/ustadz/pendataanRoutes'));
 app.use('/api/ustadz/kegiatan', require('./routes/ustadz/kegiatanRoutes'));
 app.use('/api/ustadz/santri', require('./routes/ustadz/santriRoutes'));
+app.use('/api/ustadz/pengaduan', require('./routes/ustadz/pengaduanRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
