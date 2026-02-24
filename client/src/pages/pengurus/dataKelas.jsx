@@ -17,7 +17,7 @@ export default function DataKelas() {
   const [refreshListKey, setRefreshListKey] = useState(0);
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 5);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // Modals State
   const [modalKelas, setKelasModal] = useState({ isOpen: false, isEditing: false, data: null });
@@ -115,7 +115,7 @@ export default function DataKelas() {
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4">Nama Kelas</th><th className="p-4">Tahun Ajaran</th><th className="p-4">Wali Kelas</th><th className="p-4 text-center">Aksi</th></tr></thead>
+                        <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4 w-[40%]">Nama Kelas</th><th className="p-4 w-[25%]">Tahun Ajaran</th><th className="p-4 w-[25%]">Wali Kelas</th><th className="p-4 text-center w-[10%]">Aksi</th></tr></thead>
                         <tbody className="divide-y divide-gray-100">
                             {currentData.length > 0 ? currentData.map(item => (
                                 <tr key={item.id} className="hover:bg-gray-50 transition">

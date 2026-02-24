@@ -15,7 +15,7 @@ export default function RiwayatLayanan() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 10);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // State Modals
   const [detailData, setDetailData] = useState(null);
@@ -153,11 +153,11 @@ export default function RiwayatLayanan() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase">
-                                <th className="p-4">Waktu & Layanan</th>
-                                <th className="p-4">Santri</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4 text-center">Rating</th> 
-                                <th className="p-4 text-center">Aksi</th>
+                                <th className="p-4 w-[20%]">Waktu & Layanan</th>
+                                <th className="p-4 w-[40%]">Santri</th>
+                                <th className="p-4 w-[10%]">Status</th>
+                                <th className="p-4 text-center w-[20%]">Rating</th> 
+                                <th className="p-4 text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
