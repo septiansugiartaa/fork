@@ -32,6 +32,12 @@ import OrangtuaKegiatan from "./pages/orangtua/kegiatan"
 import OrangtuaKeuangan from "./pages/orangtua/keuangan"
 import OrangtuaPengaduan from "./pages/orangtua/pengaduan"
 
+import UstadzDashboard from "./pages/ustadz/dashboard"
+import UstadzProfile from "./pages/ustadz/pendataan"
+import UstadzKegiatan from "./pages/ustadz/kegiatan"
+import UstadzSantri from "./pages/ustadz/daftarSantri"
+import UstadzPengaduan from "./pages/ustadz/pengaduan"
+
 function App() {
   return (
     <BrowserRouter>
@@ -84,6 +90,16 @@ function App() {
             <Route path="kegiatan" element={<OrangtuaKegiatan />} />
             <Route path="keuangan" element={<OrangtuaKeuangan />} />
             <Route path="pengaduan" element={<OrangtuaPengaduan />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['ustadz']} />}>
+          <Route path="/ustadz">
+            <Route index element={<UstadzDashboard />} />
+            <Route path="profil" element={<UstadzProfile />} />
+            <Route path="kegiatan" element={<UstadzKegiatan />} />
+            <Route path="daftar-santri" element={<UstadzSantri />} />
+            <Route path="pengaduan" element={<UstadzPengaduan />} />
           </Route>
         </Route>
 

@@ -5,27 +5,27 @@ import { X, Send, User, Loader2, Lock, AlertTriangle, CheckCircle } from 'lucide
 const formatTime = (dateString) => {
   if (!dateString) return "";
   return new Date(dateString).toLocaleTimeString('id-ID', {
-    hour: '2-digit', minute: '2-digit', hour12: false, timeZone: 'UTC'
-  });
+    hour: '2-digit', minute: '2-digit', hour12: false
+  }) + " WIB"; 
 };
 
-const DetailPengaduanModal = ({ idAduan, onClose }) => {
+const DetailPengaduanModal = ({ idAduan, onClose, onRefreshList }) => {
   const [detail, setDetail] = useState(null);
   const [loading, setLoading] = useState(true);
   const [tanggapan, setTanggapan] = useState("");
   const [sending, setSending] = useState(false);
+  const [finishing, setFinishing] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" }); 
+  
   const chatContainerRef = useRef(null);
+  const textareaRef = useRef(null);
   
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const currentUserId = currentUser.id;
-  // Deteksi role dari localStorage (huruf kecil semua agar aman)
   const currentRole = (currentUser.role || "").toLowerCase().replace(/\s/g, ''); 
   
-  // Kondisi: Hanya Ortu (atau Ustadz/Pengurus) yang boleh balas
-  const canReply = currentRole === 'orangtua';
-  
-  const textareaRef = useRef(null);
+  const canReply = currentRole === 'orangtua' || currentRole === 'ustadz';
+  const isUstadz = currentRole === 'ustadz';
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -41,10 +41,9 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
   const fetchDetail = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem("token");
-      // Karena modal ini bisa diakses dari page Ortu atau Santri, endpoint harus dinamis
-      // Di sini kita pakai prefix berdasarkan role 
-      const apiPrefix = canReply ? 'orangtua' : 'santri'; 
+      const apiPrefix = isUstadz ? 'ustadz' : (currentRole === 'orangtua' ? 'orangtua' : 'santri'); 
 
       const res = await axios.get(`http://localhost:3000/api/${apiPrefix}/pengaduan/${idAduan}`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -73,7 +72,9 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
     setSending(true);
     try {
       const token = localStorage.getItem("token");
-      await axios.post('http://localhost:3000/api/orangtua/pengaduan/tanggapan', {
+      const apiPrefix = isUstadz ? 'ustadz' : 'orangtua'; 
+      
+      await axios.post(`http://localhost:3000/api/${apiPrefix}/pengaduan/tanggapan`, {
         id_aduan: idAduan,
         isi_tanggapan: tanggapan
       }, {
@@ -86,6 +87,28 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
       showAlert("error", err.response?.data?.message || "Gagal mengirim pesan");
     } finally {
       setSending(false);
+    }
+  };
+
+  const handleSelesaikan = async () => {
+    if (!window.confirm("Yakin ingin menyelesaikan laporan ini? Diskusi akan ditutup permanen.")) return;
+    
+    setFinishing(true);
+    try {
+        const token = localStorage.getItem("token");
+        const res = await axios.put(`http://localhost:3000/api/ustadz/pengaduan/${idAduan}/selesai`, {}, {
+            headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (res.data.success) {
+            showAlert("success", res.data.message);
+            fetchDetail();
+            if (onRefreshList) onRefreshList();
+        }
+    } catch (err) {
+        showAlert("error", err.response?.data?.message || "Gagal menyelesaikan pengaduan");
+    } finally {
+        setFinishing(false);
     }
   };
 
@@ -106,14 +129,29 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
 
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
         
+        {/* HEADER MODAL */}
         <div className="p-4 border-b border-gray-100 flex justify-between items-center bg-white z-10">
           <div>
             <h3 className="font-bold text-gray-800 text-lg">Rincian Laporan</h3>
             <p className="text-xs text-gray-500">Diskusi penyelesaian masalah</p>
           </div>
-          <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition">
-            <X size={20} />
-          </button>
+          <div className="flex items-center gap-3">
+             {/* Tombol Selesai (Khusus Ustadz) */}
+             {isUstadz && detail?.status === 'Aktif' && (
+                 <button 
+                    onClick={handleSelesaikan}
+                    disabled={finishing}
+                    className="bg-orange-100 hover:bg-orange-200 text-orange-700 text-xs font-bold px-3 py-1.5 rounded-lg transition flex items-center disabled:opacity-50"
+                 >
+                    {finishing ? <Loader2 size={14} className="animate-spin mr-1"/> : <CheckCircle size={14} className="mr-1"/>}
+                    Tandai Selesai
+                 </button>
+             )}
+             
+             <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full text-gray-500 transition">
+               <X size={20} />
+             </button>
+          </div>
         </div>
 
         <div ref={chatContainerRef} className="flex-1 overflow-y-auto p-4 bg-gray-50 space-y-4">
@@ -123,7 +161,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
             <>
               {/* Info Pengaduan Utama */}
               <div className="bg-white p-5 rounded-xl shadow-sm border border-green-100 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-1 h-full bg-green-500"></div>
+                <div className={`absolute top-0 left-0 w-1 h-full ${detail.status === 'Selesai' ? 'bg-green-500' : 'bg-orange-500'}`}></div>
                 <div className="flex items-start gap-3">
                   <div className="flex-shrink-0">
                     <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
@@ -137,19 +175,22 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                   <div className="flex-1">
                     <div className="flex justify-between items-start">
                       <div>
+                        {/* Jika Ustadz, tampilkan nama Santrinya. Jika Ortu, biarkan default */}
                         <p className="font-bold text-gray-900 text-sm">
-                            {detail.users_pengaduan_id_pelaporTousers?.nama}
+                            {isUstadz ? `Terkait: ${detail.users_pengaduan_id_santriTousers?.nama}` : detail.users_pengaduan_id_pelaporTousers?.nama}
                         </p>
                         <p className="text-xs text-gray-400 mb-2">
                           {new Date(detail.waktu_aduan).toLocaleDateString('id-ID')} • {formatTime(detail.waktu_aduan)}
                         </p>
                       </div>
                       <span className={`px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide
-                        ${detail.status === 'Selesai' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'}`}>
+                        ${detail.status === 'Selesai' ? 'bg-green-100 text-green-700' : 'bg-orange-100 text-orange-700'}`}>
                         {detail.status || 'Aktif'}
                       </span>
                     </div>
-                    <h4 className="font-bold text-green-700 text-md mb-1">{detail.judul}</h4>
+                    <h4 className={`font-bold text-md mb-1 ${detail.status === 'Selesai' ? 'text-green-700' : 'text-orange-600'}`}>
+                        {detail.judul}
+                    </h4>
                     <p className="text-gray-700 text-sm leading-relaxed whitespace-pre-line">
                       {detail.deskripsi}
                     </p>
@@ -171,7 +212,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                 const hubungan = chat.users?.orangtua_orangtua_id_orangtuaTousers?.[0]?.hubungan;
                 
                 const isOrangTuaChat = rawRole?.toLowerCase().replace(/\s/g, '') === 'orangtua';
-                const roleLabel = isOrangTuaChat ? (hubungan || "Wali") : null;
+                const roleLabel = isOrangTuaChat ? (hubungan || "Wali") : (rawRole || "");
 
                 return (
                   <div key={chat.id} className={`flex gap-2 ${isMe ? 'flex-row-reverse' : 'flex-row'}`}>
@@ -193,7 +234,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                       {!isMe && (
                         <p className="text-[10px] font-bold text-green-600 mb-1">
                           {chat.users?.nama} 
-                          {roleLabel && <span className="text-gray-400 font-normal ml-1">({roleLabel})</span>}
+                          {roleLabel && <span className="text-gray-400 font-normal ml-1 capitalize">({roleLabel})</span>}
                         </p>
                       )}
 
@@ -247,7 +288,7 @@ const DetailPengaduanModal = ({ idAduan, onClose }) => {
                 {detail?.status === 'Selesai' ? 'Laporan Telah Ditutup' : 'Balasan Dinonaktifkan'}
               </p>
               <p className="text-[10px] text-gray-400 mt-0.5">
-                {detail?.status === 'Selesai' ? 'Kasus ini sudah diselesaikan.' : 'Hanya Orang Tua/Wali Santri dan Ustadz yang dapat berdiskusi di sini.'}
+                {detail?.status === 'Selesai' ? 'Masalah ini telah diselesaikan oleh pihak pesantren.' : 'Hanya Orang Tua/Wali Santri dan Ustadz yang dapat berdiskusi di sini.'}
               </p>
             </div>
           )}
