@@ -84,7 +84,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-          <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><DollarSign className="text-blue-600"/> {isEditing ? "Edit Tagihan" : "Buat Tagihan Baru"}</h3>
+          <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><DollarSign className="text-green-600"/> {isEditing ? "Edit Tagihan" : "Buat Tagihan Baru"}</h3>
           <button onClick={onClose}><X size={20} className="text-gray-400 hover:text-red-500"/></button>
         </div>
 
@@ -126,11 +126,11 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
 
             {/* Section Santri (Gmail Style) */}
             {!isEditing && (
-                <div className="border-t pt-4">
+                <div className="border-t border-gray-200 pt-4">
                     <div className="flex justify-between items-center mb-2">
                         <label className="block text-sm font-medium text-gray-700">Pilih Santri (Target)</label>
                         <div className="flex items-center gap-2">
-                            <input type="checkbox" id="selectAll" checked={isSelectAll} onChange={handleSelectAll} className="w-4 h-4 text-blue-600 rounded"/>
+                            <input type="checkbox" id="selectAll" checked={isSelectAll} onChange={handleSelectAll} className="w-4 h-4 text-green-600 rounded"/>
                             <label htmlFor="selectAll" className="text-sm text-gray-600">Pilih Semua Santri Aktif</label>
                         </div>
                     </div>
@@ -142,7 +142,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
                                 {selectedSantri.map(id => {
                                     const s = allSantri.find(x => x.id === id);
                                     return (
-                                        <div key={id} className="bg-white border border-blue-200 text-blue-700 px-2 py-1 rounded-lg text-sm flex items-center gap-1 shadow-sm">
+                                        <div key={id} className="bg-white border border-green-200 text-green-700 px-2 py-1 rounded-lg text-sm flex items-center gap-1 shadow-sm">
                                             {s?.nama}
                                             <button onClick={() => toggleSantri(id)} className="hover:text-red-500"><X size={14}/></button>
                                         </div>
@@ -154,7 +154,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
                             <div className="relative">
                                 <input 
                                     type="text" 
-                                    className="w-full p-2 pl-8 border-b border-transparent focus:border-blue-500 outline-none bg-transparent text-sm"
+                                    className="w-full p-2 pl-8 border-b border-transparent focus:border-green-500 outline-none bg-transparent text-sm"
                                     placeholder="Ketik nama santri..."
                                     value={searchTerm}
                                     onChange={e => setSearchTerm(e.target.value)}
@@ -165,7 +165,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
                                 {searchTerm && (
                                     <div className="absolute top-full left-0 right-0 bg-white border border-gray-100 shadow-lg rounded-xl mt-1 max-h-40 overflow-y-auto z-10">
                                         {filteredSantri.map(s => (
-                                            <button key={s.id} onClick={() => { toggleSantri(s.id); setSearchTerm(""); }} className="w-full text-left px-4 py-2 hover:bg-blue-50 text-sm text-gray-700">
+                                            <button key={s.id} onClick={() => { toggleSantri(s.id); setSearchTerm(""); }} className="w-full text-left px-4 py-2 hover:bg-green-50 text-sm text-gray-700">
                                                 {s.nama} <span className="text-xs text-gray-400">({s.nip})</span>
                                             </button>
                                         ))}
@@ -175,7 +175,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
                         </div>
                     )}
                     {isSelectAll && (
-                        <div className="p-3 bg-blue-50 border border-blue-100 rounded-xl text-center text-blue-700 text-sm font-medium">
+                        <div className="p-3 bg-green-50 border border-green-100 rounded-xl text-center text-green-700 text-sm font-medium">
                             <CheckSquare className="inline-block mr-2" size={16}/> Semua santri aktif akan menerima tagihan ini.
                         </div>
                     )}
@@ -185,7 +185,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
 
         <div className="p-5 border-t border-gray-100 bg-gray-50 rounded-b-2xl flex justify-end gap-3">
             <button onClick={onClose} className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100">Batal</button>
-            <button onClick={handleSubmit} disabled={loading} className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 flex items-center">
+            <button onClick={handleSubmit} disabled={loading} className="px-5 py-2.5 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 flex items-center">
                 {loading ? <Loader2 className="animate-spin mr-2"/> : <Save className="mr-2"/>} Simpan
             </button>
         </div>

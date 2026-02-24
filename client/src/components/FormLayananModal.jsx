@@ -171,7 +171,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
                                 <select 
                                     value={locationType} 
                                     onChange={handleLocationTypeChange}
-                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none appearance-none text-sm text-gray-700"
+                                    className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none appearance-none text-sm text-gray-700"
                                 >
                                     <option value="" disabled>-- Pilih Area --</option>
                                     <option value="kamar">Kamar</option>
@@ -192,7 +192,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
                                         onChange={handleChange}
                                         placeholder="Ketik detail lokasi..."
                                         disabled={locationType !== 'lainnya'} // Locked jika bukan lainnya
-                                        className={`w-full pl-4 pr-4 py-3 border rounded-xl outline-none text-sm transition ${locationType !== 'lainnya' ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-white border-gray-200 focus:ring-2 focus:ring-blue-500'}`}
+                                        className={`w-full pl-4 pr-4 py-3 border rounded-xl outline-none text-sm transition ${locationType !== 'lainnya' ? 'bg-gray-100 text-gray-500 border-gray-200' : 'bg-white border-gray-200 focus:ring-2 focus:ring-green-500'}`}
                                     />
                                     {locationType !== 'lainnya' && (
                                         <p className="text-[10px] text-gray-400 mt-1 ml-1">*Lokasi terisi otomatis sesuai data Anda</p>
@@ -213,7 +213,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
                                     name={field.name}
                                     rows="3"
                                     placeholder={field.placeholder}
-                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm resize-none"
+                                    className="w-full pl-4 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm resize-none"
                                     onChange={handleChange}
                                     disabled={loading}
                                 />
@@ -223,7 +223,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
                                         type={field.type} 
                                         name={field.name}
                                         placeholder={field.placeholder}
-                                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                                        className="w-full pl-10 pr-4 py-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm"
                                         onChange={handleChange}
                                         disabled={loading}
                                     />
@@ -241,7 +241,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
             <button 
                 onClick={handleSubmit}
                 disabled={loading}
-                className="w-full py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center disabled:opacity-70"
+                className="w-full py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-bold text-sm shadow-lg transition flex items-center justify-center disabled:opacity-70"
             >
                 {loading ? <Loader2 className="animate-spin mr-2" size={18} /> : <Save className="mr-2" size={18} />}
                 {loading ? "Mengirim..." : "Ajukan Permintaan"}

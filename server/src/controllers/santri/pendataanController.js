@@ -66,7 +66,7 @@ exports.getProfile = async (req, res) => {
       },
       // URL Foto: Pastikan app.js sudah set static folder ke /uploads
       foto_profil: santri.foto_profil
-        ? `http://localhost:3000/uploads/${santri.foto_profil}`
+        ? `http://localhost:3000/foto-profil/${santri.foto_profil}`
         : null,
 
       orang_tua: santri.orangtua.map((ot) => ({

@@ -30,7 +30,7 @@ export default function DetailRiwayatModal({ isOpen, onClose, data, onProcess })
 
         {/* Content */}
         <div className="p-6 overflow-y-auto space-y-6">
-            <div className={`p-4 rounded-xl flex items-center gap-3 ${data.status_sesudah === 'Selesai' ? 'bg-green-50 text-green-800' : 'bg-blue-50 text-blue-800'}`}>
+            <div className={`p-4 rounded-xl flex items-center gap-3 ${data.status_sesudah === 'Selesai' ? 'bg-green-50 text-green-800' : 'bg-green-50 text-green-800'}`}>
                 {data.status_sesudah === 'Selesai' ? <CheckCircle size={24}/> : <Clock size={24}/>}
                 <div>
                     <p className="text-xs opacity-70">Status Terkini</p>
@@ -42,7 +42,7 @@ export default function DetailRiwayatModal({ isOpen, onClose, data, onProcess })
                 <div>
                     <p className="text-gray-500 mb-1">Nama Santri</p>
                     <div className="flex items-center gap-2">
-                        <User size={14} className="text-blue-500"/>
+                        <User size={14} className="text-green-500"/>
                         <span className="font-semibold text-gray-800">{data.users?.nama}</span>
                     </div>
                 </div>
@@ -60,7 +60,7 @@ export default function DetailRiwayatModal({ isOpen, onClose, data, onProcess })
 
             <div>
                 <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    <FileText size={18} className="text-blue-600"/> Rincian Data
+                    <FileText size={18} className="text-green-600"/> Rincian Data
                 </h4>
                 <div className="bg-gray-50 rounded-xl p-4 space-y-3 border border-gray-100">
                     {data.riwayat_layanan_detail && data.riwayat_layanan_detail.length > 0 ? (
@@ -122,7 +122,7 @@ export default function DetailRiwayatModal({ isOpen, onClose, data, onProcess })
             {canProcess && (
                 <button 
                     onClick={() => onProcess(data)}
-                    className="px-5 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition font-medium flex items-center gap-2 shadow-lg"
+                    className="px-5 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 transition font-medium flex items-center gap-2 shadow-lg"
                 >
                     <Edit size={16} /> Tindak Lanjut
                 </button>

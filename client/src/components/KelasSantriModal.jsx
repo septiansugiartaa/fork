@@ -83,7 +83,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
                 <input 
                     type="text" 
                     placeholder="Cari santri di kelas ini..." 
-                    className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                 />
@@ -91,7 +91,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
             </div>
             <button 
                 onClick={() => onAssignClick(kelasData)}
-                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 text-sm shadow-md transition"
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 text-sm shadow-md transition"
             >
                 <Plus size={16} /> Tambah Santri
             </button>
@@ -100,7 +100,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
         {/* List Content */}
         <div className="p-4 overflow-y-auto flex-1">
             {loading ? (
-                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-blue-500"/></div>
+                <div className="flex justify-center py-10"><Loader2 className="animate-spin text-green-500"/></div>
             ) : filteredList.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {filteredList.map(santri => (
@@ -112,7 +112,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
                                     {santri.foto_profil ? (
                                         <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                                     ) : (
-                                        <span className="text-blue-600 font-bold text-sm">{santri.nama.charAt(0)}</span>
+                                        <span className="text-green-600 font-bold text-sm">{santri.nama.charAt(0)}</span>
                                     )}
                                 </div>
                                 <div className="min-w-0">

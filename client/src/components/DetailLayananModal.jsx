@@ -22,7 +22,7 @@ const DetailLayananModal = ({ isOpen, onClose, layanan, onAjukan }) => {
         {/* Content */}
         <div className="p-6 space-y-6">
           <div className="flex items-start gap-4">
-             <div className="p-3 bg-blue-50 rounded-xl text-blue-600">
+             <div className="p-3 bg-green-50 rounded-xl text-green-600">
                 <FileText size={24} />
              </div>
              <div>
@@ -56,7 +56,7 @@ const DetailLayananModal = ({ isOpen, onClose, layanan, onAjukan }) => {
           </button>
           <button 
             onClick={() => onAjukan(layanan)}
-            className="px-6 py-2.5 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg hover:shadow-blue-500/30 transition"
+            className="px-6 py-2.5 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 shadow-lg hover:shadow-green-500/30 transition"
           >
             Ajukan Layanan
           </button>

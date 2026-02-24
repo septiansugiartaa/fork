@@ -68,7 +68,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
         {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
-            <School className="text-blue-600" size={20} />
+            <School className="text-green-600" size={20} />
             {"Tambah Santri ke Kelas"}
           </h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={24} /></button>
@@ -76,7 +76,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             {loadingOptions ? (
-                <div className="text-center py-4"><Loader2 className="animate-spin mx-auto text-blue-500"/></div>
+                <div className="text-center py-4"><Loader2 className="animate-spin mx-auto text-green-500"/></div>
             ) : (
                 <>
                     {/* 1. Input Kelas (Disabled) */}
@@ -100,7 +100,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
                         <label className="block text-sm font-medium text-gray-700 mb-1">Pilih Santri</label>
                         <div className="relative">
                             <select 
-                                className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none bg-white disabled:bg-gray-100"
+                                className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white disabled:bg-gray-100"
                                 value={formData.id_santri}
                                 onChange={(e) => setFormData({...formData, id_santri: e.target.value})}
                                 disabled={isEditing} // Usually changing the person in an edit form is weird, better delete and re-add. But up to you.
@@ -118,7 +118,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
 
             <div className="pt-4 flex gap-3">
                 <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 font-medium transition">Batal</button>
-                <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 flex justify-center items-center font-medium shadow-lg transition">
+                <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 flex justify-center items-center font-medium shadow-lg transition">
                     {saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>}
                     Simpan
                 </button>

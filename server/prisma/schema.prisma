@@ -206,8 +206,8 @@ model materi {
   judul_materi  String          @db.VarChar(100)
   penulis       String?         @db.VarChar(100)
   is_active     Boolean
-  gambar        String          @db.VarChar(1000)
-  ringkasan     String          @db.VarChar(1000)
+  gambar        String?         @db.VarChar(1000)
+  ringkasan     String          @db.Text
   detail_materi detail_materi[]
 }
 
@@ -246,7 +246,7 @@ model pembayaran {
   id            Int                     @id @default(autoincrement())
   id_tagihan    Int
   tanggal_bayar DateTime                @db.Date
-  nominal       Float                   @db.Float
+  nominal       Float                   @default(0) @db.Float
   metode_bayar  pembayaran_metode_bayar
   bukti_bayar   String?                 @db.VarChar(255)
   status        pembayaran_status

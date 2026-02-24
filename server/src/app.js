@@ -11,14 +11,15 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
+app.use('/foto-profil', express.static(path.join(__dirname, '../public/uploads/profil')));
 
 app.get("/api", (req, res) => {
   res.send("PPDNY");
 });
 
 app.use('/api/auth', require('./routes/authRoutes'));
+
 app.use(verifyToken);
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
@@ -28,7 +29,8 @@ app.use('/api/santri/pengaduan', require('./routes/santri/pengaduanRoutes'));
 app.use('/api/santri/layanan', require('./routes/santri/layananRoutes'));
 app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRoutes'));
 
-app.use('/api/global/viewMateri', require('./routes/viewMateriRoutes'))
+app.use('/api/global/viewMateri', require('./routes/viewMateriRoutes'));
+app.use('/api/global/manageMateri', require('./routes/manageMateriRoutes'));
 
 app.use('/api/pengurus/dashboard', require('./routes/pengurus/dashboardRoutes'));
 app.use('/api/pengurus/santri', require('./routes/pengurus/santriRoutes'));
@@ -40,6 +42,18 @@ app.use('/api/pengurus/penempatan-kamar', require('./routes/pengurus/assignKamar
 app.use('/api/pengurus/jenis-layanan', require('./routes/pengurus/jenisLayananRoutes'));
 app.use('/api/pengurus/riwayat-layanan', require('./routes/pengurus/riwayatLayananRoutes'));
 app.use('/api/pengurus/keuangan', require('./routes/pengurus/keuanganRoutes'));
+
+app.use('/api/orangtua/dashboard', require('./routes/orangtua/dashboardRoutes'));
+app.use('/api/orangtua/profile', require('./routes/orangtua/pendataanRoutes'));
+app.use('/api/orangtua/kegiatan', require('./routes/orangtua/kegiatanRoutes'));
+app.use('/api/orangtua/keuangan', require('./routes/orangtua/keuanganRoutes'));
+app.use('/api/orangtua/pengaduan', require('./routes/orangtua/pengaduanRoutes'));
+
+app.use('/api/ustadz/dashboard', require('./routes/ustadz/dashboardRoutes'));
+app.use('/api/ustadz/profile', require('./routes/ustadz/pendataanRoutes'));
+app.use('/api/ustadz/kegiatan', require('./routes/ustadz/kegiatanRoutes'));
+app.use('/api/ustadz/santri', require('./routes/ustadz/santriRoutes'));
+app.use('/api/ustadz/pengaduan', require('./routes/ustadz/pengaduanRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

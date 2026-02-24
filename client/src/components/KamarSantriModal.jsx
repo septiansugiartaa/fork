@@ -56,19 +56,19 @@ export default function KamarSantriModal({ isOpen, onClose, kamarData, onAssignC
         </div>
         <div className="p-4 border-b border-gray-100 flex gap-3">
             <div className="relative flex-1">
-                <input type="text" placeholder="Cari santri..." className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-blue-500" value={search} onChange={(e) => setSearch(e.target.value)}/>
+                <input type="text" placeholder="Cari santri..." className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" value={search} onChange={(e) => setSearch(e.target.value)}/>
                 <Search className="absolute left-3 top-3 text-gray-400" size={16} />
             </div>
-            <button onClick={() => onAssignClick(kamarData)} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 text-sm shadow-md transition"><Plus size={16} /> Tambah Penghuni</button>
+            <button onClick={() => onAssignClick(kamarData)} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl font-medium flex items-center gap-2 text-sm shadow-md transition"><Plus size={16} /> Tambah Penghuni</button>
         </div>
         <div className="p-4 overflow-y-auto flex-1">
-            {loading ? <div className="flex justify-center py-10"><Loader2 className="animate-spin text-blue-500"/></div> : filteredList.length > 0 ? (
+            {loading ? <div className="flex justify-center py-10"><Loader2 className="animate-spin text-green-500"/></div> : filteredList.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {filteredList.map(santri => (
                         <div key={santri.id} className="flex items-center justify-between px-3 py-2 border border-gray-200 rounded-xl hover:bg-gray-50 transition group">
                             <div className="flex items-center gap-3 overflow-hidden">
                                 <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
-                                    {santri.foto_profil ? <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/> : <span className="text-blue-600 font-bold text-sm">{santri.nama.charAt(0)}</span>}
+                                    {santri.foto_profil ? <img src={`http://localhost:3000/uploads/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/> : <span className="text-green-600 font-bold text-sm">{santri.nama.charAt(0)}</span>}
                                 </div>
                                 <div className="min-w-0"><p className="font-medium text-gray-800 truncate">{santri.nama}</p><p className="text-xs text-gray-500">{santri.nip || "Tanpa NIS"}</p></div>
                             </div>

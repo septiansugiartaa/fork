@@ -1,6 +1,6 @@
 import { X, Plus, FileText } from "lucide-react";
 
-export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
+export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRole }) {
   if (!isOpen || !data) return null;
 
   const isLunas = data.status === "Lunas";
@@ -19,17 +19,11 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
 
   const getStatusBadge = (status) => {
     switch (status) {
-      case "Lunas":
-      case "Diterima":
-      case "Terverifikasi":
-      case "Berhasil":
+      case "Lunas":case "Diterima":case "Terverifikasi":case "Berhasil":
         return "bg-green-100 text-green-700 border border-green-200";
-      case "Ditolak":
-      case "Gagal":
+      case "Ditolak":case "Gagal":
         return "bg-red-100 text-red-700 border border-red-200";
-      case "Menunggu Verifikasi":
-      case "Sedang Diproses":
-      case "Pending":
+      case "Menunggu Verifikasi":case "Sedang Diproses":case "Pending":
         return "bg-yellow-100 text-yellow-700 border border-yellow-200";
       default:
         return "bg-gray-100 text-gray-600 border border-gray-200";
@@ -65,7 +59,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
                   key={idx}
                   className="flex flex-col md:flex-row py-3 border-b border-gray-100"
                 >
-                  <div className="w-full md:w-1/3 text-sm text-blue-600/80 font-medium mb-1 md:mb-0">
+                  <div className="w-full md:w-1/3 text-sm text-green-600/80 font-medium mb-1 md:mb-0">
                     {item.label}
                   </div>
                   <div
@@ -83,10 +77,10 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
               <h4 className="text-lg font-bold text-gray-800">
                 Riwayat Pembayaran
               </h4>
-              {!isLunas && (
+              {!isLunas && userRole==="orangtua" && (
                 <button
                   onClick={() => onPayClick(data)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm"
+                  className="bg-green-600 hover:bg-green-700 text-white text-sm px-4 py-2 rounded-lg font-medium transition flex items-center shadow-sm"
                 >
                   <Plus size={16} className="mr-2" /> Tambah Data Pembayaran
                 </button>
@@ -136,7 +130,7 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick }) {
                     <tr>
                       <td
                         colSpan="3"
-                        className="p-8 text-center text-blue-400/60 bg-blue-50/30"
+                        className="p-8 text-center text-green-400/60 bg-green-50/30"
                       >
                         <p className="text-sm">Belum Ada Riwayat Pembayaran</p>
                       </td>
