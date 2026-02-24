@@ -32,6 +32,7 @@ import OrangtuaKegiatan from "./pages/orangtua/kegiatan"
 import OrangtuaKeuangan from "./pages/orangtua/keuangan"
 import OrangtuaPengaduan from "./pages/orangtua/pengaduan"
 
+import UstadzDashboard from "./pages/ustadz/dashboard"
 function App() {
   return (
     <BrowserRouter>
@@ -87,6 +88,11 @@ function App() {
           </Route>
         </Route>
 
+        <Route element={<ProtectedRoute allowedRoles={['ustadz']} />}>
+          <Route path="/ustadz">
+            <Route index element={<UstadzDashboard />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   );
