@@ -7,7 +7,7 @@ router.get("/", pendataanController.getProfile);
 router.put("/update", pendataanController.updateProfile);
 router.put("/password", pendataanController.updatePassword);
 
-const uploadProfil = createUploader('profil', 'foto');
+const uploadProfil = createUploader('profil', 'profil');
 router.post('/photo', uploadProfil.single('foto'), pendataanController.updatePhoto);
 
 module.exports = router;

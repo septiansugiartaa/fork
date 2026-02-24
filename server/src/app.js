@@ -49,6 +49,12 @@ app.use('/api/orangtua/kegiatan', require('./routes/orangtua/kegiatanRoutes'));
 app.use('/api/orangtua/keuangan', require('./routes/orangtua/keuanganRoutes'));
 app.use('/api/orangtua/pengaduan', require('./routes/orangtua/pengaduanRoutes'));
 
+app.use('/api/ustadz/dashboard', require('./routes/ustadz/dashboardRoutes'));
+app.use('/api/ustadz/profile', require('./routes/ustadz/pendataanRoutes'));
+app.use('/api/ustadz/kegiatan', require('./routes/ustadz/kegiatanRoutes'));
+app.use('/api/ustadz/santri', require('./routes/ustadz/santriRoutes'));
+app.use('/api/ustadz/pengaduan', require('./routes/ustadz/pengaduanRoutes'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
