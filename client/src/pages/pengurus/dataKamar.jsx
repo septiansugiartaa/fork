@@ -17,7 +17,7 @@ export default function DataKamar() {
   const [refreshListKey, setRefreshListKey] = useState(0);
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 10);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // State Modals
   const [modalKamar, setModalKamar] = useState({ isOpen: false, isEditing: false, data: null });
@@ -116,7 +116,7 @@ export default function DataKamar() {
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
-                        <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4">Nama Kamar</th><th className="p-4">Kapasitas</th><th className="p-4">Gender</th><th className="p-4">Lokasi</th><th className="p-4 text-center">Aksi</th></tr></thead>
+                        <thead><tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase"><th className="p-4 w-[35%]">Nama Kamar</th><th className="p-4 w-[15%]">Kapasitas</th><th className="p-4 w-[15%]">Gender</th><th className="p-4 w-[25%]">Lokasi</th><th className="p-4 text-center w-[10%]">Aksi</th></tr></thead>
                         <tbody className="divide-y divide-gray-100">
                             {currentData.length > 0 ? currentData.map(item => (
                                 <tr key={item.id} className="hover:bg-gray-50 transition">

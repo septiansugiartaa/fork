@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
 
-export default function usePagination(data, itemsPerPage) {
+export default function usePagination(data) {
+  const itemsPerPage = 5;
+
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Reset ke halaman 1 jika data berubah (misal saat search)
   useEffect(() => {
     setCurrentPage(1);
   }, [data]);
