@@ -14,7 +14,7 @@ export default function JenisLayanan() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(layananList, 10);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(layananList);
 
   // State Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -168,10 +168,10 @@ export default function JenisLayanan() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                                <th className="p-4 font-semibold">Jenis Layanan</th>
-                                <th className="p-4 font-semibold">Estimasi Waktu</th>
-                                <th className="p-4 font-semibold">Deskripsi</th>
-                                <th className="p-4 font-semibold text-center">Aksi</th>
+                                <th className="p-4 font-semibold w-[20%]">Jenis Layanan</th>
+                                <th className="p-4 font-semibold w-[20%]">Estimasi Waktu</th>
+                                <th className="p-4 font-semibold w-[50%]">Deskripsi</th>
+                                <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
