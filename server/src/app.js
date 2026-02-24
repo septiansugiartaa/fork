@@ -50,6 +50,7 @@ app.use('/api/orangtua/keuangan', require('./routes/orangtua/keuanganRoutes'));
 app.use('/api/orangtua/pengaduan', require('./routes/orangtua/pengaduanRoutes'));
 
 app.use('/api/ustadz/dashboard', require('./routes/ustadz/dashboardRoutes'));
+app.use('/api/ustadz/profile', require('./routes/ustadz/pendataanRoutes'));
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
