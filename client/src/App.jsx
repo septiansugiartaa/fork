@@ -34,6 +34,7 @@ import OrangtuaPengaduan from "./pages/orangtua/pengaduan"
 
 import UstadzDashboard from "./pages/ustadz/dashboard"
 import UstadzProfile from "./pages/ustadz/pendataan"
+import UstadzKegiatan from "./pages/ustadz/kegiatan"
 function App() {
   return (
     <BrowserRouter>
@@ -93,6 +94,7 @@ function App() {
           <Route path="/ustadz">
             <Route index element={<UstadzDashboard />} />
             <Route path="profil" element={<UstadzProfile />} />
+            <Route path="kegiatan" element={<UstadzKegiatan />} />
           </Route>
         </Route>
 
