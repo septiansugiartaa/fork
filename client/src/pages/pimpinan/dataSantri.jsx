@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { 
-  Plus, Search, Edit2, Trash2, User, Loader2, Mail, Phone, 
+  Plus, Search, Eye, Trash2, User, Loader2, Mail, Phone, 
   AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight 
 } from "lucide-react";
 import InputSantriModal from "../../components/InputSantriModal";
@@ -135,11 +135,6 @@ export default function DataSantri() {
           <h1 className="text-2xl font-bold text-gray-800">Data Santri</h1>
           <p className="text-gray-500 text-sm">Kelola data seluruh santri aktif</p>
         </div>
-        <button 
-          onClick={handleAdd}
-          className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg hover:shadow-green-500/30 transition">
-           <Plus size={20}/><span className="ml-2 hidden md:inline">Tambah Santri</span>
-        </button>
       </div>
 
       {/* Search Bar */}
@@ -199,8 +194,7 @@ export default function DataSantri() {
                         <td className="p-4 text-sm text-gray-600 max-w-xs truncate">{item.alamat || "-"}</td>
                         <td className="p-4 text-center">
                           <div className="flex items-center justify-center gap-2">
-                            <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit"><Edit2 size={18} /></button>
-                            <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus"><Trash2 size={18} /></button>
+                            <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit"><Eye size={18} /></button>
                           </div>
                         </td>
                       </tr>
@@ -254,12 +248,9 @@ export default function DataSantri() {
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-3 mt-1">
+                        <div className="grid grid-cols-1 gap-3 mt-1">
                             <button onClick={() => handleEdit(item)} className="py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition">
-                                <Edit2 size={16}/> Edit
-                            </button>
-                            <button onClick={() => handleDelete(item.id)} className="py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition">
-                                <Trash2 size={16}/> Hapus
+                                <Eye size={16}/> View
                             </button>
                         </div>
                     </div>
@@ -287,7 +278,6 @@ export default function DataSantri() {
         editData={selectedData}
         onSubmit={handleSubmit}
         saving={isSaving}
-        userRole={"pengurus"}
       />
 
     </div>

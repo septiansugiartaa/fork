@@ -39,6 +39,8 @@ import UstadzSantri from "./pages/ustadz/daftarSantri"
 import UstadzPengaduan from "./pages/ustadz/pengaduan"
 
 import PimpinanDashboard from "./pages/pimpinan/dashboard"
+import PimpinanSantri from "./pages/pimpinan/dataSantri"
+
 function App() {
   return (
     <BrowserRouter>
@@ -107,6 +109,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['pimpinan']} />}>
           <Route path="/pimpinan" element={<PengurusLayout />}>
             <Route index element={<PimpinanDashboard />} />
+            <Route path="data-santri" element={<PimpinanSantri />} />
           </Route>
         </Route>
 

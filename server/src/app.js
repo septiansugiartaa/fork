@@ -56,6 +56,7 @@ app.use('/api/ustadz/santri', require('./routes/ustadz/santriRoutes'));
 app.use('/api/ustadz/pengaduan', require('./routes/ustadz/pengaduanRoutes'));
 
 app.use('/api/pimpinan/dashboard', require('./routes/pimpinan/dashboardRoutes'));
+app.use('/api/pimpinan/santri', require('./routes/pimpinan/santriRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
