@@ -42,6 +42,7 @@ import PimpinanDashboard from "./pages/pimpinan/dashboard"
 import PimpinanSantri from "./pages/pimpinan/dataSantri"
 import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
 import PimpinanMateri from "./pages/pimpinan/viewMateri"
+import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 
 function App() {
   return (
@@ -114,6 +115,7 @@ function App() {
             <Route path="data-santri" element={<PimpinanSantri />} />
             <Route path="data-ustadz" element={<PimpinanUstadz />} />
             <Route path="scabies/materi" element={<PimpinanMateri />} />
+            <Route path="pengaduan" element={<PimpinanPengaduan />} />
           </Route>
         </Route>
 
