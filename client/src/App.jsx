@@ -44,6 +44,7 @@ import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
 import PimpinanMateri from "./pages/pimpinan/viewMateri"
 import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 import PimpinanKeuangan from "./pages/pimpinan/keuangan"
+import PimpinanFeedback from "./pages/pimpinan/feedback"
 
 function App() {
   return (
@@ -118,6 +119,7 @@ function App() {
             <Route path="scabies/materi" element={<PimpinanMateri />} />
             <Route path="pengaduan" element={<PimpinanPengaduan />} />
             <Route path="keuangan" element={<PimpinanKeuangan />} />
+            <Route path="feedback" element={<PimpinanFeedback />} />
           </Route>
         </Route>
 

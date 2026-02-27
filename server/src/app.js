@@ -60,6 +60,7 @@ app.use('/api/pimpinan/santri', require('./routes/pimpinan/santriRoutes'));
 app.use('/api/pimpinan/ustadz', require('./routes/pimpinan/ustadzRoutes'));
 app.use('/api/pimpinan/pengaduan', require('./routes/pimpinan/pengaduanRoutes'));
 app.use('/api/pimpinan/keuangan', require('./routes/pimpinan/keuanganRoutes'));
+app.use('/api/pimpinan/feedback', require('./routes/pimpinan/feedbackRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
