@@ -251,7 +251,7 @@ export default function Keuangan() {
 
       {/* Modals */}
       <InputTagihanModal isOpen={isTagihanOpen} onClose={() => setIsTagihanOpen(false)} isEditing={isEditing} editData={selectedTagihan} onSubmit={handleSubmitTagihan} />
-      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} />
+      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} userRole={"pengurus"}/>
     </div>
   );
 }

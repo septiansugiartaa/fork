@@ -163,3 +163,37 @@ exports.login = async (req, res) => {
     res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 };
+
+exports.getCurrentUser = async (req, res) => {
+  try {
+    const userId = req.user.id; 
+
+    const user = await prisma.users.findUnique({
+      where: { id: userId },
+      include: {
+        user_role: {
+          include: { role: true }
+        }
+      }
+    });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User tidak ditemukan" });
+    }
+
+    const roleName = user.user_role[0]?.role?.role || "Guest";
+
+    res.json({
+      success: true,
+      data: {
+        id: user.id,
+        nama: user.nama,
+        role: roleName
+      }
+    });
+
+  } catch (error) {
+    console.error("Error get current user:", error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};

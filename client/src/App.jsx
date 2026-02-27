@@ -38,6 +38,14 @@ import UstadzKegiatan from "./pages/ustadz/kegiatan"
 import UstadzSantri from "./pages/ustadz/daftarSantri"
 import UstadzPengaduan from "./pages/ustadz/pengaduan"
 
+import PimpinanDashboard from "./pages/pimpinan/dashboard"
+import PimpinanSantri from "./pages/pimpinan/dataSantri"
+import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
+import PimpinanMateri from "./pages/pimpinan/viewMateri"
+import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
+import PimpinanKeuangan from "./pages/pimpinan/keuangan"
+import PimpinanFeedback from "./pages/pimpinan/feedback"
+
 function App() {
   return (
     <BrowserRouter>
@@ -100,6 +108,18 @@ function App() {
             <Route path="kegiatan" element={<UstadzKegiatan />} />
             <Route path="daftar-santri" element={<UstadzSantri />} />
             <Route path="pengaduan" element={<UstadzPengaduan />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['pimpinan']} />}>
+          <Route path="/pimpinan" element={<PengurusLayout />}>
+            <Route index element={<PimpinanDashboard />} />
+            <Route path="data-santri" element={<PimpinanSantri />} />
+            <Route path="data-ustadz" element={<PimpinanUstadz />} />
+            <Route path="scabies/materi" element={<PimpinanMateri />} />
+            <Route path="pengaduan" element={<PimpinanPengaduan />} />
+            <Route path="keuangan" element={<PimpinanKeuangan />} />
+            <Route path="feedback" element={<PimpinanFeedback />} />
           </Route>
         </Route>
 
