@@ -277,6 +277,7 @@ export default function DataUstadz() {
         editData={selectedData}
         onSubmit={handleSubmit}
         saving={isSaving}
+        userRole={"pengurus"}
       />
 
     </div>
