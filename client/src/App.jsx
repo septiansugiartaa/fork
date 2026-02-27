@@ -40,6 +40,7 @@ import UstadzPengaduan from "./pages/ustadz/pengaduan"
 
 import PimpinanDashboard from "./pages/pimpinan/dashboard"
 import PimpinanSantri from "./pages/pimpinan/dataSantri"
+import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
 
 function App() {
   return (
@@ -110,6 +111,7 @@ function App() {
           <Route path="/pimpinan" element={<PengurusLayout />}>
             <Route index element={<PimpinanDashboard />} />
             <Route path="data-santri" element={<PimpinanSantri />} />
+            <Route path="data-ustadz" element={<PimpinanUstadz />} />
           </Route>
         </Route>
 
