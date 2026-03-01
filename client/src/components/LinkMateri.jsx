@@ -5,7 +5,7 @@ function LinkMateri({ materiList = [], detailBasePath }) {
 
   return (
     <div className="space-y-5">
-      <h3 className="text-lg font-semibold border-b border-gray-300 pb-2">
+      <h3 className="text-lg font-semibold border-b border-gray-300 pb-2 mt-2">
         Materi Lain
       </h3>
 

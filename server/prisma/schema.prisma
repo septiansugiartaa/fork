@@ -185,7 +185,6 @@ model kelas {
   kelas        String?        @db.VarChar(100)
   tahun_ajaran String?        @db.VarChar(100)
   is_active    Boolean        @default(true)
-  kegiatan     kegiatan[]
   users        users          @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kelas_users_FK")
   kelas_santri kelas_santri[]
 

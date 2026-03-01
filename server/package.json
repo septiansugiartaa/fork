@@ -23,7 +23,8 @@
     "multer": "^2.0.2",
     "mysql2": "^3.16.2",
     "path": "^0.12.7",
-    "prisma": "^6.7.0"
+    "prisma": "^6.7.0",
+    "puppeteer": "^24.37.5"
   },
   "devDependencies": {
     "nodemon": "^3.1.11"
