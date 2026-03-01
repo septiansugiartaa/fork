@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Eye, Loader2, AlertCircle, CheckCircle } from 'lucide-react';
+import { X, Eye, Loader2, AlertTriangle, CheckCircle } from 'lucide-react'; // Fix: Import AlertTriangle
 import DetailPembayaranModal from './DetailPembayaranModal';
 
-export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
+// TAMBAHKAN PROP userRole DI SINI
+export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRole }) {
   const [list, setList] = useState([]);
   const [tagihanInfo, setTagihanInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -12,6 +13,9 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
   // Detail Modal State
   const [detailData, setDetailData] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+
+  // CEK ROLE
+  const isReadOnly = !["pengurus", "admin"].includes(userRole?.toLowerCase());
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -38,6 +42,9 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
 
   // Handler Update Status Tagihan
   const handleUpdateStatusTagihan = async (e) => {
+      // Proteksi ganda agar read-only tidak bisa memicu fungsi ini
+      if(isReadOnly) return; 
+
       const newStatus = e.target.value;
       if(!window.confirm(`Ubah status tagihan menjadi ${newStatus}?`)) return;
 
@@ -48,6 +55,7 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
           }, { headers: { Authorization: `Bearer ${token}` } });
           
           setTagihanInfo(prev => ({ ...prev, status: newStatus }));
+          showAlert("success", "Status berhasil diperbarui");
       } catch (err) {
           showAlert("error", "Gagal update status");
       }
@@ -65,6 +73,10 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
       setIsDetailOpen(true);
   };
 
+  const getStatusColor = (status) => {
+      return status === 'Lunas' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700';
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -78,21 +90,28 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
             </div>
         )}
         
-        {/* Header Updated: Ada Toggle Status Tagihan */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
             <div>
                 <h3 className="font-bold text-gray-800 text-lg">Riwayat Pembayaran</h3>
                 {tagihanInfo && (
                     <div className="flex items-center gap-2 mt-1">
                         <span className="text-xs text-gray-500">Status Tagihan:</span>
-                        <select 
-                            value={tagihanInfo.status || 'Aktif'}
-                            onChange={handleUpdateStatusTagihan}
-                            className={`text-xs font-bold px-2 py-1 rounded border-none outline-none cursor-pointer ${tagihanInfo.status === 'Lunas' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}
-                        >
-                            <option value="Aktif">Aktif (Belum Lunas)</option>
-                            <option value="Lunas">Lunas</option>
-                        </select>
+                        
+                        {isReadOnly ? (
+                            <span className={`text-xs font-bold px-2 py-1 rounded border-none ${getStatusColor(tagihanInfo.status)}`}>
+                                {tagihanInfo.status === 'Lunas' ? 'Lunas' : 'Aktif (Belum Lunas)'}
+                            </span>
+                        ) : (
+                            <select 
+                                value={tagihanInfo.status || 'Aktif'}
+                                onChange={handleUpdateStatusTagihan}
+                                className={`text-xs font-bold px-2 py-1 rounded border-none outline-none cursor-pointer ${getStatusColor(tagihanInfo.status)}`}
+                            >
+                                <option value="Aktif">Aktif (Belum Lunas)</option>
+                                <option value="Lunas">Lunas</option>
+                            </select>
+                        )}
+
                     </div>
                 )}
             </div>
@@ -130,8 +149,9 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan }) {
 
       <DetailPembayaranModal 
         isOpen={isDetailOpen} 
-        onClose={() => { setIsDetailOpen(false); fetchPembayaran(); }} // Refresh list setelah tutup detail (siapa tau ada update)
+        onClose={() => { setIsDetailOpen(false); fetchPembayaran(); }} 
         data={detailData} 
+        userRole={userRole}
       />
     </div>
   );

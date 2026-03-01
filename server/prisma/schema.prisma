@@ -61,14 +61,13 @@ model detail_observasi {
 }
 
 model detail_screening {
-  id_detail_screening     Int                   @id @default(autoincrement())
-  id_screening            Int?
-  id_pertanyaan_screening Int?
+  id_detail_screening     Int                  @id @default(autoincrement())
+  id_screening            Int
+  id_pertanyaan_screening Int
   jawaban                 Boolean
-  skor_diperoleh          Int?
   is_active               Boolean
-  pertanyaan_screening    pertanyaan_screening? @relation(fields: [id_pertanyaan_screening], references: [id_pertanyaan_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_pertanyaan_screening_FK")
-  screening               screening?            @relation(fields: [id_screening], references: [id_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_screening_FK")
+  pertanyaan_screening    pertanyaan_screening @relation(fields: [id_pertanyaan_screening], references: [id_pertanyaan_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_pertanyaan_screening_FK")
+  screening               screening            @relation(fields: [id_screening], references: [id_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_screening_FK")
 
   @@index([id_pertanyaan_screening], map: "detail_screening_pertanyaan_screening_FK")
   @@index([id_screening], map: "detail_screening_screening_FK")
@@ -161,6 +160,7 @@ model kamar_santri {
 
 model kegiatan {
   id               Int        @id @default(autoincrement())
+  id_kelas         Int?
   nama_kegiatan    String     @db.VarChar(100)
   tanggal          DateTime?  @db.Date
   lokasi           String?    @db.VarChar(100)
@@ -173,7 +173,9 @@ model kegiatan {
   absensi          absensi[]
   feedback         feedback[]
   users            users?     @relation(fields: [penanggung_jawab], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_ibfk_1")
+  kelas            kelas?     @relation(fields: [id_kelas], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_kelas_FK")
 
+  @@index([id_kelas], map: "kegiatan_kelas_FK")
   @@index([penanggung_jawab], map: "penanggung_jawab")
 }
 
@@ -182,7 +184,8 @@ model kelas {
   id_wali      Int
   kelas        String?        @db.VarChar(100)
   tahun_ajaran String?        @db.VarChar(100)
-  is_active    Boolean
+  is_active    Boolean        @default(true)
+  kegiatan     kegiatan[]
   users        users          @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kelas_users_FK")
   kelas_santri kelas_santri[]
 
@@ -235,7 +238,7 @@ model orangtua {
   id_santri                         Int
   hubungan                          String? @db.VarChar(100)
   is_active                         Boolean
-  users                             users   @relation(fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK")
+  users_orangtua_id_santriTousers   users   @relation("orangtua_id_santriTousers", fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK")
   users_orangtua_id_orangtuaTousers users?  @relation("orangtua_id_orangtuaTousers", fields: [id_orangtua], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "orangtua_users_FK_1")
 
   @@index([id_santri], map: "orangtua_users_FK")
@@ -254,6 +257,13 @@ model pembayaran {
   tagihan       tagihan                 @relation(fields: [id_tagihan], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "pembayaran_ibfk_1")
 
   @@index([id_tagihan], map: "id_tagihan")
+}
+
+model penanganan {
+  id_penanganan        Int                    @id @default(autoincrement())
+  opsi_penanganan      String                 @db.VarChar(200)
+  is_active            Boolean
+  screening_penanganan screening_penanganan[]
 }
 
 model pengaduan {
@@ -281,9 +291,9 @@ model pertanyaan_observasi {
 }
 
 model pertanyaan_screening {
-  id_pertanyaan_screening Int                @id @default(autoincrement())
-  pertanyaan              String             @db.Text
-  bobot_risiko            Int?
+  id_pertanyaan_screening Int                         @id @default(autoincrement())
+  pertanyaan              String                      @db.Text
+  bagian                  pertanyaan_screening_bagian
   is_active               Boolean
   detail_screening        detail_screening[]
 }
@@ -325,16 +335,33 @@ model role {
 }
 
 model screening {
-  id_screening     Int                @id @default(autoincrement())
-  id_timkes        Int?
-  id_santri        Int?
-  tanggal          DateTime?          @db.DateTime(0)
-  total_skor       Int?
-  status           screening_status
-  diagnosa         screening_diagnosa
-  catatan          String?            @db.Text
-  detail_screening detail_screening[]
-  users            users              @relation(fields: [id_screening], references: [id], onUpdate: Restrict, map: "screening_users_FK")
+  id_screening                     Int                    @id @default(autoincrement())
+  id_timkes                        Int
+  id_santri                        Int
+  tanggal                          DateTime?              @db.DateTime(0)
+  total_skor                       Int?
+  status                           screening_status
+  diagnosa                         screening_diagnosa
+  catatan                          String?                @db.Text
+  foto_predileksi                  String?                @db.VarChar(255)
+  detail_screening                 detail_screening[]
+  users_screening_id_timkesTousers users                  @relation("screening_id_timkesTousers", fields: [id_timkes], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "screening_users_FK")
+  users_screening_id_santriTousers users                  @relation("screening_id_santriTousers", fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "screening_users_FK_1")
+  screening_penanganan             screening_penanganan[]
+
+  @@index([id_timkes], map: "screening_users_FK")
+  @@index([id_santri], map: "screening_users_FK_1")
+}
+
+model screening_penanganan {
+  id            Int        @id @default(autoincrement())
+  id_screening  Int
+  id_penanganan Int
+  penanganan    penanganan @relation(fields: [id_penanganan], references: [id_penanganan], onDelete: NoAction, onUpdate: NoAction, map: "screening_penanganan_penanganan_FK")
+  screening     screening  @relation(fields: [id_screening], references: [id_screening], onDelete: NoAction, onUpdate: NoAction, map: "screening_penanganan_screening_FK")
+
+  @@index([id_penanganan], map: "screening_penanganan_penanganan_FK")
+  @@index([id_screening], map: "screening_penanganan_screening_FK")
 }
 
 model tagihan {
@@ -394,7 +421,9 @@ model users {
   foto_profil                           String?              @db.VarChar(100)
   password                              String?              @db.VarChar(100)
   is_active                             Boolean              @default(true)
+  last_opened_notif                     DateTime?            @db.DateTime(0)
   absensi                               absensi[]
+  activity_log                          activity_log[]
   feedback                              feedback[]
   heading_absensi                       heading_absensi[]
   kamar_santri                          kamar_santri[]
@@ -403,20 +432,41 @@ model users {
   kelas_santri                          kelas_santri[]
   observasi_observasi_id_santriTousers  observasi[]          @relation("observasi_id_santriTousers")
   observasi_observasi_id_timkesTousers  observasi[]          @relation("observasi_id_timkesTousers")
-  orangtua                              orangtua[]
+  orangtua_orangtua_id_santriTousers    orangtua[]           @relation("orangtua_id_santriTousers")
   orangtua_orangtua_id_orangtuaTousers  orangtua[]           @relation("orangtua_id_orangtuaTousers")
   pengaduan_pengaduan_id_pelaporTousers pengaduan[]          @relation("pengaduan_id_pelaporTousers")
   pengaduan_pengaduan_id_santriTousers  pengaduan[]          @relation("pengaduan_id_santriTousers")
   riwayat_layanan                       riwayat_layanan[]
-  screening                             screening?
+  screening_screening_id_timkesTousers  screening[]          @relation("screening_id_timkesTousers")
+  screening_screening_id_santriTousers  screening[]          @relation("screening_id_santriTousers")
   tagihan                               tagihan[]
   tanggapan_aduan                       tanggapan_aduan[]
   user_role                             user_role[]
 }
 
+model activity_log {
+  id         Int                @id @default(autoincrement())
+  id_user    Int?
+  role_user  String?            @db.VarChar(100)
+  aksi       activity_log_aksi?
+  entitas    String?            @db.VarChar(100)
+  id_entitas Int?
+  keterangan String?            @db.Text
+  data       Json?
+  created_at DateTime?          @default(now()) @db.DateTime(0)
+  users      users?             @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "activity_log_users_FK")
+
+  @@index([id_user], map: "activity_log_users_FK")
+}
+
 enum item_kebersihan_waktu_pengerjaan {
   Setiap_Hari       @map("Setiap Hari")
   Dua_Minggu_Sekali @map("Dua Minggu Sekali")
+}
+
+enum pertanyaan_screening_bagian {
+  A
+  B
 }
 
 enum absensi_status {
@@ -492,4 +542,10 @@ enum screening_diagnosa {
 enum tagihan_status {
   Aktif
   Lunas
+}
+
+enum activity_log_aksi {
+  CREATE
+  UPDATE
+  DELETE
 }

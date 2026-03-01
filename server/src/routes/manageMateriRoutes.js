@@ -41,6 +41,7 @@ const upload = multer({
 });
 
 // Route Materi List
+router.get('/:id', manageMateriController.getDetailMateri);
 router.get('/', manageMateriController.getViewMateri);
 router.post('/', (req, res, next) => {
   upload.single("gambar")(req, res, function (err) {

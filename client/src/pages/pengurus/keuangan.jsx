@@ -15,7 +15,7 @@ export default function Keuangan() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 5);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // Modals
   const [isTagihanOpen, setIsTagihanOpen] = useState(false);
@@ -153,12 +153,12 @@ export default function Keuangan() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase">
-                                <th className="p-4">Santri</th>
-                                <th className="p-4">Tagihan</th>
-                                <th className="p-4">Nominal</th>
-                                <th className="p-4">Jatuh Tempo</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4 text-center">Aksi</th>
+                                <th className="p-4 w-[30%]">Santri</th>
+                                <th className="p-4 w-[20%]">Tagihan</th>
+                                <th className="p-4 w-[15%]">Nominal</th>
+                                <th className="p-4 w-[15%]">Jatuh Tempo</th>
+                                <th className="p-4 w-[10%]">Status</th>
+                                <th className="p-4 text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -251,7 +251,7 @@ export default function Keuangan() {
 
       {/* Modals */}
       <InputTagihanModal isOpen={isTagihanOpen} onClose={() => setIsTagihanOpen(false)} isEditing={isEditing} editData={selectedTagihan} onSubmit={handleSubmitTagihan} />
-      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} />
+      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} userRole={"pengurus"}/>
     </div>
   );
 }

@@ -14,7 +14,7 @@ export default function DataSantri() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(santriList, 5);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(santriList);
 
   // State Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -160,13 +160,13 @@ export default function DataSantri() {
           {/* DESKTOP VIEW (TABEL) */}
           <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left border-collapse table-fixed">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold">Nama & NIS</th>
-                    <th className="p-4 font-semibold">Kontak</th>
-                    <th className="p-4 font-semibold">Alamat</th>
-                    <th className="p-4 font-semibold text-center">Aksi</th>
+                    <th className="p-4 font-semibold w-[40%]">Nama & NIS</th>
+                    <th className="p-4 font-semibold w-[25%]">Kontak</th>
+                    <th className="p-4 font-semibold w-[25%]">Alamat</th>
+                    <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -184,16 +184,16 @@ export default function DataSantri() {
                                 </span>
                               )}
                             </div>
-                            <div>
-                              <p className="font-semibold text-gray-800">{item.nama}</p>
-                              <p className="text-xs text-gray-500">NIS: {item.nip}</p>
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-800 truncate">{item.nama}</p>
+                              <p className="text-xs text-gray-500 truncate">NIS: {item.nip}</p>
                             </div>
                           </div>
                         </td>
                         <td className="p-4">
-                          <div className="text-sm text-gray-600 space-y-1">
-                            <div className="flex items-center gap-2"><Mail size={14} /> {item.email || "-"}</div>
-                            <div className="flex items-center gap-2"><Phone size={14} /> {item.no_hp || "-"}</div>
+                          <div className="text-sm text-gray-600 space-y-1 min-w-0">
+                            <div className="flex items-center gap-2 truncate"><Mail size={14} /> {item.email || "-"}</div>
+                            <div className="flex items-center gap-2 truncate"><Phone size={14} /> {item.no_hp || "-"}</div>
                           </div>
                         </td>
                         <td className="p-4 text-sm text-gray-600 max-w-xs truncate">{item.alamat || "-"}</td>
@@ -287,6 +287,7 @@ export default function DataSantri() {
         editData={selectedData}
         onSubmit={handleSubmit}
         saving={isSaving}
+        userRole={"pengurus"}
       />
 
     </div>

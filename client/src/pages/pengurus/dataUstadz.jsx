@@ -14,7 +14,7 @@ export default function DataUstadz() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(ustadzList, 5);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(ustadzList);
 
   // State Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -162,10 +162,10 @@ export default function DataUstadz() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                                <th className="p-4 font-semibold">Nama & NIP</th>
-                                <th className="p-4 font-semibold">Kontak</th>
-                                <th className="p-4 font-semibold">Alamat</th>
-                                <th className="p-4 font-semibold text-center">Aksi</th>
+                                <th className="p-4 font-semibold w-[40%]">Nama & NIP</th>
+                                <th className="p-4 font-semibold w-[25%]">Kontak</th>
+                                <th className="p-4 font-semibold w-[25%]">Alamat</th>
+                                <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -277,6 +277,7 @@ export default function DataUstadz() {
         editData={selectedData}
         onSubmit={handleSubmit}
         saving={isSaving}
+        userRole={"pengurus"}
       />
 
     </div>

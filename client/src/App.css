@@ -8,3 +8,26 @@
 .simtren{
     font-family: 'Gotham', sans-serif;
 }
+
+
+.ql-editor {
+    min-height: 200px;
+}
+
+/* label default */
+.ql-snow .ql-picker.ql-size .ql-picker-label::before {
+  content: attr(data-value);
+}
+
+.prose p, ul, ol{
+  font-size: 16px;
+}
+
+.ql-toolbar.ql-snow{
+  border: none !important;
+  border-bottom: 1px solid #d1d5dc !important;
+}
+
+.ql-container.ql-snow{
+  border: none !important;
+}
