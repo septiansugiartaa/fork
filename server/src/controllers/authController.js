@@ -82,36 +82,28 @@ exports.register = async (req, res) => {
 
 exports.login = async (req, res) => {
   try {
-    // Menerima 'identifier' (bisa NIP atau No HP) dan 'password'
     const { identifier, password } = req.body;
 
     if (!identifier || !password) {
-      return res
-        .status(400)
-        .json({ message: "NIP/No HP dan Password wajib diisi" });
+      return res.status(400).json({ message: "NIP/No HP dan Password wajib diisi" });
     }
 
-    // 1. Cari User berdasarkan NIP ATAU No HP
+    // 1. Cari User
     const user = await prisma.users.findFirst({
       where: {
         OR: [{ nip: identifier }, { no_hp: identifier }, { email: identifier }],
-        is_active: true, // Hanya user aktif yang boleh login
+        is_active: true,
       },
       include: {
-        // Include Role agar frontend tahu dia login sebagai apa
         user_role: {
-          include: {
-            role: true,
-          },
+          where: { is_active: true }, // Pastikan hanya role yang aktif
+          include: { role: true },
         },
       },
     });
 
-    // Jika user tidak ditemukan
     if (!user) {
-      return res
-        .status(401)
-        .json({ message: "Akun tidak ditemukan atau tidak aktif" });
+      return res.status(401).json({ message: "Akun tidak ditemukan atau tidak aktif" });
     }
 
     // 2. Verifikasi Password
@@ -120,28 +112,31 @@ exports.login = async (req, res) => {
       return res.status(401).json({ message: "Password salah" });
     }
 
-    // 3. Ekstrak Role User (Flattening)
-    // Ambil role pertama dari array user_role. Jika kosong default ke 'user'
-    const roleName =
-      user.user_role.length > 0 && user.user_role[0].role
-        ? user.user_role[0].role.role
-        : "user";
+    // 3. Cek Jumlah Role Aktif
+    const activeRoles = user.user_role.map(ur => ur.role.role);
 
-    // 4. Generate Token JWT
+    // Skenario A: User punya lebih dari 1 role (Multi-Role)
+    if (activeRoles.length > 1) {
+      return res.json({
+        success: true,
+        requireRoleSelection: true,
+        message: "Silakan pilih hak akses",
+        availableRoles: activeRoles,
+        userId: user.id // Kirim ID user sementara untuk finalize nanti
+      });
+    }
+
+    // Skenario B: User hanya punya 1 role atau tidak punya role (Default ke 'user')
+    const roleName = activeRoles.length === 1 ? activeRoles[0] : "user";
+
+    // Generate Token JWT
     const token = jwt.sign(
-      {
-        id: user.id,
-        nama: user.nama,
-        role: roleName, // PENTING: Masukkan role ke dalam token
-      },
+      { id: user.id, nama: user.nama, role: roleName },
       process.env.JWT_SECRET,
-      { expiresIn: "8h" }, // Token berlaku 1 hari
+      { expiresIn: "8h" }
     );
 
-    // 5. Siapkan Response (Buang password dari object user)
     const { password: _, ...userData } = user;
-
-    // Buat object user yang bersih dan mudah dibaca Frontend
     const finalUser = {
       id: userData.id,
       nip: userData.nip,
@@ -149,11 +144,12 @@ exports.login = async (req, res) => {
       email: userData.email,
       no_hp: userData.no_hp,
       foto_profil: userData.foto_profil,
-      role: roleName.toLowerCase(), // Kirim role sebagai string lowercase (contoh: 'santri')
+      role: roleName.toLowerCase(),
     };
 
     res.json({
       success: true,
+      requireRoleSelection: false,
       message: "Login berhasil",
       token,
       user: finalUser,
@@ -164,31 +160,73 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.finalizeLogin = async (req, res) => {
+  try {
+    const { userId, selectedRole } = req.body;
+
+    if (!userId || !selectedRole) {
+       return res.status(400).json({ message: "Data tidak valid" });
+    }
+
+    // Ambil data user lagi untuk dimasukkan ke JWT
+    const user = await prisma.users.findUnique({
+       where: { id: userId, is_active: true }
+    });
+
+    if (!user) {
+       return res.status(401).json({ message: "Sesi login tidak valid" });
+    }
+
+    // Generate Token JWT Final
+    const token = jwt.sign(
+      { id: user.id, nama: user.nama, role: selectedRole },
+      process.env.JWT_SECRET,
+      { expiresIn: "8h" }
+    );
+
+    const { password: _, ...userData } = user;
+    const finalUser = {
+      id: userData.id,
+      nip: userData.nip,
+      nama: userData.nama,
+      email: userData.email,
+      no_hp: userData.no_hp,
+      foto_profil: userData.foto_profil,
+      role: selectedRole.toLowerCase(),
+    };
+
+    res.json({
+      success: true,
+      message: `Login berhasil sebagai ${selectedRole}`,
+      token,
+      user: finalUser,
+    });
+  } catch (err) {
+    console.error("Finalize Login Error:", err);
+    res.status(500).json({ message: "Terjadi kesalahan pada server" });
+  }
+};
+
 exports.getCurrentUser = async (req, res) => {
   try {
     const userId = req.user.id; 
+    
+    const activeRole = req.user.role; 
 
     const user = await prisma.users.findUnique({
       where: { id: userId },
-      include: {
-        user_role: {
-          include: { role: true }
-        }
-      }
     });
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User tidak ditemukan" });
     }
 
-    const roleName = user.user_role[0]?.role?.role || "Guest";
-
     res.json({
       success: true,
       data: {
         id: user.id,
         nama: user.nama,
-        role: roleName
+        role: activeRole 
       }
     });
 
