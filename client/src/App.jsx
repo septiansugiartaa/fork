@@ -59,6 +59,7 @@ import AdminKegiatan from "./pages/admin/kegiatan"
 import AdminRiwayatLayanan from "./pages/admin/riwayatLayanan"
 import AdminKeuangan from "./pages/admin/keuangan"
 import AdminFeedback from "./pages/admin/feedback"
+import AdminLog from "./pages/admin/log"
 
 function App() {
   return (
@@ -152,6 +153,7 @@ function App() {
             <Route path="riwayat-layanan" element={<AdminRiwayatLayanan />} />
             <Route path="keuangan" element={<AdminKeuangan />} />
             <Route path="feedback" element={<AdminFeedback />} />
+            <Route path="log" element={<AdminLog />} />
           </Route>
         </Route>
 
