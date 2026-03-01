@@ -7,11 +7,13 @@ exports.getDashboardData = async (req, res) => {
 
         const dataDiri = await prisma.users.findFirst({
             where: { id: userId, is_active: true },
-        })
+        });
+
+        // 1. Cari Data Orang Tua
         const relasiAnak = await prisma.orangtua.findFirst({
             where: { id_orangtua: userId, is_active: true },
             include: {
-                users: {
+                users_orangtua_id_santriTousers: {
                     include: {
                         kelas_santri: {
                             where: { is_active: true },
@@ -28,11 +30,11 @@ exports.getDashboardData = async (req, res) => {
             }
         });
 
-        if (!relasiAnak || !relasiAnak.users) {
+        if (!relasiAnak || !relasiAnak.users_orangtua_id_santriTousers) {
             return res.status(404).json({ success: false, message: 'Data anak tidak ditemukan' });
         }
 
-        const anak = relasiAnak.users;
+        const anak = relasiAnak.users_orangtua_id_santriTousers;
         const santriId = anak.id;
 
         // 2. Jalankan Query Paralel untuk data si anak
@@ -96,7 +98,7 @@ exports.getDashboardData = async (req, res) => {
             data: {
                 ortu: { 
                     nama: req.user.nama, 
-                    hubungan:relasiAnak.hubungan, 
+                    hubungan: relasiAnak.hubungan, 
                     foto_profil: dataDiri.foto_profil 
                 },
                 anak: {

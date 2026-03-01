@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { User, Calendar, Cross, AlertCircle, History, Clock, Settings, CheckCircle, Home, LogOut, Loader2, ChevronDown, Wallet } from "lucide-react";
+import NotificationDropdown from "../../components/NotificationDropdown";
 
 export default function OrangTuaDashboard() {
   const [loading, setLoading] = useState(true);
@@ -54,33 +55,36 @@ export default function OrangTuaDashboard() {
             <h1 className="text-2xl font-bold">SIM-Tren</h1>
               <p className="text-green-100">Sistem Informasi Manajemen Pesantren</p>
           </div>
-          <div className="relative hidden md:block">
-            <button 
-                    onClick={() => setIsProfileOpen(!isProfileOpen)}
-                    className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
-                  >
-                    <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
-                     <img src={`http://localhost:3000/foto-profil/${data.ortu.foto_profil}`} alt={data.ortu.nama} className="w-full h-full object-cover"/>
-                    </div>
-                    <div>
-                      <p className="font-medium leading-tight">{data.ortu.nama}</p>
-                      <p className="text-sm text-white/75">{data.ortu.hubungan} {data.anak.nama.split(" ")[0]}</p>
-                    </div>
-                    <ChevronDown 
-                      size={16} 
-                      className={`text-green-200 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} 
-                    />
+          <div className="flex items-center space-x-4">
+            <NotificationDropdown />
+            <div className="relative hidden md:block">
+              <button 
+                      onClick={() => setIsProfileOpen(!isProfileOpen)}
+                      className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
+                    >
+                      <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
+                      <img src={`http://localhost:3000/foto-profil/${data.ortu.foto_profil}`} alt={data.ortu.nama} className="w-full h-full object-cover"/>
+                      </div>
+                      <div>
+                        <p className="font-medium leading-tight">{data.ortu.nama}</p>
+                        <p className="text-sm text-white/75">{data.ortu.hubungan} {data.anak.nama.split(" ")[0]}</p>
+                      </div>
+                      <ChevronDown 
+                        size={16} 
+                        className={`text-green-200 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} 
+                      />
+                    </button>
+              {isProfileOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border py-2 z-50">
+                  <button onClick={() => {setIsProfileOpen(false); navigate("/orangtua/profil");}} className="w-full flex items-center py-3 px-5 text-gray-500 hover:bg-green-50 hover:text-green-700 transition">
+                    <Settings size={16} className="mr-2" /> <span className="text-sm font-semibold">Edit Profil</span>
                   </button>
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border py-2 z-50">
-                <button onClick={() => {setIsProfileOpen(false); navigate("/orangtua/profil");}} className="w-full flex items-center py-3 px-5 text-gray-500 hover:bg-green-50 hover:text-green-700 transition">
-                  <Settings size={16} className="mr-2" /> <span className="text-sm font-semibold">Edit Profil</span>
-                </button>
-                <button onClick={handleLogout} className="w-full flex items-center py-3 px-5 text-red-600 hover:bg-red-50 transition">
-                  <LogOut size={16} className="mr-2" /> <span className="text-sm font-semibold">Keluar</span>
-                </button>
-              </div>
-            )}
+                  <button onClick={handleLogout} className="w-full flex items-center py-3 px-5 text-red-600 hover:bg-red-50 transition">
+                    <LogOut size={16} className="mr-2" /> <span className="text-sm font-semibold">Keluar</span>
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
