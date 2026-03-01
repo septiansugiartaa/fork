@@ -211,6 +211,24 @@ export default function FormScreening() {
       </div>
     );
 
+  const getDiagnosaStyle = (diagnosa) => {
+    if (!diagnosa) return "text-gray-500";
+
+    if (diagnosa === "Scabies")
+      return "text-red-600 font-semibold";
+
+    if (diagnosa === "Bukan_Scabies")
+      return "text-green-600 font-semibold";
+
+    if (
+      diagnosa === "Kemungkinan_Scabies" ||
+      diagnosa === "Perlu_Evaluasi_Lebih_Lanjut"
+    )
+      return "text-yellow-600 font-semibold";
+
+    return "text-gray-600";
+  };
+
   return (
     <div className="min-h-screen bg-gray-50 pb-10">
 
@@ -325,9 +343,14 @@ export default function FormScreening() {
             <p className="text-sm text-gray-600">
               Rekomendasi Sistem Berdasarkan Skor:
             </p>
-            <p className="font-bold text-green-700">
-              {diagnosaOtomatis.replaceAll("_", " ")}
-            </p>
+            <div className="mt-4 p-4 bg-gray-50 border rounded-lg">
+              <p className="text-sm text-gray-600">
+                Rekomendasi Sistem Berdasarkan Skor:
+              </p>
+              <p className={getDiagnosaStyle(diagnosaOtomatis)}>
+                {diagnosaOtomatis.replaceAll("_", " ")}
+              </p>
+            </div>
           </div>
         </Card>
 
