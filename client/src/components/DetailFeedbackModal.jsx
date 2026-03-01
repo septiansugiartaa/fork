@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { X, Loader2, Star, MessageSquare, User } from 'lucide-react';
+import { X, Loader2, Star, MessageSquare, User, Trash2 } from 'lucide-react';
 
-export default function DetailFeedbackModal({ isOpen, onClose, targetItem }) {
+export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role, onFeedbackHidden }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -18,7 +18,7 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem }) {
     setLoading(true);
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3000/api/pimpinan/feedback/detail/${targetItem.tipe}/${targetItem.id}`, {
+      const res = await axios.get(`http://localhost:3000/api/${role}/feedback/detail/${targetItem.tipe}/${targetItem.id}`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       if (res.data.success) {
@@ -29,6 +29,22 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem }) {
     } finally {
       setLoading(false);
     }
+  };
+
+  // AKSI MODERASI KHUSUS ADMIN
+  const handleHideFeedback = async (idFeedback) => {
+      if(!window.confirm("Yakin ingin menyembunyikan komentar ini karena melanggar pedoman? Nilai rating akan tetap dihitung, tetapi teks akan disembunyikan.")) return;
+      try {
+          const token = localStorage.getItem("token");
+          // Gunakan PUT ke rute moderasi yang baru kita buat
+          await axios.put(`http://localhost:3000/api/admin/feedback/hide/${idFeedback}`, {}, {
+              headers: { Authorization: `Bearer ${token}` }
+          });
+          fetchDetail(); // Refresh list dalam modal
+          if (onFeedbackHidden) onFeedbackHidden(); // Beritahu list utama agar update
+      } catch (err) {
+          alert("Gagal memoderasi ulasan.");
+      }
   };
 
   const renderStars = (rating) => {
@@ -86,7 +102,7 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem }) {
                            <span className="text-3xl font-black text-gray-800">{data.detail.avg_rating}</span>
                            <span className="text-sm font-bold text-gray-400">/ 5.0</span>
                        </div>
-                       <p className="text-xs text-gray-500 font-medium">Dari {data.detail.total_ulasan} Ulasan</p>
+                       <p className="text-xs text-gray-500 font-medium">Dari {data.detail.total_ulasan} Ulasan Aktif</p>
                    </div>
                 </div>
 
@@ -95,28 +111,50 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem }) {
                    <h4 className="font-bold text-gray-800 mb-3 text-sm px-1">Semua Komentar</h4>
                    <div className="space-y-3">
                        {data.feedbacks.length > 0 ? data.feedbacks.map(f => (
-                           <div key={f.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4">
+                           <div key={f.id} className="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex gap-4 relative group">
                                <div className="flex-shrink-0">
-                                   <div className="w-10 h-10 bg-green-50 border border-green-100 rounded-full flex items-center justify-center overflow-hidden">
+                                   <div className="w-10 h-10 bg-gray-100 border border-gray-200 rounded-full flex items-center justify-center overflow-hidden">
                                        {f.foto_user ? (
                                            <img src={`http://localhost:3000/foto-profil/${f.foto_user}`} alt="" className="w-full h-full object-cover" />
                                        ) : (
-                                           <User size={20} className="text-green-500" />
+                                           <User size={20} className="text-gray-400" />
                                        )}
                                    </div>
                                </div>
-                               <div className="flex-1 min-w-0">
+                               <div className="flex-1 min-w-0 pr-2">
                                    <div className="flex justify-between items-start mb-1">
                                        <h5 className="font-bold text-gray-800 text-sm truncate pr-2">{f.nama_user}</h5>
                                        <span className="text-[10px] text-gray-400 whitespace-nowrap">{f.tanggal}</span>
                                    </div>
+                                   
+                                   {/* RATING SELALU MUNCUL MESKI TEKS DIHAPUS */}
                                    <div className="flex items-center gap-0.5 mb-2">
                                        {renderStars(f.rating)}
                                    </div>
-                                   <p className="text-gray-600 text-sm leading-relaxed">
-                                       {f.komentar || <span className="italic text-gray-400">Tidak ada teks ulasan</span>}
-                                   </p>
+                                   
+                                   {/* CONDITIONAL RENDERING TEKS KOMENTAR */}
+                                   {f.is_active ? (
+                                       <p className="text-gray-600 text-sm leading-relaxed">
+                                           {f.komentar || <span className="italic text-gray-400">Tidak ada teks ulasan</span>}
+                                       </p>
+                                   ) : (
+                                       <div className="bg-gray-100 border border-gray-200 border-dashed text-gray-500 p-3 rounded-lg text-xs mt-1 flex items-start gap-2">
+                                           <span>🚫</span>
+                                           <span className="italic">Komentar ini telah disembunyikan oleh Admin Pesantren karena berindikasi melanggar ketentuan pesantren.</span>
+                                       </div>
+                                   )}
                                </div>
+
+                               {/* TOMBOL MODERASI KHUSUS ADMIN (JIKA KOMENTAR MASIH AKTIF) */}
+                               {role === 'admin' && f.is_active && (
+                                  <button 
+                                      onClick={() => handleHideFeedback(f.id)}
+                                      className="absolute right-4 top-8 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-md transition group-hover:opacity-100"
+                                      title="Sembunyikan / Moderasi Ulasan Ini"
+                                  >
+                                      <Trash2 size={16} />
+                                  </button>
+                               )}
                            </div>
                        )) : (
                            <p className="text-center text-gray-500 text-sm py-4">Belum ada rincian ulasan.</p>

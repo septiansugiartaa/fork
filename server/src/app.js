@@ -3,6 +3,7 @@ const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const {verifyToken} = require('../src/middleware/verifyToken');
+const activityLog = require('../src/middleware/activityLog');
 
 dotenv.config();
 
@@ -20,6 +21,12 @@ app.get("/api", (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 
 app.use(verifyToken);
+
+app.use('/api/santri/notifications', require('./routes/santri/notificationRoutes'));
+app.use('/api/orangtua/notifications', require('./routes/orangtua/notificationRoutes'));
+app.use('/api/ustadz/notifications', require('./routes/ustadz/notificationRoutes'));
+
+app.use(activityLog);
 
 app.use('/api/santri', require('./routes/santri/dashboardRoutes'));
 app.use('/api/santri/profile', require('./routes/santri/pendataanRoutes'));
@@ -61,6 +68,22 @@ app.use('/api/pimpinan/ustadz', require('./routes/pimpinan/ustadzRoutes'));
 app.use('/api/pimpinan/pengaduan', require('./routes/pimpinan/pengaduanRoutes'));
 app.use('/api/pimpinan/keuangan', require('./routes/pimpinan/keuanganRoutes'));
 app.use('/api/pimpinan/feedback', require('./routes/pimpinan/feedbackRoutes'));
+
+app.use('/api/admin/dashboard', require('./routes/admin/dashboardRoutes'));
+app.use('/api/admin/staf', require('./routes/admin/stafRoutes'));
+app.use('/api/admin/santri', require('./routes/admin/santriRoutes'));
+app.use('/api/admin/ustadz', require('./routes/admin/ustadzRoutes'));
+app.use('/api/admin/kelas', require('./routes/admin/kelasRoutes'));
+app.use('/api/admin/kamar', require('./routes/admin/kamarRoutes'));
+app.use('/api/admin/penempatan-kelas', require('./routes/admin/assignKelasRoutes'));
+app.use('/api/admin/penempatan-kamar', require('./routes/admin/assignKamarRoutes'));
+app.use('/api/admin/jenis-layanan', require('./routes/admin/jenisLayananRoutes'));
+app.use('/api/admin/pengaduan', require('./routes/admin/pengaduanRoutes'));
+app.use('/api/admin/kegiatan', require('./routes/admin/kegiatanRoutes'));
+app.use('/api/admin/riwayat-layanan', require('./routes/admin/riwayatLayananRoutes'));
+app.use('/api/admin/keuangan', require('./routes/admin/keuanganRoutes'));
+app.use('/api/admin/feedback', require('./routes/admin/feedbackRoutes'));
+app.use('/api/admin/log', require('./routes/admin/logRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
