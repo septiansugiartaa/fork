@@ -47,6 +47,8 @@ import PimpinanKeuangan from "./pages/pimpinan/keuangan"
 import PimpinanFeedback from "./pages/pimpinan/feedback"
 
 import AdminDashboard from "./pages/admin/dashboard"
+import AdminStaf from "./pages/admin/manajemenStaf"
+
 function App() {
   return (
     <BrowserRouter>
@@ -74,7 +76,6 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>
-          <Route path="/pengurus" element={<PengurusLayout />}>
           <Route path="/pengurus" element={<Layout />}>
             <Route index element={<PengurusDashboard />} />
             <Route path="data-santri" element={<PengurusSantri />} />
@@ -114,7 +115,6 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['pimpinan']} />}>
-          <Route path="/pimpinan" element={<PengurusLayout />}>
           <Route path="/pimpinan" element={<Layout />}>
             <Route index element={<PimpinanDashboard />} />
             <Route path="data-santri" element={<PimpinanSantri />} />
@@ -129,6 +129,7 @@ function App() {
         <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
           <Route path="/admin" element={<Layout />}>
             <Route index element={<AdminDashboard />} />
+            <Route path="data-staf" element={<AdminStaf />} />
           </Route>
         </Route>
 
