@@ -85,6 +85,8 @@ app.use('/api/admin/keuangan', require('./routes/admin/keuanganRoutes'));
 app.use('/api/admin/feedback', require('./routes/admin/feedbackRoutes'));
 app.use('/api/admin/log', require('./routes/admin/logRoutes'));
 
+app.use('/api/timkesehatan/screening', require('./routes/timkesehatan/screeningRoutes'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

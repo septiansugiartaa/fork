@@ -145,7 +145,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
 
   const modules = {
     toolbar: [
-      [{ header: [ 2, 3, false] }],
+      [{ header: [ 3, 4, false] }],
       ["bold", "italic", "underline"],
       [{ list: "ordered" }, { list: "bullet" }],
       ["clean"]

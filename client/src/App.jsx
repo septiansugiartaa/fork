@@ -24,7 +24,12 @@ import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
 import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
 import PengurusKeuangan from "./pages/pengurus/keuangan"
 
+import TimkesLayout from "./components/LayoutTimkes"
 import TimkesDashboard from "./pages/timkesehatan/dashboard"
+import TimkesScreening from "./pages/timkesehatan/daftarSantriScreening"
+import TimkesDetailScreening from "./pages/timkesehatan/portalScreening"
+import TimkesCreateScreening from "./pages/timkesehatan/formScreening"
+import TimkesViewScreening from "./pages/timkesehatan/viewScreening"
 
 import OrangtuaDashboard from "./pages/orangtua/dashboard"
 import OrangtuaProfile from "./pages/orangtua/pendataan"
@@ -101,9 +106,29 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['timkes']} />}>
-          <Route path="/timkesehatan" element={<TimkesDashboard />}/>
-          <Route path="/timkesehatan/manageMateri" element={<MateriManage />}/>
-          <Route path="/timkesehatan/manageMateri/:id" element={<DetailMateri />}/>
+          <Route path="/timkesehatan" element={<TimkesLayout />}>
+            <Route index element={<TimkesDashboard />} />
+            <Route path="manageMateri" element={<MateriManage />} />
+            <Route path="manageMateri/:id" element={<DetailMateri />} />
+            <Route path="daftarSantriScreening" element={<TimkesScreening />} />
+            <Route
+              path="daftarSantriScreening/:id/create"
+              element={<TimkesCreateScreening />}
+            />
+            <Route
+              path="daftarSantriScreening/:id/edit/:screeningId"
+              element={<TimkesCreateScreening />}
+            />
+            <Route
+              path="daftarSantriScreening/:id"
+              element={<TimkesDetailScreening />}
+            />
+            <Route
+              path="/timkesehatan/daftarSantriScreening/:id/view/:screeningId"
+              element={<TimkesViewScreening />}
+            />
+          </Route>
+          
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>

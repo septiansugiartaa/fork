@@ -9,7 +9,7 @@ function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
       className="bg-white rounded-3xl shadow-md overflow-hidden
                  hover:shadow-2xl hover:-translate-y-1
                  transition-all duration-300
-                 flex flex-col"
+                 flex flex-col "
     >
       {/* IMAGE */}
       <div className="relative w-full h-52">
