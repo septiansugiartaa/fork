@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { User, Users, BookOpen, Calendar, AlertCircle, Clock, Bell, CheckCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown, MessageSquare, ClipboardList } from "lucide-react";
+import NotificationDropdown from "../../components/NotificationDropdown";
 
 export default function Dashboard() {
   const [loading, setLoading] = useState(true);
@@ -146,12 +147,7 @@ export default function Dashboard() {
               <p className="text-green-100">Sistem Informasi Manajemen Pesantren</p>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition relative">
-                <Bell size={24} />
-                {pengaduan_terbaru.length > 0 && (
-                  <span className="absolute top-1 right-1 w-3 h-3 bg-red-500 rounded-full border-2 border-green-600"></span>
-                )}
-              </button>
+              <NotificationDropdown />
               <div className="hidden md:flex items-center space-x-2">
                 <div className="relative">
                   <button 
