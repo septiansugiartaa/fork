@@ -64,6 +64,18 @@ app.use('/api/pimpinan/feedback', require('./routes/pimpinan/feedbackRoutes'));
 
 app.use('/api/admin/dashboard', require('./routes/admin/dashboardRoutes'));
 app.use('/api/admin/staf', require('./routes/admin/stafRoutes'));
+app.use('/api/admin/santri', require('./routes/admin/santriRoutes'));
+app.use('/api/admin/ustadz', require('./routes/admin/ustadzRoutes'));
+app.use('/api/admin/kelas', require('./routes/admin/kelasRoutes'));
+app.use('/api/admin/kamar', require('./routes/admin/kamarRoutes'));
+app.use('/api/admin/penempatan-kelas', require('./routes/admin/assignKelasRoutes'));
+app.use('/api/admin/penempatan-kamar', require('./routes/admin/assignKamarRoutes'));
+app.use('/api/admin/jenis-layanan', require('./routes/admin/jenisLayananRoutes'));
+app.use('/api/admin/pengaduan', require('./routes/admin/pengaduanRoutes'));
+app.use('/api/admin/kegiatan', require('./routes/admin/kegiatanRoutes'));
+app.use('/api/admin/riwayat-layanan', require('./routes/admin/riwayatLayananRoutes'));
+app.use('/api/admin/keuangan', require('./routes/admin/keuanganRoutes'));
+app.use('/api/admin/feedback', require('./routes/admin/feedbackRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -1,15 +1,19 @@
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 
-export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSaving, initialData }) {
+export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSaving, initialData, myClasses = [] }) {
     const [formData, setFormData] = useState({
         nama_kegiatan: "",
         tanggal: "",
         waktu_mulai: "",
         waktu_selesai: "",
         lokasi: "",
-        deskripsi: ""
+        deskripsi: "",
+        id_kelas: ""
     });
+
+    const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const userRole = (currentUser.role || "").toLowerCase().replace(/\s/g, '');
 
     useEffect(() => {
         if (isOpen) {
@@ -21,7 +25,8 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
                     waktu_mulai: initialData.raw_waktu_mulai,
                     waktu_selesai: initialData.raw_waktu_selesai,
                     lokasi: initialData.lokasi,
-                    deskripsi: initialData.deskripsi === "Tidak ada deskripsi." ? "" : initialData.deskripsi
+                    deskripsi: initialData.deskripsi === "Tidak ada deskripsi." ? "" : initialData.deskripsi,
+                    id_kelas: initialData.id_kelas || "" 
                 });
             } else {
                 setFormData({
@@ -30,7 +35,8 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
                     waktu_mulai: "",
                     waktu_selesai: "",
                     lokasi: "",
-                    deskripsi: ""
+                    deskripsi: "",
+                    id_kelas: ""
                 });
             }
         }
@@ -44,7 +50,18 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        onSubmit(formData);
+        
+        const finalData = { ...formData };
+        if (userRole === 'pengurus' || userRole === 'admin') {
+            finalData.id_kelas = null; 
+        } else {
+            if (!finalData.id_kelas) {
+                alert("Silakan pilih kelas terlebih dahulu.");
+                return;
+            }
+        }
+
+        onSubmit(finalData);
     };
 
     const isEditMode = !!initialData;
@@ -63,6 +80,33 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
                 
                 <div className="p-5 overflow-y-auto">
                     <form id="form-kegiatan" onSubmit={handleSubmit} className="space-y-4">
+                        
+                        {/* JIKA USTADZ: Munculkan Dropdown Pilih Kelas */}
+                        {userRole === 'ustadz' && (
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700 mb-1">Skala Kegiatan (Kelas)</label>
+                                <select 
+                                    required 
+                                    name="id_kelas" 
+                                    value={formData.id_kelas} 
+                                    onChange={handleInputChange} 
+                                    className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none bg-white"
+                                >
+                                    <option value="" disabled>-- Pilih Kelas --</option>
+                                    {myClasses.map((kls) => (
+                                        <option key={kls.id} value={kls.id}>{kls.kelas}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        )}
+
+                        {/* JIKA PENGURUS: Beritahu bahwa ini otomatis Global */}
+                        {(userRole === 'pengurus' || userRole === 'admin') && !isEditMode && (
+                            <div className="bg-blue-50 border border-blue-100 p-3 rounded-xl mb-2">
+                                <p className="text-xs text-blue-700 font-medium">Kegiatan ini otomatis akan berstatus <strong>GLOBAL</strong> dan dapat dilihat oleh seluruh santri.</p>
+                            </div>
+                        )}
+
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-1">Nama Kegiatan</label>
                             <input required type="text" name="nama_kegiatan" value={formData.nama_kegiatan} onChange={handleInputChange} className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none" placeholder="Contoh: Kajian Kitab Kuning" />
@@ -91,7 +135,7 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
 
                         <div>
                             <label className="block text-sm font-semibold text-gray-700 mb-1">Deskripsi & Catatan</label>
-                            <textarea required name="deskripsi" value={formData.deskripsi} onChange={handleInputChange} rows="3" className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none" placeholder="Tuliskan detail kegiatan di sini..."></textarea>
+                            <textarea name="deskripsi" value={formData.deskripsi} onChange={handleInputChange} rows="3" className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none resize-none" placeholder="Tuliskan detail kegiatan di sini... (opsional)"></textarea>
                         </div>
                     </form>
                 </div>

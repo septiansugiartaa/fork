@@ -18,40 +18,24 @@ const formatTimeRange = (start, end) => {
     return `${formatTime(start)} - ${formatTime(end)} WIB`;
 };
 
-// GET: Lihat Kegiatan
+// GET: Lihat SEMUA Kegiatan (Global & Semua Kelas)
 exports.getKegiatan = async (req, res) => {
     try {
-        const userId = req.user.id;
         const { search, type } = req.query; 
 
-        // CARI KELAS YANG DI-WALI-KAN USTADZ INI
-        const kelasUstadz = await prisma.kelas.findMany({
-            where: { id_wali: userId, is_active: true }
-        });
-        const classIds = kelasUstadz.map(k => k.id);
-
-        let whereCondition = {
-            is_active: true,
-            OR: [ { id_kelas: null }, { id_kelas: { in: classIds } } ]
-        };
+        let whereCondition = { is_active: true };
         
         if (search) {
-            whereCondition.AND = [
-                { OR: [ { id_kelas: null }, { id_kelas: { in: classIds } } ] },
-                { nama_kegiatan: { contains: search } }
-            ];
-            delete whereCondition.OR; 
+            whereCondition.nama_kegiatan = { contains: search };
         }
         
         const today = new Date();
         today.setHours(0, 0, 0, 0);
 
         if (type === 'Mendatang') {
-            if(whereCondition.AND) whereCondition.AND.push({ tanggal: { gte: today } });
-            else whereCondition.tanggal = { gte: today };
+            whereCondition.tanggal = { gte: today };
         } else if (type === 'Selesai') {
-            if(whereCondition.AND) whereCondition.AND.push({ tanggal: { lt: today } });
-            else whereCondition.tanggal = { lt: today };
+            whereCondition.tanggal = { lt: today };
         }
 
         const kegiatans = await prisma.kegiatan.findMany({
@@ -78,7 +62,7 @@ exports.getKegiatan = async (req, res) => {
                 nama_penanggung_jawab: k.users?.nama || "Admin Pondok",
                 status_waktu: statusWaktu,
                 
-                skala: k.kelas ? `Khusus ${k.kelas.kelas}` : "Seluruh Pesantren",
+                skala: k.kelas ? `Khusus ${k.kelas.kelas}` : "Global (Semua Santri)",
                 id_kelas: k.id_kelas,
 
                 raw_tanggal: k.tanggal ? new Date(k.tanggal).toISOString().split('T')[0] : "",
@@ -87,23 +71,19 @@ exports.getKegiatan = async (req, res) => {
             };
         });
 
-        res.json({ success: true, data, list_kelas: kelasUstadz });
+        res.json({ success: true, data });
 
     } catch (err) {
-        console.error("Error getKegiatan Ustadz:", err);
+        console.error("Error getKegiatan Pengurus:", err);
         res.status(500).json({ success: false, message: 'Gagal memuat daftar kegiatan' });
     }
 };
 
-// POST: Buat Kegiatan Ustadz
+// POST: Buat Kegiatan Pengurus (Otomatis Global)
 exports.createKegiatan = async (req, res) => {
     try {
         const userId = req.user.id;
-        const { nama_kegiatan, tanggal, waktu_mulai, waktu_selesai, lokasi, deskripsi, id_kelas } = req.body;
-
-        if (!nama_kegiatan || !tanggal || !waktu_mulai || !waktu_selesai || !lokasi || !id_kelas) {
-            return res.status(400).json({ success: false, message: 'Semua kolom wajib diisi!' });
-        }
+        const { nama_kegiatan, tanggal, waktu_mulai, waktu_selesai, lokasi, deskripsi } = req.body;
 
         const timeStart = new Date(`1970-01-01T${waktu_mulai}:00Z`);
         const timeEnd = new Date(`1970-01-01T${waktu_selesai}:00Z`);
@@ -117,24 +97,23 @@ exports.createKegiatan = async (req, res) => {
                 lokasi: lokasi,
                 deskripsi: deskripsi,
                 penanggung_jawab: userId,
-                id_kelas: parseInt(id_kelas),
+                id_kelas: null, // PENGURUS OTOMATIS BIKIN KEGIATAN GLOBAL
                 rutin: false,
                 is_active: true
             }
         });
 
-        res.status(201).json({ success: true, message: 'Kegiatan Kelas berhasil ditambahkan!' });
+        res.status(201).json({ success: true, message: 'Kegiatan Global berhasil ditambahkan!' });
     } catch (err) {
-        console.error("Error createKegiatan:", err);
+        console.error("Error createKegiatan Pengurus:", err);
         res.status(500).json({ success: false, message: 'Gagal menyimpan kegiatan baru' });
     }
 };
 
-// PUT: Edit Kegiatan Ustadz
 exports.updateKegiatan = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nama_kegiatan, tanggal, waktu_mulai, waktu_selesai, lokasi, deskripsi, id_kelas } = req.body;
+        const { nama_kegiatan, tanggal, waktu_mulai, waktu_selesai, lokasi, deskripsi } = req.body;
 
         const timeStart = new Date(`1970-01-01T${waktu_mulai}:00Z`);
         const timeEnd = new Date(`1970-01-01T${waktu_selesai}:00Z`);
@@ -142,19 +121,31 @@ exports.updateKegiatan = async (req, res) => {
         await prisma.kegiatan.update({
             where: { id: parseInt(id) },
             data: {
-                nama_kegiatan: nama_kegiatan,
+                nama_kegiatan,
                 tanggal: new Date(tanggal),
                 waktu_mulai: timeStart,
                 waktu_selesai: timeEnd,
-                lokasi: lokasi,
-                deskripsi: deskripsi,
-                id_kelas: parseInt(id_kelas)
+                lokasi,
+                deskripsi
             }
         });
 
         res.json({ success: true, message: 'Kegiatan berhasil diperbarui!' });
     } catch (err) {
-        console.error("Error updateKegiatan:", err);
+        console.error("Error updateKegiatan Pengurus:", err);
         res.status(500).json({ success: false, message: 'Gagal memperbarui kegiatan' });
+    }
+};
+
+exports.deleteKegiatan = async (req, res) => {
+    try {
+      const { id } = req.params;
+      await prisma.kegiatan.update({
+        where: { id: parseInt(id) },
+        data: { is_active: false }
+      });
+      res.json({ success: true, message: "Kegiatan berhasil dihapus" });
+    } catch (error) {
+      res.status(500).json({ success: false, message: "Gagal menghapus kegiatan" });
     }
 };
