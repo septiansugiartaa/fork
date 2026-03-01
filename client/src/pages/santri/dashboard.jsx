@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown, Cross } from "lucide-react";
+import NotificationDropdown from "../../components/NotificationDropdown";
 
 export default function SantriDashboard() {
   const [loading, setLoading] = useState(true);
@@ -246,9 +247,7 @@ export default function SantriDashboard() {
               <p className="text-green-100">Sistem Informasi Manajemen Pesantren</p>
             </div>
             <div className="flex items-center space-x-4">
-              <button className="p-2 rounded-full bg-white/20 hover:bg-white/30 transition">
-                <Bell size={24} />
-              </button>
+              <NotificationDropdown />
               <div className="hidden md:flex items-center space-x-2">
                 <div className="relative hidden md:block">
                   <button 
