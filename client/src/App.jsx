@@ -48,6 +48,17 @@ import PimpinanFeedback from "./pages/pimpinan/feedback"
 
 import AdminDashboard from "./pages/admin/dashboard"
 import AdminStaf from "./pages/admin/manajemenStaf"
+import AdminSantri from "./pages/admin/dataSantri"
+import AdminUstadz from "./pages/admin/dataUstadz"
+import AdminKelas from "./pages/admin/dataKelas"
+import AdminKamar from "./pages/admin/dataKamar"
+import AdminJenisLayanan from "./pages/admin/jenisLayanan"
+import AdminMateri from "./pages/admin/viewMateri"
+import AdminPengaduan from "./pages/admin/pengaduan"
+import AdminKegiatan from "./pages/admin/kegiatan"
+import AdminRiwayatLayanan from "./pages/admin/riwayatLayanan"
+import AdminKeuangan from "./pages/admin/keuangan"
+import AdminFeedback from "./pages/admin/feedback"
 
 function App() {
   return (
@@ -130,6 +141,17 @@ function App() {
           <Route path="/admin" element={<Layout />}>
             <Route index element={<AdminDashboard />} />
             <Route path="data-staf" element={<AdminStaf />} />
+            <Route path="data-santri" element={<AdminSantri />} />
+            <Route path="data-ustadz" element={<AdminUstadz />} />
+            <Route path="data-kelas" element={<AdminKelas />} />
+            <Route path="data-kamar" element={<AdminKamar />} />
+            <Route path="jenis-layanan" element={<AdminJenisLayanan />} />
+            <Route path="scabies/materi" element={<AdminMateri />} />
+            <Route path="pengaduan" element={<AdminPengaduan />} />
+            <Route path="kegiatan" element={<AdminKegiatan />} />
+            <Route path="riwayat-layanan" element={<AdminRiwayatLayanan />} />
+            <Route path="keuangan" element={<AdminKeuangan />} />
+            <Route path="feedback" element={<AdminFeedback />} />
           </Route>
         </Route>
 
