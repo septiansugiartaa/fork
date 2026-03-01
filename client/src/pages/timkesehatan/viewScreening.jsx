@@ -68,18 +68,36 @@ export default function ViewScreening() {
             backgroundColor: "#ffffff",
         });
 
-        const imgData = canvas.toDataURL("image/png");
+        const imgData = canvas.toDataURL("image/jpeg", 0.7);
 
         const pdf = new jsPDF("p", "mm", "a4");
 
         const imgWidth = 210;
         const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
-        pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
+        pdf.addImage(imgData, "JPEG", 0, 0, imgWidth, imgHeight);
 
         pdf.save(`Laporan-Screening-${screeningId}.pdf`);
     };
 
+    const getDiagnosaStyle = (diagnosa) => {
+        if (!diagnosa) return "text-gray-500";
+
+        if (diagnosa === "Scabies")
+            return "text-red-600 font-semibold";
+
+        if (diagnosa === "Bukan_Scabies")
+            return "text-green-600 font-semibold";
+
+        if (
+            diagnosa === "Kemungkinan_Scabies" ||
+            diagnosa === "Perlu_Evaluasi_Lebih_Lanjut"
+        )
+            return "text-yellow-600 font-semibold";
+
+        return "text-gray-600";
+    };
+        
     return (
         <div className="min-h-screen bg-gray-50">
             <div className="mb-10 flex items-center">
@@ -170,7 +188,7 @@ export default function ViewScreening() {
                 {/* BAGIAN D */}
                 <SectionTitle title="D. DIAGNOSA"/>
                 <div className="mb-8 ">
-                    <p className="font-semibold text-black text-[12px]">
+                    <p className={`${getDiagnosaStyle(data.diagnosa)} text-[12px]`}>
                         {data.diagnosa.replaceAll("_", " ")}
                     </p>
                 </div>
@@ -244,8 +262,8 @@ export default function ViewScreening() {
 
     function DataRow({ label, value }) {
         return (
-            <div className="flex">
-            <p className="w-40">{label}</p>
+            <div className="flex text-[12px]">
+            <p className="w-40 ">{label}</p>
             <p>: {value || "-"}</p>
             </div>
         );

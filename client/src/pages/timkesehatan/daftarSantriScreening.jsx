@@ -45,6 +45,24 @@ export default function DaftarSantriScreening() {
     setPage(1);
   }, [search]);
 
+  const getDiagnosaStyle = (diagnosa) => {
+    if (!diagnosa) return "text-gray-500";
+
+    if (diagnosa === "Scabies")
+      return "text-red-600 font-semibold";
+
+    if (diagnosa === "Bukan_Scabies")
+      return "text-green-600 font-semibold";
+
+    if (
+      diagnosa === "Kemungkinan_Scabies" ||
+      diagnosa === "Perlu_Evaluasi_Lebih_Lanjut"
+    )
+      return "text-yellow-600 font-semibold";
+
+    return "text-gray-600";
+  };
+
   return (
     <div className="space-y-6">
 
@@ -133,7 +151,9 @@ export default function DaftarSantriScreening() {
                                   item.screening_screening_id_santriTousers[0].tanggal
                                 ).toLocaleDateString("id-ID")}
                               </p>
-                              <p className="font-semibold text-green-600">
+                              <p className={getDiagnosaStyle(
+                                item.screening_screening_id_santriTousers[0].diagnosa
+                              )}>
                                 {item.screening_screening_id_santriTousers[0].diagnosa.replaceAll("_", " ")}
                               </p>
                             </>
@@ -204,7 +224,13 @@ export default function DaftarSantriScreening() {
                       <p className="text-xs text-gray-500">
                         {new Date(latest.tanggal).toLocaleDateString("id-ID")}
                       </p>
-                      <span className="inline-block mt-1 px-3 py-1 text-xs font-semibold bg-green-100 text-green-700 rounded-full">
+                      <span className={`inline-block mt-1 px-3 py-1 text-xs rounded-full ${
+                          latest?.diagnosa === "Scabies"
+                            ? "bg-red-100 text-red-700"
+                            : latest?.diagnosa === "Bukan_Scabies"
+                            ? "bg-green-100 text-green-700"
+                            : "bg-yellow-100 text-yellow-700"
+                      }`}>
                         {latest.diagnosa.replaceAll("_", " ")}
                       </span>
                     </div>
