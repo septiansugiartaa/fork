@@ -18,6 +18,7 @@ import {
   AlertCircle,
   Loader2,
   Star,
+  History
 } from "lucide-react";
 
 export default function GlobalLayout() {
@@ -73,6 +74,12 @@ export default function GlobalLayout() {
 
     // --- PENDATAAN ---
     { category: "PENDATAAN", roles: ["pengurus", "admin", "pimpinan"] },
+    {
+      name: "Manajemen Staf",
+      path: "/data-staf",
+      icon: Users,
+      roles: ["admin"],
+    },
     {
       name: "Data Santri",
       path: "/data-santri",
@@ -136,8 +143,14 @@ export default function GlobalLayout() {
 
     // --- LAYANAN & TRANSAKSI ---
     {
-      category: "LAYANAN & TRANSAKSI",
+      category: "KEGIATAN DAN LAYANAN",
       roles: ["pengurus", "admin", "pimpinan"],
+    },
+    {
+      name: "Kegiatan",
+      path: "/kegiatan",
+      icon: Activity,
+      roles: ["pengurus", "admin"],
     },
     {
       name: "Riwayat Layanan",
@@ -157,6 +170,18 @@ export default function GlobalLayout() {
       icon: Star,
       roles: ["admin", "pimpinan"],
     },
+
+    // --- ACTIVITY LOG ---
+    {
+      category: "LOG AKTIVITAS",
+      roles: ["admin"],
+    },
+    {
+      name: "Log Aktivitas",
+      path: "/log",
+      icon: History,
+      roles: ["admin"],
+    }
   ];
 
   const filteredMenu = masterMenu.filter((item) =>

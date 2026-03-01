@@ -62,6 +62,8 @@ app.use('/api/pimpinan/pengaduan', require('./routes/pimpinan/pengaduanRoutes'))
 app.use('/api/pimpinan/keuangan', require('./routes/pimpinan/keuanganRoutes'));
 app.use('/api/pimpinan/feedback', require('./routes/pimpinan/feedbackRoutes'));
 
+app.use('/api/admin/dashboard', require('./routes/admin/dashboardRoutes'));
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
