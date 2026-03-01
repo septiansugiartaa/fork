@@ -2,6 +2,7 @@ import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from "./pages/Login"
 import ProtectedRoute from "./components/ProtectedRoutes";
+import Layout from "./components/Layout"
 
 import SantriDashboard from "./pages/santri/dashboard"
 import SantriProfile from "./pages/santri/pendataan"
@@ -14,7 +15,6 @@ import MateriView from "./pages/viewMateri"
 import DetailMateri from "./pages/detailMateri"
 import MateriManage from "./pages/manageMateri" 
 
-import PengurusLayout from "./components/Layout"
 import PengurusDashboard from "./pages/pengurus/dashboard"
 import PengurusSantri from "./pages/pengurus/dataSantri"
 import PengurusUstadz from "./pages/pengurus/dataUstadz"
@@ -46,6 +46,7 @@ import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 import PimpinanKeuangan from "./pages/pimpinan/keuangan"
 import PimpinanFeedback from "./pages/pimpinan/feedback"
 
+import AdminDashboard from "./pages/admin/dashboard"
 function App() {
   return (
     <BrowserRouter>
@@ -74,6 +75,7 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['pengurus']} />}>
           <Route path="/pengurus" element={<PengurusLayout />}>
+          <Route path="/pengurus" element={<Layout />}>
             <Route index element={<PengurusDashboard />} />
             <Route path="data-santri" element={<PengurusSantri />} />
             <Route path="data-ustadz" element={<PengurusUstadz />} />
@@ -113,6 +115,7 @@ function App() {
 
         <Route element={<ProtectedRoute allowedRoles={['pimpinan']} />}>
           <Route path="/pimpinan" element={<PengurusLayout />}>
+          <Route path="/pimpinan" element={<Layout />}>
             <Route index element={<PimpinanDashboard />} />
             <Route path="data-santri" element={<PimpinanSantri />} />
             <Route path="data-ustadz" element={<PimpinanUstadz />} />
@@ -120,6 +123,12 @@ function App() {
             <Route path="pengaduan" element={<PimpinanPengaduan />} />
             <Route path="keuangan" element={<PimpinanKeuangan />} />
             <Route path="feedback" element={<PimpinanFeedback />} />
+          </Route>
+        </Route>
+
+        <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
+          <Route path="/admin" element={<Layout />}>
+            <Route index element={<AdminDashboard />} />
           </Route>
         </Route>
 
