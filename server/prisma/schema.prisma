@@ -64,8 +64,9 @@ model detail_screening {
   id_detail_screening     Int                  @id @default(autoincrement())
   id_screening            Int
   id_pertanyaan_screening Int
-  jawaban                 Boolean
+  jawaban                 Boolean?
   is_active               Boolean
+  nilai_number            Int?
   pertanyaan_screening    pertanyaan_screening @relation(fields: [id_pertanyaan_screening], references: [id_pertanyaan_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_pertanyaan_screening_FK")
   screening               screening            @relation(fields: [id_screening], references: [id_screening], onDelete: NoAction, onUpdate: NoAction, map: "detail_screening_screening_FK")
 
@@ -185,6 +186,7 @@ model kelas {
   kelas        String?        @db.VarChar(100)
   tahun_ajaran String?        @db.VarChar(100)
   is_active    Boolean        @default(true)
+  kegiatan     kegiatan[]
   users        users          @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kelas_users_FK")
   kelas_santri kelas_santri[]
 
@@ -290,10 +292,11 @@ model pertanyaan_observasi {
 }
 
 model pertanyaan_screening {
-  id_pertanyaan_screening Int                         @id @default(autoincrement())
-  pertanyaan              String                      @db.Text
+  id_pertanyaan_screening Int                               @id @default(autoincrement())
+  pertanyaan              String                            @db.Text
   bagian                  pertanyaan_screening_bagian
   is_active               Boolean
+  tipe_jawaban            pertanyaan_screening_tipe_jawaban @default(BOOLEAN)
   detail_screening        detail_screening[]
 }
 
@@ -547,4 +550,9 @@ enum activity_log_aksi {
   CREATE
   UPDATE
   DELETE
+}
+
+enum pertanyaan_screening_tipe_jawaban {
+  BOOLEAN
+  NUMBER
 }

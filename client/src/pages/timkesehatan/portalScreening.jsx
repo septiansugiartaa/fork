@@ -189,7 +189,7 @@ export default function PortalScreening() {
                             <thead>
                             <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
                                 <th className="p-4 pl-6 w-1/5">Tanggal</th>
-                                <th className="p-4 w-1/4">Diagnosa</th>
+                                <th className="p-4 w-1/3">Diagnosa</th>
                                 <th className="p-4 w-1/4">Pemeriksa</th>
                                 <th className="p-4 pr-6 w-1/6 text-center">Aksi</th>
                             </tr>
@@ -252,7 +252,7 @@ export default function PortalScreening() {
                         <thead>
                         <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
                             <th className="p-4 pl-6 w-1/5">Tanggal</th>
-                            <th className="p-4 w-1/4">Diagnosa</th>
+                            <th className="p-4 w-1/3">Diagnosa</th>
                             <th className="p-4 w-1/4">Pemeriksa</th>
                             <th className="p-4 pr-6 w-1/6 text-center">Aksi</th>
                         </tr>

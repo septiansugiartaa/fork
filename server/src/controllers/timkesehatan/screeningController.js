@@ -3,6 +3,13 @@ const prisma = new PrismaClient();
 const fs = require("fs");
 const path = require("path");
 
+const VALID_DIAGNOSA = [
+  "Scabies",
+  "Kemungkinan_Scabies",
+  "Perlu_Evaluasi_Lebih_Lanjut",
+  "Bukan_Scabies"
+];
+
 exports.getSantriList = async (req, res) => {
   try {
     const { search = "", page = 1, limit = 5 } = req.query;
@@ -12,21 +19,18 @@ exports.getSantriList = async (req, res) => {
     const whereCondition = {
       is_active: true,
       user_role: {
-        some: {
-          id_role: 1,
-          is_active: true
-        }
+        some: { id_role: 1, is_active: true }
       }
     };
 
-    if (search.trim() !== "") {
+    if (search.trim()) {
       whereCondition.OR = [
-        { nama: { contains: search } },
-        { nip: { contains: search } }
+        { nama: { contains: search, mode: "insensitive" } },
+        { nip: { contains: search, mode: "insensitive" } }
       ];
     }
 
-    const [santri, total] = await prisma.$transaction([
+    const [data, total] = await prisma.$transaction([
       prisma.users.findMany({
         where: whereCondition,
         skip,
@@ -38,10 +42,16 @@ exports.getSantriList = async (req, res) => {
           nip: true,
           foto_profil: true,
           screening_screening_id_santriTousers: {
+            take: 1,
             orderBy: { tanggal: "desc" },
             select: {
               tanggal: true,
               diagnosa: true
+            }
+          },
+          _count: {
+            select: {
+              screening_screening_id_santriTousers: true
             }
           }
         }
@@ -51,7 +61,7 @@ exports.getSantriList = async (req, res) => {
 
     res.json({
       success: true,
-      data: santri,
+      data,
       pagination: {
         total,
         page: Number(page),
@@ -60,7 +70,7 @@ exports.getSantriList = async (req, res) => {
     });
 
   } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
@@ -147,34 +157,70 @@ exports.postScreening = async (req, res) => {
 
   try {
     if (req.user.role !== "timkes") {
-      return res.status(403).json({
-        success: false,
-        message: "Akses ditolak"
-      });
+      return res.status(403).json({ success: false, message: "Akses ditolak" });
     }
 
     const id_timkes = req.user.id;
     const id_santri = Number(req.body.id_santri);
-    const jawaban = JSON.parse(req.body.jawaban || "[]");
-    const diagnosaManual = req.body.diagnosaManual;
-    const penanganan = JSON.parse(req.body.penanganan || "[]");
 
-    if (!id_santri || jawaban.length === 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Data tidak lengkap"
-      });
+    if (!id_santri) {
+      return res.status(400).json({ success: false, message: "Santri tidak valid" });
     }
 
-    const totalYa = jawaban.filter(j => j.jawaban === true).length;
+    const santriExists = await prisma.users.findFirst({
+      where: {
+        id: id_santri,
+        is_active: true,
+        user_role: { some: { id_role: 1, is_active: true } }
+      }
+    });
 
-    let diagnosa = "Bukan_Scabies";
-    if (totalYa > 5) diagnosa = "Scabies";
-    else if (totalYa >= 3) diagnosa = "Perlu_Evaluasi_Lebih_Lanjut";
+    if (!santriExists) {
+      return res.status(404).json({ success: false, message: "Santri tidak ditemukan" });
+    }
 
-    if (diagnosaManual) diagnosa = diagnosaManual;
+    const jawaban = JSON.parse(req.body.jawaban || "[]");
+    const penanganan = JSON.parse(req.body.penanganan || "[]");
+    let diagnosaManual = req.body.diagnosaManual;
+
+    if (!Array.isArray(jawaban) || jawaban.length === 0) {
+      return res.status(400).json({ success: false, message: "Jawaban tidak valid" });
+    }
+
+    if (diagnosaManual && !VALID_DIAGNOSA.includes(diagnosaManual)) {
+      return res.status(400).json({ success: false, message: "Diagnosa tidak valid" });
+    }
 
     if (req.file) uploadedFile = req.file.filename;
+
+    const pertanyaanDB = await prisma.pertanyaan_screening.findMany({
+      where: { is_active: true }
+    });
+
+    const pertanyaanMap = new Map(
+      pertanyaanDB.map(p => [p.id_pertanyaan_screening, p])
+    );
+
+    let totalSkor = 0;
+
+    for (const j of jawaban) {
+      const pertanyaan = pertanyaanMap.get(j.id_pertanyaan_screening);
+      if (!pertanyaan) continue;
+
+      if (
+        pertanyaan.bagian === "B" &&
+        pertanyaan.tipe_jawaban === "BOOLEAN" &&
+        j.jawaban === true
+      ) {
+        totalSkor += 1;
+      }
+    }
+
+    let diagnosa = "Bukan_Scabies";
+    if (totalSkor > 4) diagnosa = "Scabies";
+    else if (totalSkor >= 2) diagnosa = "Perlu_Evaluasi_Lebih_Lanjut";
+
+    if (diagnosaManual) diagnosa = diagnosaManual;
 
     await prisma.$transaction(async (tx) => {
 
@@ -183,7 +229,7 @@ exports.postScreening = async (req, res) => {
           id_timkes,
           id_santri,
           tanggal: new Date(),
-          total_skor: totalYa,
+          total_skor: totalSkor,
           status: "Selesai",
           diagnosa,
           foto_predileksi: uploadedFile
@@ -194,12 +240,13 @@ exports.postScreening = async (req, res) => {
         data: jawaban.map(j => ({
           id_screening: screening.id_screening,
           id_pertanyaan_screening: j.id_pertanyaan_screening,
-          jawaban: j.jawaban,
+          jawaban: j.jawaban ?? null,
+          nilai_number: j.nilai_number ?? null,
           is_active: true
         }))
       });
 
-      if (penanganan.length > 0) {
+      if (Array.isArray(penanganan) && penanganan.length > 0) {
         await tx.screening_penanganan.createMany({
           data: penanganan.map(id_penanganan => ({
             id_screening: screening.id_screening,
@@ -216,7 +263,6 @@ exports.postScreening = async (req, res) => {
 
   } catch (error) {
 
-    // cleanup file jika gagal
     if (uploadedFile) {
       const filePath = path.join(
         __dirname,
@@ -230,7 +276,7 @@ exports.postScreening = async (req, res) => {
 
     res.status(500).json({
       success: false,
-      message: error.message
+      message: "Gagal menyimpan screening"
     });
   }
 };

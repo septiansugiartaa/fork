@@ -42,18 +42,21 @@ export default function FormScreening() {
         bagianA.some(a => a.id_pertanyaan_screening === j.id_pertanyaan_screening)
       );
 
-      const jawabanB = jawaban.filter(j =>
-        bagianB.some(b => b.id_pertanyaan_screening === j.id_pertanyaan_screening)
-      );
-
       if (jawabanA.length !== bagianA.length) {
         newErrors.bagianA = "Semua pertanyaan Bagian A wajib dijawab";
         isValid = false;
       }
 
-      if (jawabanB.length !== bagianB.length) {
-        newErrors.bagianB = "Semua pertanyaan Bagian B wajib dijawab";
-        isValid = false;
+      for (const item of bagianB) {
+        const found = jawaban.find(
+          j => j.id_pertanyaan_screening === item.id_pertanyaan_screening
+        );
+
+        if (!found) {
+          newErrors.bagianB = "Semua pertanyaan Bagian B wajib dijawab";
+          isValid = false;
+          break;
+        }
       }
 
       if (penanganan.length === 0) {
@@ -138,6 +141,24 @@ export default function FormScreening() {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleNumberChange = (id_pertanyaan, value) => {
+    if (isEditMode) return;
+
+    setJawaban(prev => {
+      const filtered = prev.filter(
+        j => j.id_pertanyaan_screening !== id_pertanyaan
+      );
+
+      return [
+        ...filtered,
+        {
+          id_pertanyaan_screening: id_pertanyaan,
+          nilai_number: value === "" ? null : Number(value)
+        }
+      ];
+    });
   };
 
   const handleChange = (id_pertanyaan, value) => {
@@ -265,6 +286,7 @@ export default function FormScreening() {
           title="Bagian B — Gejala Klinis"
           data={bagianB}
           handleChange={handleChange}
+          handleNumberChange={handleNumberChange}
           disabled={isEditMode}
           jawaban={jawaban}
           error={errors.bagianB}
@@ -428,30 +450,40 @@ function Card({ title, children, error }) {
   );
 }
 
-function Section({ title, data, handleChange, disabled, jawaban, error }) {
+function Section({ title, data, handleChange, handleNumberChange, disabled, jawaban, error }) {
   return (
     <Card title={title} error={error}>
       {data.map((item, index) => (
         <div key={item.id_pertanyaan_screening} className="pb-4">
           <p className="mb-3">
-            {index + 1}. {item.pertanyaan}
+            {index + 1}. {item.pertanyaan} <span className="text-red-500"> *</span>
           </p>
-          <div className="flex gap-6">
-            <Radio
+
+          {item.tipe_jawaban === "NUMBER" ? (
+            <NumberInput
               item={item}
-              value="ya"
-              handleChange={handleChange}
               disabled={disabled}
               jawaban={jawaban}
+              handleNumberChange={handleNumberChange}
             />
-            <Radio
-              item={item}
-              value="tidak"
-              handleChange={handleChange}
-              disabled={disabled}
-              jawaban={jawaban}
-            />
-          </div>
+          ) : (
+            <div className="flex gap-6">
+              <Radio
+                item={item}
+                value="ya"
+                handleChange={handleChange}
+                disabled={disabled}
+                jawaban={jawaban}
+              />
+              <Radio
+                item={item}
+                value="tidak"
+                handleChange={handleChange}
+                disabled={disabled}
+                jawaban={jawaban}
+              />
+            </div>
+          )}
         </div>
       ))}
 
@@ -486,5 +518,45 @@ function Radio({ item, value, handleChange, disabled, jawaban }) {
       />
       {value === "ya" ? "Ya" : "Tidak"}
     </label>
+  );
+}
+
+function NumberInput({ item, disabled, jawaban, handleNumberChange }) {
+  const selected = jawaban.find(
+    j => j.id_pertanyaan_screening === item.id_pertanyaan_screening
+  );
+
+  return (
+    <div className="flex items-center w-44">
+      <input
+        type="number"
+        min="0"
+        max="30"
+        placeholder="Max 30"
+        className="border border-r-0 border-gray-500 rounded-l-lg px-3 py-2 w-full outline-none placeholder:text-[14px] placeholder:italic"
+        disabled={disabled}
+        value={selected?.nilai_number ?? ""}
+        onChange={(e) => {
+          const val = e.target.value;
+
+          if (val === "") {
+            handleNumberChange(item.id_pertanyaan_screening, "");
+            return;
+          }
+
+          const numberVal = Number(val);
+
+          if (numberVal <= 30) {
+            handleNumberChange(
+              item.id_pertanyaan_screening,
+              numberVal
+            );
+          }
+        }}
+      />
+      <span className="bg-gray-100 border border-l-0 border-gray-500 rounded-r-lg px-3 py-2 text-gray-600">
+        hari
+      </span>
+    </div>
   );
 }

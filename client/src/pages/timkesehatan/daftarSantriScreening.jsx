@@ -100,13 +100,13 @@ export default function DaftarSantriScreening() {
           {/* DESKTOP TABLE */}
           <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
+              <table className="w-full text-left table-fixed border-collapse">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold">Nama & NIS</th>
-                    <th className="p-4 font-semibold">Riwayat Screening Terakhir</th>
-                    <th className="p-4 font-semibold text-center">Total Screening</th>
-                    <th className="p-4 font-semibold text-center">Aksi</th>
+                    <th className="p-4 font-semibold w-[20%]">Nama & NIS</th>
+                    <th className="p-4 font-semibold w-[15%]">Riwayat Screening Terakhir</th>
+                    <th className="p-4 font-semibold text-center w-[15%]">Total Screening</th>
+                    <th className="p-4 font-semibold text-center w-[15%]">Aksi</th>
                   </tr>
                 </thead>
 
@@ -131,11 +131,11 @@ export default function DaftarSantriScreening() {
                                 </span>
                               )}
                             </div>
-                            <div>
-                              <p className="font-semibold text-gray-800">
+                            <div className="min-w-0">
+                              <p className="font-semibold text-gray-800 truncate">
                                 {item.nama}
                               </p>
-                              <p className="text-xs text-gray-500">
+                              <p className="text-xs text-gray-500 truncate">
                                 NIS: {item.nip}
                               </p>
                             </div>
@@ -146,13 +146,13 @@ export default function DaftarSantriScreening() {
                         <td className="p-4 align-top text-sm text-gray-600">
                           {item.screening_screening_id_santriTousers?.length > 0 ? (
                             <>
-                              <p>
+                              <p className="truncate">
                                 {new Date(
                                   item.screening_screening_id_santriTousers[0].tanggal
                                 ).toLocaleDateString("id-ID")}
                               </p>
                               <p className={getDiagnosaStyle(
-                                item.screening_screening_id_santriTousers[0].diagnosa
+                                item.screening_screening_id_santriTousers[0].diagnosa, "truncate"
                               )}>
                                 {item.screening_screening_id_santriTousers[0].diagnosa.replaceAll("_", " ")}
                               </p>
@@ -163,7 +163,7 @@ export default function DaftarSantriScreening() {
                         </td>
 
                         {/* TOTAL SCREENING */}
-                        <td className="p-4 text-center font-semibold text-gray-700">
+                        <td className="p-4 text-center text-gray-700">
                           {item.screening_screening_id_santriTousers?.length || 0}
                         </td>
 
@@ -173,7 +173,7 @@ export default function DaftarSantriScreening() {
                             onClick={() =>
                               navigate(`/timkesehatan/daftarSantriScreening/${item.id}`)
                             }
-                            className="px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-100 transition"
+                            className="px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-100 transition truncate"
                           >
                             <FileText size={16} />
                             Riwayat Screening

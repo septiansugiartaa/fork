@@ -204,9 +204,9 @@ export default function ViewScreening() {
                     </p>
                 </div>
                 ) : (
-                <ul className="list-decimal ml-6 mb-10 space-y-1">
+                <ul className="mb-10 space-y-1">
                     {data.screening_penanganan.map((p) => (
-                    <li key={p.id} className="text-[12px]">
+                    <li key={p.id} className="text-[12px] list-decimal list-outside max-w-48 ml-4">
                         {p.penanganan.opsi_penanganan}
                     </li>
                     ))}
@@ -270,36 +270,46 @@ export default function ViewScreening() {
     }
 
     function QuestionList({ questions }) {
-    return (
-        <div className="mb-8 space-y-3">
-            {questions.map((item, index) => (
-                <div
-                key={item.id_detail_screening}
-                className="flex justify-between items-start border-b border-gray-200 pb-2"
-                >
-                    <div className="flex gap-2 max-w-[75%]">
+        return (
+            <div className="mb-8 space-y-3">
+                {questions.map((item, index) => {
+                    const tipe = item.pertanyaan_screening.tipe_jawaban;
+
+                    return (
+                    <div
+                        key={item.id_detail_screening}
+                        className="flex justify-between items-start border-b border-gray-200 pb-2"
+                    >
+                        <div className="flex gap-2 max-w-[75%]">
                         <span className="font-semibold text-green-600 text-[12px]">
                             {index + 1}.
                         </span>
                         <p className="text-[12px]">
                             {item.pertanyaan_screening.pertanyaan}
                         </p>
-                    </div>
+                        </div>
 
-                    <span
-                        className={`font-semibold ${
-                        item.jawaban
-                            ? "text-green-600 text-[12px]"
-                            : "text-red-500 text-[12px]"
-                        }`}
-                    >
-                        {item.jawaban ? "Ya" : "Tidak"}
-                    </span>
-                </div>
-            ))}
-        </div>
-    );
-}
+                        {tipe === "NUMBER" ? (
+                        <span className="font-semibold text-blue-600 text-[12px]">
+                            {item.nilai_number ?? "-"} hari
+                        </span>
+                        ) : (
+                        <span
+                            className={`font-semibold text-[12px] ${
+                            item.jawaban
+                                ? "text-green-600"
+                                : "text-red-500"
+                            }`}
+                        >
+                            {item.jawaban ? "Ya" : "Tidak"}
+                        </span>
+                        )}
+                    </div>
+                    );
+                })}
+            </div>
+        );
+    }
 
 <style>
 {`
