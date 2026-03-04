@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   ArrowLeft, Loader2, Search, Calendar, Clock, MapPin, ChevronDown, 
   AlertTriangle, CheckCircle, X, UserCheck
@@ -19,18 +19,6 @@ export default function OrangTuaKegiatan() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/orangtua/kegiatan"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   useEffect(() => {
     fetchKegiatan();
@@ -39,7 +27,7 @@ export default function OrangTuaKegiatan() {
   const fetchKegiatan = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
+      const res = await api.get(`/orangtua/kegiatan?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
       if (res.data.success) {
         setKegiatans(res.data.data);
       }

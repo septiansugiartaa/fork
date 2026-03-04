@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Search, Eye, Loader2, Calendar, User, 
   AlertTriangle, CheckCircle, X, Star, ChevronLeft, ChevronRight 
@@ -25,7 +25,6 @@ export default function RiwayatLayanan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/pengurus/riwayat-layanan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -35,10 +34,7 @@ export default function RiwayatLayanan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/riwayat-layanan?search=${search}`);
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,11 +69,7 @@ export default function RiwayatLayanan() {
   const handleSubmitProcess = async (id, formData) => {
     setIsSaving(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.put(`${API_URL}/${id}/status`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
+        await api.put(`/pengurus/riwayat-layanan/${id}/status`, formData);        
         showAlert("success", "Status layanan berhasil diperbarui");
         setIsProcessOpen(false);
         fetchData();
@@ -173,7 +165,7 @@ export default function RiwayatLayanan() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                                                 {item.users.foto_profil ? (
-                                                    <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
+                                                    <img src={`/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                                 ) : (
                                                     <span className="text-green-600 font-bold text-sm bg-green-100 w-full h-full flex items-center justify-center">
                                                         {item.users.nama.charAt(0).toUpperCase()}
@@ -225,7 +217,7 @@ export default function RiwayatLayanan() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                     {item.users.foto_profil ? (
-                                        <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
+                                        <img src={`/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold">{item.users.nama.charAt(0)}</div>
                                     )}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { 
   User, Loader2, Plus, CheckCircle, Search, AlertTriangle, X 
 } from 'lucide-react';
@@ -19,14 +19,6 @@ export default function UstadzPengaduan() {
   // Modal states
   const [selectedId, setSelectedId] = useState(null);
 
-  const api = axios.create({ baseURL: "http://localhost:3000/api/pimpinan/pengaduan" });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -39,7 +31,7 @@ export default function UstadzPengaduan() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/");
+      const res = await api.get("/pimpinan/pengaduan");
       if (res.data.success) {
         setData(res.data.data);
       }

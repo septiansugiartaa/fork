@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import { ArrowLeft, Search, Calendar, ChevronRight, Clock, CheckCircle, XCircle, Star, AlertTriangle, X, Loader2 } from 'lucide-react';
 import DetailRiwayatLayananModal from '../../components/DetailRiwayatLayananModal';
 import FeedbackModal from '../../components/FeedbackModal';
@@ -29,10 +29,7 @@ export default function RiwayatLayananList() {
   // --- FETCH DATA ---
   const fetchRiwayat = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:3000/api/santri/layanan/riwayat', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/santri/layanan/riwayat');
       setData(res.data.data);
     } catch (err) {
       console.error(err);
@@ -50,13 +47,10 @@ export default function RiwayatLayananList() {
   const handleSubmitFeedback = async (idRiwayat, rating, review) => {
     setIsSavingFeedback(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.post('http://localhost:3000/api/santri/layanan/riwayat/feedback', {
+        await api.post('/santri/layanan/riwayat/feedback', {
             id_riwayat: idRiwayat,
             rating: rating,
             isi_text: review
-        }, {
-            headers: { Authorization: `Bearer ${token}` }
         });
 
         showAlert("success", "Terima kasih atas ulasan Anda!");

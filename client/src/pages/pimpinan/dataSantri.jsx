@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Eye, Trash2, User, Loader2, Mail, Phone, 
   AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight 
@@ -25,8 +25,6 @@ export default function DataSantri() {
   // State Alert Inline
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/pengurus/santri";
-
   // Helper Alert
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -37,11 +35,7 @@ export default function DataSantri() {
   const fetchSantri = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      // Note: Backend diasumsikan mengirim semua data, filtering & paging dilakukan di Client
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pimpinan/santri?search=${search}`);
       setSantriList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -75,17 +69,12 @@ export default function DataSantri() {
   // 3. Submit Handler
   const handleSubmit = async (formData) => {
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
       if (isEditing) {
-        await axios.put(`${API_URL}/${selectedData.id}`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/pimpinan/santri/${selectedData.id}`, formData);
         showAlert("success", "Data santri berhasil diperbarui");
       } else {
-        await axios.post(API_URL, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post("/pimpinan/santri", formData);
         showAlert("success", "Santri baru berhasil ditambahkan");
       }
       setIsModalOpen(false);
@@ -102,11 +91,8 @@ export default function DataSantri() {
   const handleDelete = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menonaktifkan santri ini?")) return;
 
-    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/pimpinan/santri/${id}`);
       showAlert("success", "Santri berhasil dinonaktifkan");
       fetchSantri();
     } catch (err) {
@@ -160,7 +146,7 @@ export default function DataSantri() {
                   <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
                     <th className="p-4 font-semibold w-[40%]">Nama & NIS</th>
                     <th className="p-4 font-semibold w-[25%]">Kontak</th>
-                    <th className="p-4 font-semibold w-[25%]">Alamat</th>
+                    <th className="p-4 font-semibold w-[25%]">Jenis Kelamin</th>
                     <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
                   </tr>
                 </thead>
@@ -172,7 +158,7 @@ export default function DataSantri() {
                           <div className="flex items-center gap-3">
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                               {item.foto_profil ? (
-                                <img src={`http://localhost:3000/foto-profil/${item.foto_profil}`} alt={item.nama} className="w-full h-full object-cover"/>
+                                <img src={`/foto-profil/${item.foto_profil}`} alt={item.nama} className="w-full h-full object-cover"/>
                               ) : (
                                 <span className="text-green-600 font-bold text-sm bg-green-100 w-full h-full flex items-center justify-center">
                                   {item.nama.charAt(0).toUpperCase()}
@@ -191,7 +177,7 @@ export default function DataSantri() {
                             <div className="flex items-center gap-2 truncate"><Phone size={14} /> {item.no_hp || "-"}</div>
                           </div>
                         </td>
-                        <td className="p-4 text-sm text-gray-600 max-w-xs truncate">{item.alamat || "-"}</td>
+                        <td className="p-4 text-sm text-gray-600 max-w-xs truncate">{(item.jenis_kelamin==="Laki_laki"?"Laki-laki":"Perempuan")}</td>
                         <td className="p-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit"><Eye size={18} /></button>
@@ -215,7 +201,7 @@ export default function DataSantri() {
                         <div className="flex items-start gap-3">
                             <div className="w-12 h-12 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                 {item.foto_profil ? (
-                                    <img src={`http://localhost:3000/foto-profil/${item.foto_profil}`} className="w-full h-full object-cover"/>
+                                    <img src={`/foto-profil/${item.foto_profil}`} className="w-full h-full object-cover"/>
                                 ) : (
                                     <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold">{item.nama.charAt(0)}</div>
                                 )}

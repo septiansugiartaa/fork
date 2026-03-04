@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import LinkMateri from "../components/LinkMateri";
+import api from "../config/api"
 
 function DetailMateri() {
   const { id } = useParams();
@@ -19,7 +20,6 @@ function DetailMateri() {
     admin: "/admin/manageMateri",
     // orangtua: "orangtua/viewMateri"
     // ustadz: "ustadz/viewMateri"
-    // pimpinan: "pimpinan/viewMateri"
   };
 
   const detailBasePath = rolePathMap[role] || "/viewMateri";
@@ -27,21 +27,9 @@ function DetailMateri() {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          `http://localhost:3000/api/global/manageMateri/${id}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        const result = await res.json();
-        
-        if (result.success) {
-          setMateri(result.data);
+        const res = await api.get(`/global/manageMateri/${id}`,);
+        if (res.data.success) {
+          setMateri(res.data.data);
         }
         
       } catch (err) {
@@ -64,21 +52,9 @@ function DetailMateri() {
   useEffect(() => {
     const fetchMateriLain = async () => {
       try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch(
-          "http://localhost:3000/api/global/manageMateri",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
-
-        const result = await res.json();
-
-        if (result.success) {
-          const filtered = result.data.list_materi.filter(
+        const res = await api.get("/global/manageMateri",);
+        if (res.data.success) {
+          const filtered = res.data.data.list_materi.filter(
             (item) => item.id !== Number(id)
           );
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import {
   ArrowLeft,
   Loader2,
@@ -28,18 +28,6 @@ export default function KeuanganSantri() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/orangtua/keuangan";
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   // --- HELPER ALERT (TOAST) ---
   const showAlert = (type, text) => {
@@ -56,7 +44,7 @@ export default function KeuanganSantri() {
   const fetchKeuangan = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/");
+      const response = await api.get("/orangtua/keuangan/");
       if (response.data.success) {
         setData(response.data.data);
       }
@@ -67,8 +55,6 @@ export default function KeuanganSantri() {
       setLoading(false);
     }
   };
-
-  // --- Handlers Modal ---
 
   const handleOpenDetail = (tagihan) => {
     setSelectedTagihan(tagihan);
@@ -87,7 +73,7 @@ export default function KeuanganSantri() {
     formData.append("bukti_bayar", file);
 
     try {
-      const res = await api.post("/bayar", formData, {
+      const res = await api.post("/orangtua/keuangan/bayar", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   ArrowLeft, Loader2, Search, Calendar, Clock, MapPin, ChevronDown, 
   AlertTriangle, CheckCircle, X 
@@ -26,18 +26,6 @@ export default function KegiatanSantri() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/santri/kegiatan"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -52,7 +40,7 @@ export default function KegiatanSantri() {
     try {
       setLoading(true);
       // Query Params: ?search=...&type=...
-      const res = await api.get(`/?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
+      const res = await api.get(`/santri/kegiatan/?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
       if (res.data.success) {
         setKegiatans(res.data.data);
       }
@@ -88,7 +76,7 @@ export default function KegiatanSantri() {
   const handleSubmitFeedback = async (idKegiatan, rating, isiText) => {
     setIsSaving(true);
     try {
-        const res = await api.post("/feedback", {
+        const res = await api.post("/santri/kegiatan/feedback", {
             id_kegiatan: idKegiatan,
             rating: rating,
             isi_text: isiText

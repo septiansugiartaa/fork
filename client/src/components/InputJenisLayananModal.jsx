@@ -14,8 +14,8 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
     if (isOpen) {
       if (isEditing && editData) {
         setFormData({
-          nama_layanan: editData.nama_layanan,
-          estimasi: editData.estimasi,
+          nama_layanan: editData.nama_layanan || "",
+          estimasi: editData.estimasi || "",
           deskripsi: editData.deskripsi || ""
         });
       } else {
@@ -26,14 +26,16 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
 
   if (!isOpen) return null;
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  // Clean Code: Destructuring event target
+  const handleChange = ({ target: { name, value } }) => {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.nama_layanan || !formData.estimasi) return alert("Nama layanan dan estimasi wajib diisi");
+    if (!formData.nama_layanan || !formData.estimasi) {
+      return alert("Nama layanan dan estimasi wajib diisi");
+    }
     onSubmit(formData);
   };
 
@@ -41,7 +43,6 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col">
         
-        {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
             <List className="text-green-600" size={20} />
@@ -52,11 +53,8 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
           </button>
         </div>
 
-        {/* Form Content */}
         <div className="p-6">
           <form id="layananForm" onSubmit={handleSubmit} className="space-y-4">
-            
-            {/* Nama Layanan */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Layanan</label>
                 <div className="relative">
@@ -70,32 +68,25 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                 </div>
             </div>
 
-            {/* Estimasi */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Estimasi Waktu Pengerjaan (Hari)</label>
                 <div className="relative">
                     <input 
-                        type="text" // Ganti number biar lebih pas untuk hari
+                        type="text"
                         name="estimasi" 
                         required
-                        // Tambahkan 'pr-12' (padding right) agar angka tidak menumpuk dengan tulisan "Hari"
                         className="w-full pl-9 pr-12 p-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                         value={formData.estimasi} 
                         onChange={handleChange}
                         placeholder="Contoh: 1"
                     />
-                    
-                    {/* Ikon Kiri */}
                     <CreditCard className="absolute left-3 top-3.5 text-gray-400" size={16} />
-                    
-                    {/* Tulisan Kanan "Hari" */}
                     <span className="absolute right-4 top-2.5 text-gray-500 text-md font-medium pointer-events-none">
                         Hari
                     </span>
                 </div>
             </div>
 
-            {/* Deskripsi */}
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi</label>
                 <div className="relative">
@@ -108,11 +99,9 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                     <FileText className="absolute left-3 top-3.5 text-gray-400" size={16} />
                 </div>
             </div>
-
           </form>
         </div>
 
-        {/* Footer */}
         <div className="p-5 border-t border-gray-100 bg-gray-50 rounded-b-2xl flex justify-end gap-3">
             <button onClick={onClose} type="button" className="px-5 py-2.5 bg-white border border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-100 transition">
                 Batal
@@ -122,7 +111,6 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
                 {saving ? "Menyimpan..." : "Simpan Data"}
             </button>
         </div>
-
       </div>
     </div>
   );

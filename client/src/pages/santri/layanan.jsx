@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import { ArrowLeft, Search, Briefcase, History, Loader2, AlertTriangle, CheckCircle, X } from 'lucide-react';
 import DetailLayananModal from '../../components/DetailLayananModal'; 
 import FormLayananModal from '../../components/FormLayananModal';
@@ -28,10 +28,7 @@ export default function LayananList() {
 
   const fetchLayanan = async () => {
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get('http://localhost:3000/api/santri/layanan', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get('/santri/layanan');
       setLayananList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -41,18 +38,15 @@ export default function LayananList() {
     }
   };
 
-  // Step 1: User klik item -> Buka Modal Detail
   const handleItemClick = (item) => {
     setSelectedLayananDetail(item);
   };
 
-  // Step 2: User klik "Ajukan" di Modal Detail -> Tutup Detail, Buka Form
   const handleAjukanClick = (layanan) => {
-    setSelectedLayananDetail(null); // Tutup detail
-    setSelectedLayananForm(layanan); // Buka form
+    setSelectedLayananDetail(null); 
+    setSelectedLayananForm(layanan);
   };
 
-  // Step 3: Sukses Submit Form
   const handleFormSuccess = () => {
     showAlert("success", "Pengajuan berhasil dikirim!");
     setTimeout(() => {

@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { User, X, Search, Loader2, CheckCircle, Plus, AlertTriangle } from "lucide-react";
+import api from "../config/api"; // Menggunakan instance api global
 
 export default function OrtuModal({
   isOpen,
   onClose,
-  api,
   isEditing,
   editData,
   onSubmit,
@@ -60,6 +60,7 @@ export default function OrtuModal({
       if (!isEditing && formStep === 1 && searchQuery.length >= 3) {
         setIsSearchingUser(true);
         try {
+          // Memanggil API global
           const res = await api.get(`/orangtua/search?q=${searchQuery}`);
           if (res.data.success) {
             setSearchResults(res.data.data);
@@ -75,7 +76,7 @@ export default function OrtuModal({
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, formStep, isEditing, api]);
+  }, [searchQuery, formStep, isEditing]);
 
   // Handlers
   const handleSelectUser = (user) => {

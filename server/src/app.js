@@ -13,6 +13,7 @@ app.use(cors());
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 app.use('/foto-profil', express.static(path.join(__dirname, '../public/uploads/profil')));
+app.use('/payments', express.static(path.join(__dirname, '../public/uploads/payments')));
 
 app.get("/api", (req, res) => {
   res.send("PPDNY");
@@ -84,6 +85,7 @@ app.use('/api/admin/riwayat-layanan', require('./routes/admin/riwayatLayananRout
 app.use('/api/admin/keuangan', require('./routes/admin/keuanganRoutes'));
 app.use('/api/admin/feedback', require('./routes/admin/feedbackRoutes'));
 app.use('/api/admin/log', require('./routes/admin/logRoutes'));
+app.use('/api/admin/screening', require('./routes/admin/screeningRoutes'));
 
 app.use('/api/timkesehatan/screening', require('./routes/timkesehatan/screeningRoutes'));
 

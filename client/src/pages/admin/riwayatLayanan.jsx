@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
-  Search, Eye, Loader2, Calendar, User, 
-  AlertTriangle, CheckCircle, X, Star, ChevronLeft, ChevronRight 
+  Search, Eye, Loader2, Calendar, 
+  AlertTriangle, CheckCircle, X, Star
 } from "lucide-react";
 import DetailRiwayatModal from "../../components/DetailRiwayatLayananPengurusModal";
 import ProsesLayananModal from "../../components/ProsesLayananModal";
@@ -14,10 +14,8 @@ export default function RiwayatLayanan() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
-  // State Modals
   const [detailData, setDetailData] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [processData, setProcessData] = useState(null);
@@ -25,7 +23,6 @@ export default function RiwayatLayanan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/admin/riwayat-layanan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -35,10 +32,7 @@ export default function RiwayatLayanan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/admin/riwayat-layanan", { params: { search } });
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -51,33 +45,26 @@ export default function RiwayatLayanan() {
   useEffect(() => {
     const delay = setTimeout(() => {
         fetchData();
-        jump(1); // Reset page ke 1 saat search berubah
+        jump(1);
     }, 500);
     return () => clearTimeout(delay);
   }, [search]);
 
-  // Handler Buka Detail
   const handleOpenDetail = (item) => {
     setDetailData(item);
     setIsDetailOpen(true);
   };
 
-  // Handler Buka Proses 
   const handleOpenProcess = (item) => {
     setIsDetailOpen(true);
     setProcessData(item);
     setIsProcessOpen(true);
   };
 
-  // Handler Submit Proses
   const handleSubmitProcess = async (id, formData) => {
     setIsSaving(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.put(`${API_URL}/${id}/status`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
+        await api.put(`/admin/riwayat-layanan/${id}/status`, formData);
         showAlert("success", "Status layanan berhasil diperbarui");
         setIsProcessOpen(false);
         fetchData();
@@ -112,8 +99,6 @@ export default function RiwayatLayanan() {
 
   return (
     <div className="space-y-6 relative">
-        
-      {/* Alert */}
       {message.text && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
           {message.type === 'error' ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>}
@@ -122,7 +107,6 @@ export default function RiwayatLayanan() {
         </div>
       )}
 
-      {/* Header & Search */}
       <div className="flex justify-between items-center">
         <div>
             <h1 className="text-2xl font-bold text-gray-800">Riwayat Layanan</h1>
@@ -130,13 +114,13 @@ export default function RiwayatLayanan() {
         </div>
       </div>
 
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 outline-none">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
             <input 
               type="text" 
               placeholder="Cari riwayat layanan..." 
-              className="w-full pl-10 pr-4 py-2.5 outline-none"
+              className="w-full pl-10 pr-4 py-2.5 outline-none bg-transparent"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -147,7 +131,6 @@ export default function RiwayatLayanan() {
         <div className="p-12 text-center"><Loader2 className="animate-spin text-green-500 mx-auto mb-2"/><p>Loading...</p></div>
       ) : (
         <>
-            {/* VIEW 1: TABLE (Desktop) */}
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -173,7 +156,7 @@ export default function RiwayatLayanan() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                                                 {item.users.foto_profil ? (
-                                                    <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
+                                                    <img src={`/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                                 ) : (
                                                     <span className="text-green-600 font-bold text-sm bg-green-100 w-full h-full flex items-center justify-center">
                                                         {item.users.nama.charAt(0).toUpperCase()}
@@ -194,6 +177,7 @@ export default function RiwayatLayanan() {
                                             <div className="flex items-center justify-center gap-1 bg-yellow-50 px-2 py-1 rounded-lg border border-yellow-100 w-fit mx-auto">
                                                 <Star size={14} className="text-yellow-500 fill-yellow-500"/>
                                                 <span className="text-sm font-bold text-yellow-700">{item.feedback[0].rating}</span>
+                                                <span className="text-xs text-gray-400">({item.total_ulasan} ulasan)</span>
                                             </div>
                                         ) : (
                                             <span className="text-xs text-gray-400">-</span>
@@ -217,7 +201,6 @@ export default function RiwayatLayanan() {
                 </div>
             </div>
 
-            {/* VIEW 2: CARD (Mobile) */}
             <div className="block md:hidden space-y-4">
                 {currentData.length > 0 ? currentData.map((item) => (
                     <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-3">
@@ -225,7 +208,7 @@ export default function RiwayatLayanan() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                     {item.users.foto_profil ? (
-                                        <img src={`http://localhost:3000/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
+                                        <img src={`/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                     ) : (
                                         <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold">{item.users.nama.charAt(0)}</div>
                                     )}
@@ -261,7 +244,6 @@ export default function RiwayatLayanan() {
                 )) : <div className="text-center p-8 bg-white rounded-xl text-gray-500">Data tidak ditemukan</div>}
             </div>
 
-            {/* Pagination Controls */}
             <Pagination 
                 currentPage={currentPage}
                 totalPages={maxPage}
@@ -271,7 +253,6 @@ export default function RiwayatLayanan() {
         </>
       )}
 
-      {/* Modal Detail (Sudah termasuk feedback) */}
       <DetailRiwayatModal 
         isOpen={isDetailOpen} 
         onClose={() => setIsDetailOpen(false)} 

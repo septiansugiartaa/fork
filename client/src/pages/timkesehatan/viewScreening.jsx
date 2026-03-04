@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { Loader2, ArrowLeft } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
@@ -17,12 +17,8 @@ export default function ViewScreening() {
 
     const fetchData = async () => {
         try {
-        const token = localStorage.getItem("token");
-
-        const res = await axios.get(
-            `http://localhost:3000/api/timkesehatan/screening/${screeningId}`,
-            { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const res = await api.get(
+            `/timkesehatan/screening/${screeningId}`);
 
         setData(res.data.data);
         } catch (err) {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   ArrowLeft, Loader2, Search, User, ShieldAlert, CheckCircle, X, AlertTriangle 
 } from "lucide-react";
@@ -28,13 +28,6 @@ export default function DaftarSantri() {
   const [loadingPengaduan, setLoadingPengaduan] = useState(false);
 
   const navigate = useNavigate();
-  const api = axios.create({ baseURL: "http://localhost:3000/api/ustadz/santri" });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -50,7 +43,7 @@ export default function DaftarSantri() {
     try {
       setLoading(true);
       // Kirim parameter id_kelas juga ke backend
-      const res = await api.get(`/?search=${search}&filter=${activeTab}&id_kelas=${selectedKelas}`);
+      const res = await api.get(`/ustadz/santri/?search=${search}&filter=${activeTab}&id_kelas=${selectedKelas}`);
       if (res.data.success) {
         setSantris(res.data.data);
         setMetaInfo(res.data.meta);
@@ -79,7 +72,7 @@ export default function DaftarSantri() {
     setIsPengaduanOpen(true);
     setLoadingPengaduan(true);
     try {
-        const res = await api.get(`/${santri.id}/pengaduan`);
+        const res = await api.get(`/ustadz/santri/${santri.id}/pengaduan`);
         if (res.data.success) {
             setRiwayatPengaduan(res.data.data);
         }
@@ -191,14 +184,15 @@ export default function DaftarSantri() {
                         <div className="flex items-start gap-4 mb-4">
                             <div className="w-14 h-14 bg-gray-100 rounded-full flex-shrink-0 flex items-center justify-center overflow-hidden border border-gray-200">
                                 {santri.foto_profil && santri.foto_profil !== '-' ? (
-                                    <img src={`http://localhost:3000/foto-profil/${santri.foto_profil}`} className="w-full h-full object-cover" alt={santri.nama}/>
+                                    <img src={`/foto-profil/${santri.foto_profil}`} className="w-full h-full object-cover" alt={santri.nama}/>
                                 ) : (
                                     <User size={24} className="text-gray-400" />
                                 )}
                             </div>
                             <div className="flex-1 min-w-0">
                                 <h3 className="font-bold text-gray-800 truncate">{santri.nama}</h3>
-                                <p className="text-xs text-gray-500 mb-2">NIS: {santri.nip} • {santri.kelas}</p>
+                                <p className="text-xs text-gray-500 truncate">NIS: {santri.nip}</p>
+                                <p className="text-xs text-gray-500 mb-2 truncate">{santri.kelas}</p>
                                 
                                 <div className={`inline-flex items-center px-2 py-0.5 rounded border text-[10px] font-bold ${getKehadiranColor(santri.kehadiran)}`}>
                                     <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></span>

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
-  Plus, Search, Edit2, Trash2, User, Loader2, Mail, Phone, 
-  AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight 
+  Plus, Search, Edit2, Trash2, Loader2, Mail, Phone, 
+  AlertTriangle, CheckCircle, X, MapPin 
 } from "lucide-react";
 import InputUstadzModal from "../../components/InputUstadzModal";
 import usePagination from "../../components/pagination/usePagination";
@@ -13,36 +13,25 @@ export default function DataUstadz() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(ustadzList);
 
-  // State Modal
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  // State Alert
   const [message, setMessage] = useState({ type: "", text: "" });
-
-  const API_URL = "http://localhost:3000/api/admin/ustadz";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
   };
 
-  // 1. Fetch Data
   const fetchUstadz = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get("/admin/ustadz", { params: { search } });
       setUstadzList(res.data.data);
     } catch (err) {
-      console.error(err);
       showAlert("error", "Gagal memuat data ustadz");
     } finally {
       setLoading(false);
@@ -52,12 +41,11 @@ export default function DataUstadz() {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
         fetchUstadz();
-        jump(1); // Reset page saat search berubah
+        jump(1);
     }, 500);
     return () => clearTimeout(delayDebounce);
   }, [search]);
 
-  // 2. Handlers Modal
   const handleAdd = () => {
     setIsEditing(false);
     setSelectedData(null);
@@ -70,45 +58,32 @@ export default function DataUstadz() {
     setIsModalOpen(true);
   };
 
-  // 3. Submit Handler
   const handleSubmit = async (formData) => {
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
       if (isEditing) {
-        await axios.put(`${API_URL}/${selectedData.id}`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/admin/ustadz/${selectedData.id}`, formData);
         showAlert("success", "Data ustadz diperbarui");
       } else {
-        await axios.post(API_URL, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post("/admin/ustadz", formData);
         showAlert("success", "Ustadz baru ditambahkan");
       }
       setIsModalOpen(false);
       fetchUstadz(); 
     } catch (err) {
-      console.error(err);
       showAlert("error", err.response?.data?.message || "Terjadi kesalahan");
     } finally {
       setIsSaving(false);
     }
   };
 
-  // 4. Delete Handler
   const handleDelete = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menonaktifkan akun ini?")) return;
-
-    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/admin/ustadz/${id}`);
       showAlert("success", "Akun berhasil dinonaktifkan");
       fetchUstadz();
     } catch (err) {
-      console.error(err);
       showAlert("error", "Gagal menghapus data");
     }
   };
@@ -118,7 +93,7 @@ export default function DataUstadz() {
         
       {/* Alert */}
       {message.text && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 bg-white ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
              {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
           </div>
@@ -142,10 +117,10 @@ export default function DataUstadz() {
       </div>
 
       {/* Search Bar */}
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 transition-all outline-none">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-          <input type="text" placeholder="Cari nama atau NIP..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
+          <input type="text" placeholder="Cari nama atau NIP..." className="w-full pl-10 pr-4 py-2.5 outline-none bg-transparent" value={search} onChange={(e) => setSearch(e.target.value)}/>
         </div>
       </div>
 
@@ -162,10 +137,10 @@ export default function DataUstadz() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                                <th className="p-4 font-semibold w-[40%]">Nama & NIP</th>
-                                <th className="p-4 font-semibold w-[25%]">Kontak</th>
-                                <th className="p-4 font-semibold w-[25%]">Alamat</th>
-                                <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
+                                <th className="p-4 w-[40%]">Nama & NIP</th>
+                                <th className="p-4 w-[25%]">Kontak</th>
+                                <th className="p-4 w-[25%]">Jenis Kelamin</th>
+                                <th className="p-4 text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -192,7 +167,7 @@ export default function DataUstadz() {
                                         <td className="p-4 text-sm text-gray-600 max-w-xs truncate">
                                             {item.alamat ? (
                                                 <div className="flex items-center gap-2">
-                                                    <MapPin size={14} className="flex-shrink-0"/> <span className="truncate">{item.alamat}</span>
+                                                    <p className="truncate">{(item.jenis_kelamin==="Laki_laki" ? "Laki-laki":"Perempuan")}</p>
                                                 </div>
                                             ) : "-"}
                                         </td>
@@ -277,7 +252,7 @@ export default function DataUstadz() {
         editData={selectedData}
         onSubmit={handleSubmit}
         saving={isSaving}
-        userRole={"pengurus"}
+        userRole={"admin"}
       />
 
     </div>

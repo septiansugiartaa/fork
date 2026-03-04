@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Search, Mail, Phone, FileText, MapPin } from "lucide-react";
 import Pagination from "../../components/pagination/Pagination";
-import axios from "axios";
+import api from "../../config/api";
 
 export default function DaftarSantriScreening() {
   const [santriList, setSantriList] = useState([]);
@@ -13,16 +13,12 @@ export default function DaftarSantriScreening() {
 
   const navigate = useNavigate();
   const limit = 5;
-  const API_URL = "http://localhost:3000/api/timkesehatan/screening/santri";
 
   const fetchSantri = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-
-      const res = await axios.get(API_URL, {
-        params: { search, page, limit },
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/timkesehatan/screening/santri", {
+        params: { search, page, limit }
       });
 
       setSantriList(res.data.data);

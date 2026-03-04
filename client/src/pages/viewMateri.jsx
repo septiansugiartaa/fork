@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -17,20 +17,11 @@ export default function MateriView (){
     const fetchMateri = async () => {
         try {
             setLoading(true);
-            const token = localStorage.getItem("token");
-            const res = await fetch(
-                "http://localhost:3000/api/global/viewMateri",
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Cache-Control": "no-cache"
-                }}
-            );
-            const result = await res.json();
-                if (result.success) {
-                    setMateri(result.data.list_materi);
+            const res = await api.get("/global/viewMateri");
+                if (res.data.success) {
+                    setMateri(res.data.data.list_materi);
                 } else {
-                    console.error(result.message);
+                    console.error(res.data.message);
                     setMateri([]);
                 }
         } catch (err) {

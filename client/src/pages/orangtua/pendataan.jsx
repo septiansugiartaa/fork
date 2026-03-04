@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   User, Save, Lock, Camera, ArrowLeft, Loader2, 
   AlertTriangle, CheckCircle, X, Users
@@ -21,19 +21,6 @@ export default function OrangTuaProfile() {
   
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
-  
-  const API_URL = "http://localhost:3000/api/orangtua/profile"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -47,7 +34,7 @@ export default function OrangTuaProfile() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/");
+      const response = await api.get("/orangtua/profile/");
       if (response.data.success) {
         const { data_diri, foto_profil, anak } = response.data.data;
         setDataDiri(data_diri);
@@ -66,7 +53,7 @@ export default function OrangTuaProfile() {
     e.preventDefault();
     setSaving(true);
     try {
-      await api.put("/update", dataDiri);
+      await api.put("/orangtua/profile/update", dataDiri);
       showAlert("success", "Data diri berhasil disimpan");
     } catch (err) {
       showAlert("error", "Gagal menyimpan perubahan");
@@ -81,7 +68,7 @@ export default function OrangTuaProfile() {
     if (passwordBaru !== konfirmasiPassword) { showAlert("error", "Konfirmasi password tidak cocok!"); return; }
     setSaving(true);
     try {
-      await api.put("/password", { password_baru: passwordBaru });
+      await api.put("/orangtua/profile/password", { password_baru: passwordBaru });
       showAlert("success", "Password berhasil diubah");
       setPasswordBaru(""); setKonfirmasiPassword(""); setShowPasswordModal(false);
     } catch (err) {
@@ -101,7 +88,7 @@ export default function OrangTuaProfile() {
     
     try {
       setSaving(true); 
-      const res = await api.post('/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post('/orangtua/profile/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (res.data.success) {
           setFotoProfil(res.data.data.url);
           showAlert("success", "Foto profil berhasil diperbarui");
@@ -146,7 +133,7 @@ export default function OrangTuaProfile() {
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-6 text-center">
           <div className="relative inline-block group mb-2">
             <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-green-100 flex items-center justify-center border-4 border-white shadow-lg mx-auto overflow-hidden">
-              {fotoProfil ? <img src={fotoProfil} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : <User size={64} className="text-green-400" />}
+              {fotoProfil ? <img src={`/foto-profil/${fotoProfil}`} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : dataDiri.foto_profil ? <img src={`/foto-profil/${dataDiri.foto_profil}`} className="w-full h-full object-cover" alt="Profile" /> : <User size={64} className="text-green-400" />}
             </div>
             <input type="file" ref={fileInputRef} className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handlePhotoUpload} />
             <button onClick={() => fileInputRef.current.click()} disabled={saving} className="absolute bottom-0 right-0 bg-green-600 text-white p-2.5 rounded-full hover:bg-green-700 shadow-md transition border-2 border-white cursor-pointer">
@@ -214,7 +201,7 @@ export default function OrangTuaProfile() {
             {anakList.map((anak, idx) => (
               <div key={idx} className="bg-gray-50 border border-gray-200 rounded-2xl p-4 flex items-center gap-4">
                 <div className="w-16 h-16 rounded-xl overflow-hidden bg-indigo-100 flex-shrink-0 flex items-center justify-center text-indigo-600 font-bold text-xl border-2 border-white shadow-sm">
-                   {anak.foto ? <img src={anak.foto} className="w-full h-full object-cover" alt={anak.nama}/> : anak.nama.charAt(0)}
+                   {anak.foto ? <img src={`/foto-profil/${anak.foto}`} className="w-full h-full object-cover" alt={anak.nama}/> : anak.nama.charAt(0)}
                 </div>
                 <div className="min-w-0 flex-1">
                   <h4 className="font-bold text-gray-800 text-md truncate">{anak.nama}</h4>

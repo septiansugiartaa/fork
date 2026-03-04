@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { User, Users, BookOpen, Calendar, AlertCircle, Clock, Bell, CheckCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown, MessageSquare, ClipboardList } from "lucide-react";
 import NotificationDropdown from "../../components/NotificationDropdown";
 
@@ -12,31 +12,6 @@ export default function Dashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const navigate = useNavigate();
-  // Sesuaikan URL dengan env atau konvensi routingmu
-  const API_URL = "http://localhost:3000/api/ustadz";
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-
-  api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-      }
-      return Promise.reject(error);
-    }
-  );
 
   useEffect(() => {
     fetchDashboardData();
@@ -46,7 +21,7 @@ export default function Dashboard() {
     try {
       setLoading(true);
       setError("");
-      const response = await api.get("/dashboard");
+      const response = await api.get("/ustadz/dashboard");
       if (response.data.success) {
         setDashboardData(response.data.data);
       } else {
@@ -156,7 +131,7 @@ export default function Dashboard() {
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 flex items-center justify-center">
                       {ustadz.foto_profil !== '-' ? (
-                         <img src={`http://localhost:3000/foto-profil/${ustadz.foto_profil}`} alt={ustadz.nama} className="w-full h-full object-cover"/>
+                         <img src={`/foto-profil/${ustadz.foto_profil}`} alt={ustadz.nama} className="w-full h-full object-cover"/>
                       ) : (
                          <User size={20} />
                       )}

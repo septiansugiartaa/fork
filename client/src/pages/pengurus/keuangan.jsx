@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, CreditCard, Loader2, 
   AlertTriangle, CheckCircle, X, ChevronLeft, ChevronRight, User, Calendar
@@ -26,7 +26,6 @@ export default function Keuangan() {
   const [selectedTagihanId, setSelectedTagihanId] = useState(null);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/pengurus/keuangan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -36,10 +35,7 @@ export default function Keuangan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/tagihan?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/keuangan/tagihan?search=${search}`);
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,8 +69,7 @@ export default function Keuangan() {
   const handleDelete = async (id) => {
     if (!confirm("Hapus tagihan ini? Data pembayaran terkait mungkin akan terpengaruh.")) return;
     try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`${API_URL}/tagihan/${id}`, { headers: { Authorization: `Bearer ${token}` }});
+        await api.delete(`/pengurus/keuangan/tagihan/${id}`);
         showAlert("success", "Tagihan dihapus");
         fetchData();
     } catch (err) { showAlert("error", "Gagal menghapus"); }
@@ -87,12 +82,11 @@ export default function Keuangan() {
 
   const handleSubmitTagihan = async (formData) => {
     try {
-        const token = localStorage.getItem("token");
         if (isEditing) {
-            await axios.put(`${API_URL}/tagihan/${selectedTagihan.id}`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.put(`/pengurus/keuangan/tagihan/${selectedTagihan.id}`, formData);
             showAlert("success", "Tagihan diperbarui");
         } else {
-            await axios.post(`${API_URL}/tagihan`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.post(`/pengurus/keuangan/tagihan`, formData);
             showAlert("success", "Tagihan berhasil dibuat");
         }
         setIsTagihanOpen(false);
