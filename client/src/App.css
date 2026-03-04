@@ -23,11 +23,10 @@
   font-size: 16px;
 }
 
-.ql-toolbar.ql-snow{
-  border: none !important;
-  border-bottom: 1px solid #d1d5dc !important;
+.recharts-surface, .recharts-sector{
+  outline: none;
 }
 
-.ql-container.ql-snow{
-  border: none !important;
+.recharts-surface:active, .recharts-sector:active{
+  outline: none;
 }

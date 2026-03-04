@@ -1,23 +1,29 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../config/api"; // MENGGUNAKAN API GLOBAL
 import { X, Save, Loader2, BookOpen, User } from "lucide-react";
 
 export default function ModalKelas({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
   const [formData, setFormData] = useState({ kelas: "", tahun_ajaran: "", id_wali: "" });
   const [waliOptions, setWaliOptions] = useState([]);
 
-  // Fetch Wali Options saat modal dibuka
+  // Clean Code: Mengubah promise chain menjadi async function yang rapi di dalam useEffect
   useEffect(() => {
-    if (isOpen) {
-        axios.get("http://localhost:3000/api/pengurus/kelas/wali", {
-            headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-        }).then(res => setWaliOptions(res.data.data)).catch(console.error);
+    const fetchWali = async () => {
+      try {
+        const { data } = await api.get("/pengurus/kelas/wali");
+        if (data.success) setWaliOptions(data.data);
+      } catch (err) {
+        console.error("Gagal load wali kelas", err);
+      }
+    };
 
+    if (isOpen) {
+        fetchWali();
         if (isEditing && editData) {
             setFormData({
-                kelas: editData.kelas,
-                tahun_ajaran: editData.tahun_ajaran,
-                id_wali: editData.id_wali
+                kelas: editData.kelas || "",
+                tahun_ajaran: editData.tahun_ajaran || "",
+                id_wali: editData.id_wali || ""
             });
         } else {
             setFormData({ kelas: "", tahun_ajaran: "", id_wali: "" });
@@ -26,6 +32,10 @@ export default function ModalKelas({ isOpen, onClose, isEditing, editData, onSub
   }, [isOpen, isEditing, editData]);
 
   if (!isOpen) return null;
+
+  const handleChange = ({ target: { name, value } }) => {
+      setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -43,15 +53,15 @@ export default function ModalKelas({ isOpen, onClose, isEditing, editData, onSub
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kelas</label>
-                <input type="text" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: 10 IPA 1 / Awwaliyah 1" value={formData.kelas} onChange={e => setFormData({...formData, kelas: e.target.value})} />
+                <input type="text" name="kelas" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: 10 IPA 1 / Awwaliyah 1" value={formData.kelas} onChange={handleChange} />
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Tahun Ajaran</label>
-                <input type="text" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: 2023/2024" value={formData.tahun_ajaran} onChange={e => setFormData({...formData, tahun_ajaran: e.target.value})} />
+                <input type="text" name="tahun_ajaran" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: 2023/2024" value={formData.tahun_ajaran} onChange={handleChange} />
             </div>
             <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Wali Kelas</label>
-                <select className="w-full p-2.5 border border-gray-200 rounded-xl outline-none bg-white" value={formData.id_wali} onChange={e => setFormData({...formData, id_wali: e.target.value})}>
+                <select name="id_wali" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none bg-white" value={formData.id_wali} onChange={handleChange}>
                     <option value="" disabled>-- Pilih Wali --</option>
                     {waliOptions.map(w => <option key={w.id} value={w.id}>{w.nama}</option>)}
                 </select>

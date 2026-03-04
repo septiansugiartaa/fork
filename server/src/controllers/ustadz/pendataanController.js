@@ -34,7 +34,7 @@ exports.getProfile = async (req, res) => {
         alamat: ustadz.alamat,
       },
       foto_profil: ustadz.foto_profil
-        ? `http://localhost:3000/uploads/profil/${ustadz.foto_profil}`
+        ? `/foto-profil/${ustadz.foto_profil}`
         : null
     };
 
@@ -124,7 +124,7 @@ exports.updatePhoto = async (req, res) => {
       data: { foto_profil: req.file.filename },
     });
 
-    const newPhotoUrl = `http://localhost:3000/uploads/profil/${req.file.filename}`;
+    const newPhotoUrl = `/foto-profil/${req.file.filename}`;
 
     res.json({ 
         success: true, 

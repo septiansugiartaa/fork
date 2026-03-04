@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import {
   ArrowLeft,
   Loader2,
@@ -26,24 +26,13 @@ export default function PortalScreening() {
 
     const fetchDetail = async () => {
         try {
-        const token = localStorage.getItem("token");
-
         const [santriRes, screeningRes, latestRes] = await Promise.all([
-            axios.get(
-            `http://localhost:3000/api/timkesehatan/screening/santri/${id}/detail`,
-            { headers: { Authorization: `Bearer ${token}` } }
-            ),
-            axios.get(
-            `http://localhost:3000/api/timkesehatan/screening/santri/${id}/screening`,
-            {
-                params: { page, limit },
-                headers: { Authorization: `Bearer ${token}` }
-            }
-            ),
-            axios.get(
-            `http://localhost:3000/api/timkesehatan/screening/santri/${id}/latest`,
-            { headers: { Authorization: `Bearer ${token}` } }
-            )
+            api.get(
+            `/timkesehatan/screening/santri/${id}/detail`),
+            api.get(
+            `/timkesehatan/screening/santri/${id}/screening`, {params: { page, limit }}),
+            api.get(
+            `/timkesehatan/screening/santri/${id}/latest`)
         ]);
 
         setSantri(santriRes.data.data);

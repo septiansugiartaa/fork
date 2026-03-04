@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { Search, Loader2, Activity, Clock, Filter, X } from "lucide-react";
 import Pagination from "../../components/pagination/Pagination";
 
-// Helper: Format Waktu Lengkap
 const formatDateTime = (dateString) => {
     if (!dateString) return "-";
     const date = new Date(dateString);
@@ -18,45 +17,40 @@ const formatEntitas = (string) => {
     return string.replace(/-/g, ' ');
 };
 
-export default function ActivityLogView() {
+export default function Log() {
     const [dataList, setDataList] = useState([]);
     const [loading, setLoading] = useState(true);
     const [meta, setMeta] = useState({ totalPages: 0, currentPage: 1 });
 
-    // States Filter & Search
     const [search, setSearch] = useState("");
-    const [debouncedSearch, setDebouncedSearch] = useState(""); // Untuk menahan hit API
+    const [debouncedSearch, setDebouncedSearch] = useState(""); 
     const [filterAksi, setFilterAksi] = useState("Semua");
     const [filterRole, setFilterRole] = useState("Semua");
     const [availableRoles, setAvailableRoles] = useState([]);
     
     const [currentPage, setCurrentPage] = useState(1);
 
-    // Ambil list dropdown role (sekali saja saat komponen mount)
     useEffect(() => {
         const fetchRoles = async () => {
             try {
-                const res = await axios.get("http://localhost:3000/api/admin/log/roles", {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                });
+                const res = await api.get("/admin/log/roles");
                 if (res.data.success) setAvailableRoles(res.data.data);
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error("Gagal mengambil daftar role:", err.response?.data?.message || err.message); 
+            }
         };
         fetchRoles();
     }, []);
 
-    // Efek Debounce: Tunda pencarian 500ms agar server tidak berat
     useEffect(() => {
         const timer = setTimeout(() => setDebouncedSearch(search), 500);
         return () => clearTimeout(timer);
     }, [search]);
 
-    // Reset ke halaman 1 jika filter berubah
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch, filterAksi, filterRole]);
 
-    // Fetch data utama (Server-side search & pagination)
     useEffect(() => {
         fetchLogs();
     }, [debouncedSearch, filterAksi, filterRole, currentPage]);
@@ -64,9 +58,7 @@ export default function ActivityLogView() {
     const fetchLogs = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
-            const res = await axios.get("http://localhost:3000/api/admin/log", {
-                headers: { Authorization: `Bearer ${token}` },
+            const res = await api.get("/admin/log", {
                 params: {
                     page: currentPage,
                     limit: 15,
@@ -81,7 +73,7 @@ export default function ActivityLogView() {
                 setMeta(res.data.meta);
             }
         } catch (err) {
-            console.error("Gagal memuat log", err);
+            console.error("Gagal memuat log:", err.response?.data?.message || err.message);
         } finally {
             setLoading(false);
         }
@@ -90,7 +82,6 @@ export default function ActivityLogView() {
     return (
         <div className="space-y-6">
             <div className="flex flex-col md:flex-row justify-between md:items-end gap-4">
-                {/* Header */}
                 <div className="flex justify-between items-center">
                     <div>
                         <h1 className="text-2xl font-bold text-gray-800">Log Aktivitas</h1>
@@ -99,8 +90,7 @@ export default function ActivityLogView() {
                 </div>
             </div>
 
-            <div className="flex flex-col md:flex-row gap-4 w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
-                {/* Universal Search Bar */}
+            <div className="flex flex-col md:flex-row gap-4 w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 transition-all outline-none">
                 <div className="flex-1 relative">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={18} />
                     <input
@@ -108,7 +98,7 @@ export default function ActivityLogView() {
                         placeholder="Cari (Nama, aksi, role, dll)..."
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
-                        className="w-full pl-10 pr-4 py-2.5 outline-none"
+                        className="w-full pl-10 pr-4 py-2.5 outline-none bg-transparent"
                     />
                     {search && (
                         <button onClick={() => setSearch("")} className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
@@ -117,10 +107,9 @@ export default function ActivityLogView() {
                     )}
                 </div>
 
-                {/* Filter Dropdowns */}
                 <div className="flex gap-3">
                     <div className="relative">
-                        <select value={filterAksi} onChange={(e) => setFilterAksi(e.target.value)} className="appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer">
+                        <select value={filterAksi} onChange={(e) => setFilterAksi(e.target.value)} className="appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer outline-none">
                             <option value="Semua">Semua Aksi</option>
                             <option value="CREATE">CREATE (Tambah)</option>
                             <option value="UPDATE">UPDATE (Ubah)</option>
@@ -130,7 +119,7 @@ export default function ActivityLogView() {
                     </div>
 
                     <div className="relative">
-                        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer capitalize">
+                        <select value={filterRole} onChange={(e) => setFilterRole(e.target.value)} className="appearance-none pl-4 pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-lg text-sm font-medium text-gray-700 cursor-pointer capitalize outline-none">
                             <option value="Semua">Semua Role</option>
                             {availableRoles.map(role => (
                                 <option key={role} value={role} className="capitalize">{role}</option>
@@ -141,7 +130,6 @@ export default function ActivityLogView() {
                 </div>
             </div>
 
-            {/* Konten Log */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 min-h-[400px]">
                 {loading ? (
                     <div className="h-full flex flex-col items-center justify-center py-20">
@@ -186,7 +174,6 @@ export default function ActivityLogView() {
                 )}
             </div>
 
-            {/* Server-Side Pagination Controls */}
             {meta.totalPages > 1 && !loading && (
                 <Pagination
                     currentPage={meta.currentPage}

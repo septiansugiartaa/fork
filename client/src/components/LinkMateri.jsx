@@ -18,7 +18,8 @@ function LinkMateri({ materiList = [], detailBasePath }) {
           <div className="w-15 h-15 flex-shrink-0 overflow-hidden hover:">
             {materi.gambar ? (
               <img
-                src={`http://localhost:3000/uploads/${materi.gambar}`}
+                // Menggunakan path relatif agar didukung oleh proxy Vite
+                src={`/uploads/${materi.gambar}`}
                 alt={materi.judul_materi}
                 className="w-full h-full object-cover"
               />

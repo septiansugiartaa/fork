@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, List, Loader2, 
   AlertTriangle, CheckCircle, X, ChevronLeft, ChevronRight, Clock, Info 
@@ -25,8 +25,6 @@ export default function JenisLayanan() {
   // State Alert Inline
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/pengurus/jenis-layanan";
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -36,10 +34,7 @@ export default function JenisLayanan() {
   const fetchLayanan = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/jenis-layanan?search=${search}`);
       setLayananList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,17 +68,12 @@ export default function JenisLayanan() {
   // 3. Submit Handler
   const handleSubmit = async (formData) => {
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
       if (isEditing) {
-        await axios.put(`${API_URL}/${selectedData.id}`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/pengurus/jenis-layanan/${selectedData.id}`, formData);
         showAlert("success", "Jenis layanan berhasil diperbarui");
       } else {
-        await axios.post(API_URL, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post("/pengurus/jenis-layanan", formData);
         showAlert("success", "Layanan baru berhasil ditambahkan");
       }
       setIsModalOpen(false);
@@ -100,11 +90,8 @@ export default function JenisLayanan() {
   const handleDelete = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menghapus layanan ini?")) return;
 
-    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/pengurus/jenis-layanan/${id}`);
       showAlert("success", "Layanan berhasil dihapus");
       fetchLayanan();
     } catch (err) {

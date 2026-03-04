@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { User, Calendar, Cross, AlertCircle, History, Clock, Settings, CheckCircle, Home, LogOut, Loader2, ChevronDown, Wallet } from "lucide-react";
 import NotificationDropdown from "../../components/NotificationDropdown";
 
@@ -20,9 +20,7 @@ export default function OrangTuaDashboard() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/orangtua/dashboard", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      });
+      const res = await api.get("/orangtua/dashboard");
       if (res.data.success) setData(res.data.data);
     } catch (err) {
       console.error(err);
@@ -63,7 +61,7 @@ export default function OrangTuaDashboard() {
                       className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                     >
                       <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
-                      <img src={`http://localhost:3000/foto-profil/${data.ortu.foto_profil}`} alt={data.ortu.nama} className="w-full h-full object-cover"/>
+                      <img src={`/foto-profil/${data.ortu.foto_profil}`} alt={data.ortu.nama} className="w-full h-full object-cover"/>
                       </div>
                       <div>
                         <p className="font-medium leading-tight">{data.ortu.nama}</p>
@@ -94,7 +92,7 @@ export default function OrangTuaDashboard() {
         <div className="bg-white rounded-3xl shadow-xl p-6 flex flex-col md:flex-row items-center gap-6 border border-white">
           <div className="w-24 h-24 rounded-2xl overflow-hidden shadow-lg border-4 border-white">
             <img 
-              src={`http://localhost:3000/foto-profil/${data.anak.foto_profil}`} 
+              src={`/foto-profil/${data.anak.foto_profil}`} 
               className="w-full h-full object-cover" 
               alt="Foto Anak"
               onError={(e) => e.target.src = "https://ui-avatars.com/api/?name=" + data.anak.nama}
@@ -136,7 +134,7 @@ export default function OrangTuaDashboard() {
               <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                 <Wallet className="text-green-500 mb-2" size={24} />
                 <p className="text-gray-400 text-xs font-medium">Tagihan Aktif</p>
-                <h4 className="text-xl font-black text-gray-800">{data.statistik.tagihan_aktif} Item</h4>
+                <h4 className="text-xl font-black text-gray-800">{data.statistik.tagihan_aktif} Tagihan</h4>
               </div>
               <div className="bg-white p-5 rounded-3xl shadow-sm border border-gray-100">
                 <History className="text-green-500 mb-2" size={24} />

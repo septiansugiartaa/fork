@@ -114,8 +114,9 @@ export default function TagihanModal({ isOpen, onClose, data, onPayClick, userRo
                         <td className="p-4 text-right">
                           <button
                             onClick={() =>
+                              // Menggunakan path relatif agar diforward dengan baik oleh Vite Proxy
                               window.open(
-                                `http://localhost:3000/uploads/payments/${bayar.bukti}`,
+                                `/payments/${bayar.bukti}`,
                                 "_blank",
                               )
                             }

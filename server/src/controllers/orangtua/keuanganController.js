@@ -25,10 +25,11 @@ exports.getKeuanganDashboard = async (req, res) => {
   try {
     const parentId = req.user.id;
 
+    // PERBAIKAN: Gunakan nama relasi spesifik yang di-generate Prisma untuk santri
     const relasiOrangTua = await prisma.orangtua.findFirst({
       where: { id_orangtua: parentId, is_active: true },
       include: {
-        users: { // Relasi ke data santri
+        users_orangtua_id_santriTousers: { 
           include: {
             kelas_santri: {
               where: { is_active: true },
@@ -41,12 +42,14 @@ exports.getKeuanganDashboard = async (req, res) => {
       },
     });
 
-    if (!relasiOrangTua || !relasiOrangTua.users) {
+    // PERBAIKAN: Sesuaikan pengecekan validasi data
+    if (!relasiOrangTua || !relasiOrangTua.users_orangtua_id_santriTousers) {
       return res.status(404).json({ success: false, message: "Data anak (santri) tidak ditemukan" });
     }
 
-    const santri = relasiOrangTua.users;
-    const santriId = santri.id; // Gunakan ID anak untuk pencarian tagihan
+    // PERBAIKAN: Ekstrak data santri dari relasi yang benar
+    const santri = relasiOrangTua.users_orangtua_id_santriTousers;
+    const santriId = santri.id; 
 
     // 2. Ambil Semua Tagihan milik Santri (Anak)
     const allTagihan = await prisma.tagihan.findMany({
@@ -65,7 +68,7 @@ exports.getKeuanganDashboard = async (req, res) => {
       riwayat_pembayaran: t.pembayaran.map((p) => ({
         id: p.id,
         tanggal: formatDateIndo(p.tanggal_bayar),
-        jumlah: formatRupiah(p.nominal), // Di schema namanya nominal, bukan jumlah_bayar
+        jumlah: formatRupiah(p.nominal), 
         bukti: p.bukti_bayar,
         status: p.status,
       })),
@@ -139,7 +142,6 @@ exports.uploadPembayaran = async (req, res) => {
     });
 
     if (!tagihan || tagihan.id_santri !== santriId) {
-      // Hapus file jika tagihan tidak valid/bukan milik anaknya
       fs.unlinkSync(req.file.path);
       return res.status(404).json({ success: false, message: "Tagihan tidak ditemukan atau bukan milik anak Anda." });
     }
@@ -149,10 +151,10 @@ exports.uploadPembayaran = async (req, res) => {
       data: {
         id_tagihan: parseInt(id_tagihan),
         tanggal_bayar: new Date(),
-        nominal: tagihan.nominal, // Asumsi bayar full sesuai nominal tagihan
+        nominal: tagihan.nominal,
         bukti_bayar: req.file.filename,
         metode_bayar: "Transfer",
-        status: "Pending", // Default status
+        status: "Pending", 
       },
     });
 
@@ -162,7 +164,7 @@ exports.uploadPembayaran = async (req, res) => {
     });
   } catch (err) {
     console.error("Error uploadPembayaran:", err);
-    if (req.file) fs.unlinkSync(req.file.path); // Cleanup file jika terjadi error database
+    if (req.file) fs.unlinkSync(req.file.path); 
     res.status(500).json({ success: false, message: "Gagal memproses pembayaran" });
   }
 };

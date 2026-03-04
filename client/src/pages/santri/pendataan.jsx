@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   User, Save, Lock, Camera, ArrowLeft, Loader2, 
   AlertTriangle, CheckCircle, Trash2, Plus, Edit2, X, Search 
@@ -38,19 +38,6 @@ export default function SantriProfile() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   
-  const API_URL = "http://localhost:3000/api/santri/profile"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -67,7 +54,7 @@ export default function SantriProfile() {
       if (searchQuery.length >= 3 && formStep === 1) {
         setIsSearchingUser(true);
         try {
-          const res = await api.get(`/orangtua/search?q=${searchQuery}`);
+          const res = await api.get(`/santri/profile/orangtua/search?q=${searchQuery}`);
           if (res.data.success) {
             setSearchResults(res.data.data);
           }
@@ -87,7 +74,7 @@ export default function SantriProfile() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/");
+      const response = await api.get("/santri/profile");
       if (response.data.success) {
         const { data_pondok, data_diri, orang_tua, foto_profil } = response.data.data;
         setDataPondok(data_pondok);
@@ -108,7 +95,7 @@ export default function SantriProfile() {
     setSaving(true);
     setMessage({ type: "", text: "" });
     try {
-      await api.put("/update", dataDiri);
+      await api.put("/santri/profile/update", dataDiri);
       showAlert("success", "Data diri berhasil disimpan");
     } catch (err) {
       showAlert("error", "Gagal menyimpan perubahan");
@@ -123,7 +110,7 @@ export default function SantriProfile() {
     if (passwordBaru !== konfirmasiPassword) { showAlert("error", "Konfirmasi password tidak cocok!"); return; }
     setSaving(true);
     try {
-      await api.put("/password", { password_baru: passwordBaru });
+      await api.put("/santri/profile/password", { password_baru: passwordBaru });
       showAlert("success", "Password berhasil diubah");
       setPasswordBaru(""); setKonfirmasiPassword(""); setShowPasswordModal(false);
     } catch (err) {
@@ -141,7 +128,7 @@ export default function SantriProfile() {
     formData.append('foto', file); 
     try {
       setSaving(true); 
-      const res = await api.post('/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post('/santri/profile/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (res.data.success) {
           setFotoProfil(res.data.data.url);
           showAlert("success", "Foto profil berhasil diperbarui");
@@ -208,10 +195,10 @@ export default function SantriProfile() {
     setSaving(true);
     try {
       if (isEditing) {
-        await api.put(`/orangtua/${editId}`, newOrtu);
+        await api.put(`/santri/profile/orangtua/${editId}`, newOrtu);
         showAlert("success", "Data berhasil diperbarui");
       } else {
-        await api.post("/orangtua", newOrtu);
+        await api.post("/santri/profile/orangtua", newOrtu);
         showAlert("success", isManualInput 
             ? "Data berhasil ditambah! Akun wali baru telah dibuat. Silakan login dengan memasukkan No. HP." 
             : "Data berhasil ditautkan! Akun wali yang ada telah dihubungkan. Silakan login dengan memasukkan No. HP."
@@ -230,7 +217,7 @@ export default function SantriProfile() {
   const handleDeleteOrtu = async (id) => {
     if (window.confirm("Yakin hapus data ini?")) {
       try {
-        await api.delete(`/orangtua/${id}`);
+        await api.delete(`/santri/profile/orangtua/${id}`);
         fetchProfile();
         showAlert("success", "Data berhasil dihapus");
       } catch (err) {

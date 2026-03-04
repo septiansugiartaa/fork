@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import {
-  Search, Eye, Loader2, AlertTriangle, CheckCircle, X, Star, MessageSquare
+  Search, Loader2, AlertTriangle, CheckCircle, X, Star, MessageSquare
 } from "lucide-react";
 import DetailFeedbackModal from "../../components/DetailFeedbackModal";
 import usePagination from "../../components/pagination/usePagination";
@@ -18,7 +18,6 @@ export default function Feedback() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
 
-  // Ambil Role
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const userRole = (currentUser.role || "pengurus").toLowerCase().replace(/\s/g, '');
 
@@ -30,12 +29,9 @@ export default function Feedback() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`http://localhost:3000/api/${userRole}/feedback`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get(`/${userRole}/feedback`);
       if (res.data.success) {
-          setDataList(res.data.data);
+        setDataList(res.data.data);
       }
     } catch (err) {
       showAlert("error", "Gagal memuat daftar feedback");
@@ -49,25 +45,24 @@ export default function Feedback() {
   }, []);
 
   const filteredData = dataList.filter(item => {
-      const matchSearch = (item.judul?.toLowerCase() || "").includes(search.toLowerCase());
-      const matchType = filterType === "Semua" || item.tipe === filterType;
-      return matchSearch && matchType;
+    const matchSearch = (item.judul?.toLowerCase() || "").includes(search.toLowerCase());
+    const matchType = filterType === "Semua" || item.tipe === filterType;
+    return matchSearch && matchType;
   });
 
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(filteredData, 10);
 
   useEffect(() => {
-      jump(1);
+    jump(1);
   }, [filterType, search, dataList]);
 
   const handleOpenDetail = (item) => {
-      setSelectedItem({ id: item.id, tipe: item.tipe });
-      setIsModalOpen(true);
+    setSelectedItem({ id: item.id, tipe: item.tipe });
+    setIsModalOpen(true);
   };
 
   return (
     <div className="space-y-6 relative">
-      {/* --- HEADER DAN LIST TABEL SAMA PERSIS SEPERTI SEBELUMNYA --- */}
       {message.text && (
         <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === "error" ? "border-red-500 text-red-700" : "border-green-500 text-green-700"}`}>
           {message.type === "error" ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
@@ -84,17 +79,17 @@ export default function Feedback() {
 
       <div className="space-y-3">
         <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 outline-none">
-            <div className="relative flex-1 flex items-center">
-                <Search className="absolute left-3 text-gray-400" size={18} />
-                <input type="text" placeholder="Cari berdasarkan nama kegiatan atau layanan..." className="w-full pl-10 pr-4 py-1.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)} />
-                {search && <button onClick={() => setSearch("")} className="absolute right-3 text-gray-400 hover:text-gray-600 transition"><X size={18} /></button>}
-            </div>
+          <div className="relative flex-1 flex items-center">
+            <Search className="absolute left-3 text-gray-400" size={18} />
+            <input type="text" placeholder="Cari berdasarkan nama kegiatan atau layanan..." className="w-full pl-10 pr-4 py-1.5 outline-none bg-transparent" value={search} onChange={(e) => setSearch(e.target.value)} />
+            {search && <button onClick={() => setSearch("")} className="absolute right-3 text-gray-400 hover:text-gray-600 transition"><X size={18} /></button>}
+          </div>
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
-            {['Semua', 'Kegiatan', 'Layanan'].map((tipe) => (
-                <button key={tipe} onClick={() => setFilterType(tipe)} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${filterType === tipe ? 'bg-green-600 text-white border-green-600 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-green-50 hover:text-green-600'}`}>{tipe}</button>
-            ))}
+          {['Semua', 'Kegiatan', 'Layanan'].map((tipe) => (
+            <button key={tipe} onClick={() => setFilterType(tipe)} className={`px-4 py-1.5 rounded-full text-sm font-medium transition-all whitespace-nowrap border ${filterType === tipe ? 'bg-green-600 text-white border-green-600 shadow-md' : 'bg-white text-gray-600 border-gray-200 hover:bg-green-50 hover:text-green-600'}`}>{tipe}</button>
+          ))}
         </div>
       </div>
 
@@ -125,11 +120,11 @@ export default function Feedback() {
                         <td className="p-4"><span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-md ${item.tipe === 'Kegiatan' ? 'bg-purple-100 text-purple-700' : 'bg-teal-100 text-teal-700'}`}>{item.tipe}</span></td>
                         <td className="p-4 text-sm text-gray-600">{item.tanggal}</td>
                         <td className="p-4">
-                           <div className="flex items-center gap-2">
-                               <Star size={16} className="text-yellow-400 fill-yellow-400" />
-                               <span className="font-bold text-gray-700">{item.avg_rating}</span>
-                               <span className="text-xs text-gray-400">({item.total_ulasan} ulasan)</span>
-                           </div>
+                          <div className="flex items-center gap-2">
+                            <Star size={16} className="text-yellow-400 fill-yellow-400" />
+                            <span className="font-bold text-gray-700">{item.avg_rating}</span>
+                            <span className="text-xs text-gray-400">({item.total_ulasan} ulasan)</span>
+                          </div>
                         </td>
                         <td className="p-4 pr-6 text-center">
                           <button onClick={() => handleOpenDetail(item)} className="inline-flex items-center justify-center gap-2 px-3 py-1.5 bg-green-50 text-green-600 hover:bg-green-100 hover:text-green-700 rounded-lg text-sm font-medium transition">
@@ -157,9 +152,9 @@ export default function Feedback() {
                   <div className="text-xs text-gray-500">Diselenggarakan: {item.tanggal}</div>
                   <div className="flex items-center justify-between mt-1 pt-3 border-t border-gray-50">
                     <div className="flex items-center gap-1.5">
-                       <Star size={18} className="text-yellow-400 fill-yellow-400" />
-                       <span className="font-black text-gray-800 text-lg leading-none">{item.avg_rating}</span>
-                       <span className="text-xs text-gray-400 ml-1">({item.total_ulasan} ulasan)</span>
+                      <Star size={18} className="text-yellow-400 fill-yellow-400" />
+                      <span className="font-black text-gray-800 text-lg leading-none">{item.avg_rating}</span>
+                      <span className="text-xs text-gray-400 ml-1">({item.total_ulasan} ulasan)</span>
                     </div>
                     <button onClick={() => handleOpenDetail(item)} className="p-2 bg-green-50 text-green-600 rounded-lg"><MessageSquare size={18} /></button>
                   </div>
@@ -174,7 +169,6 @@ export default function Feedback() {
         </>
       )}
 
-      {/* Modal Detail Feedback DENGAN REFRESH HOOK */}
       <DetailFeedbackModal 
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, CreditCard, Loader2, 
-  AlertTriangle, CheckCircle, X, ChevronLeft, ChevronRight, User, Calendar
+  AlertTriangle, CheckCircle, X, Calendar
 } from "lucide-react";
 import InputTagihanModal from "../../components/InputTagihanModal";
 import DaftarPembayaranModal from "../../components/DaftarPembayaranModal";
@@ -14,10 +14,8 @@ export default function Keuangan() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
-  // Modals
   const [isTagihanOpen, setIsTagihanOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedTagihan, setSelectedTagihan] = useState(null);
@@ -26,7 +24,6 @@ export default function Keuangan() {
   const [selectedTagihanId, setSelectedTagihanId] = useState(null);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/admin/keuangan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -36,9 +33,8 @@ export default function Keuangan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/tagihan?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
+      const res = await api.get("/admin/keuangan/tagihan", {
+        params: { search }
       });
       setDataList(res.data.data);
     } catch (err) {
@@ -52,12 +48,11 @@ export default function Keuangan() {
   useEffect(() => {
     const delay = setTimeout(() => {
         fetchData();
-        jump(1); // Reset page saat search berubah
+        jump(1);
     }, 500);
     return () => clearTimeout(delay);
   }, [search]);
 
-  // --- Handlers ---
   const handleCreate = () => {
     setIsEditing(false);
     setSelectedTagihan(null);
@@ -73,11 +68,12 @@ export default function Keuangan() {
   const handleDelete = async (id) => {
     if (!confirm("Hapus tagihan ini? Data pembayaran terkait mungkin akan terpengaruh.")) return;
     try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`${API_URL}/tagihan/${id}`, { headers: { Authorization: `Bearer ${token}` }});
+        await api.delete(`/admin/keuangan/tagihan/${id}`);
         showAlert("success", "Tagihan dihapus");
         fetchData();
-    } catch (err) { showAlert("error", "Gagal menghapus"); }
+    } catch (err) { 
+      showAlert("error", "Gagal menghapus"); 
+    }
   };
 
   const handleOpenListBayar = (id) => {
@@ -87,24 +83,23 @@ export default function Keuangan() {
 
   const handleSubmitTagihan = async (formData) => {
     try {
-        const token = localStorage.getItem("token");
         if (isEditing) {
-            await axios.put(`${API_URL}/tagihan/${selectedTagihan.id}`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.put(`/admin/keuangan/tagihan/${selectedTagihan.id}`, formData);
             showAlert("success", "Tagihan diperbarui");
         } else {
-            await axios.post(`${API_URL}/tagihan`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.post("/admin/keuangan/tagihan", formData);
             showAlert("success", "Tagihan berhasil dibuat");
         }
         setIsTagihanOpen(false);
         fetchData();
     } catch (err) {
         console.error(err);
-        showAlert("error", "Gagal menyimpan data");
+        showAlert("error", err.response?.data?.message || "Gagal menyimpan data");
     }
   };
 
-  // Helper Formatter
   const formatRupiah = (num) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(num);
+  
   const formatDate = (dateString) => {
     if(!dateString) return "-";
     return new Date(dateString).toLocaleDateString('id-ID', {
@@ -114,14 +109,12 @@ export default function Keuangan() {
 
   return (
     <div className="space-y-6 relative">
-      {/* Alert */}
       {message.text && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
+        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           {message.type === 'error' ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>} <p className="text-sm font-medium">{message.text}</p>
         </div>
       )}
 
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div>
             <h1 className="text-2xl font-bold text-gray-800">Keuangan</h1>
@@ -132,11 +125,10 @@ export default function Keuangan() {
         </button>
       </div>
 
-      {/* Toolbar */}
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 transition-all outline-none">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
-            <input type="text" placeholder="Cari tagihan..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
+            <input type="text" placeholder="Cari tagihan..." className="w-full pl-10 pr-4 py-2.5 outline-none bg-transparent" value={search} onChange={(e) => setSearch(e.target.value)}/>
         </div>
       </div>
 
@@ -147,10 +139,9 @@ export default function Keuangan() {
         </div>
       ) : (
         <>
-            {/* VIEW 1: TABEL (Desktop Only) */}
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-left border-collapse">
+                    <table className="w-full text-left border-collapse table-fixed">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase">
                                 <th className="p-4 w-[30%]">Santri</th>
@@ -193,11 +184,9 @@ export default function Keuangan() {
                 </div>
             </div>
 
-            {/* VIEW 2: CARD (Mobile Only) */}
             <div className="block md:hidden space-y-4">
                 {currentData.length > 0 ? currentData.map((item) => (
                     <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-3">
-                        {/* Header: Nama Santri & Status */}
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center font-bold">
@@ -212,10 +201,7 @@ export default function Keuangan() {
                                 {item.status || "Aktif"}
                             </span>
                         </div>
-
                         <div className="border-t border-gray-100"></div>
-
-                        {/* Details */}
                         <div className="grid grid-cols-2 gap-y-2 text-sm">
                             <div>
                                 <p className="text-xs text-gray-400 mb-0.5">Nominal</p>
@@ -228,8 +214,6 @@ export default function Keuangan() {
                                 </div>
                             </div>
                         </div>
-
-                        {/* Actions */}
                         <div className="grid grid-cols-3 gap-2 mt-2">
                             <button onClick={() => handleOpenListBayar(item.id)} className="py-2 bg-green-50 text-green-600 rounded-lg flex justify-center items-center"><CreditCard size={16}/></button>
                             <button onClick={() => handleEdit(item)} className="py-2 bg-green-50 text-green-600 rounded-lg flex justify-center items-center"><Edit2 size={16}/></button>
@@ -239,7 +223,6 @@ export default function Keuangan() {
                 )) : <div className="text-center p-8 bg-white rounded-xl text-gray-500">Data tidak ditemukan</div>}
             </div>
 
-            {/* Pagination Controls */}
             <Pagination 
                 currentPage={currentPage}
                 totalPages={maxPage}
@@ -249,9 +232,8 @@ export default function Keuangan() {
         </>
       )}
 
-      {/* Modals */}
       <InputTagihanModal isOpen={isTagihanOpen} onClose={() => setIsTagihanOpen(false)} isEditing={isEditing} editData={selectedTagihan} onSubmit={handleSubmitTagihan} />
-      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} userRole={"pengurus"}/>
+      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} userRole={"admin"}/>
     </div>
   );
 }

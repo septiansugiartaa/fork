@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Users, UserCheck, Home, Bell, CreditCard, ArrowUpRight, 
   Clock, CheckCircle, ChevronRight, Loader2, Info, User
@@ -14,8 +14,7 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const res = await axios.get("http://localhost:3000/api/pengurus/dashboard/stats", {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
+        const res = await api.get("/pengurus/dashboard/stats", {
         });
         setData(res.data);
       } catch (err) { console.error(err); } finally { setLoading(false); }
@@ -127,7 +126,7 @@ export default function Dashboard() {
 
         {/* Layanan Terakhir */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 flex justify-between items-center">
+        <div className="p-6 flex justify-between items-center">
             <h3 className="font-bold text-gray-800">Antrean Layanan Terbaru</h3>
         </div>
         <div className="divide-y divide-gray-50">

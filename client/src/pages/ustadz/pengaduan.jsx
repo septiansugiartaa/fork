@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import api from '../../config/api';
 import { 
   ArrowLeft, User, Loader2, Plus, CheckCircle, Search, AlertTriangle, X 
 } from 'lucide-react';
@@ -24,14 +24,6 @@ export default function UstadzPengaduan() {
 
   const navigate = useNavigate();
 
-  const api = axios.create({ baseURL: "http://localhost:3000/api/ustadz/pengaduan" });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -44,7 +36,7 @@ export default function UstadzPengaduan() {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const res = await api.get("/");
+      const res = await api.get("/ustadz/pengaduan/");
       if (res.data.success) {
         setData(res.data.data);
       }
@@ -59,7 +51,7 @@ export default function UstadzPengaduan() {
   const handleCreateSubmit = async (formData) => {
     setIsSaving(true);
     try {
-        const res = await api.post("/", formData);
+        const res = await api.post("/ustadz/pengaduan/", formData);
         if (res.data.success) {
             showAlert("success", res.data.message);
             setIsCreateOpen(false);

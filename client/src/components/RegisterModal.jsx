@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../config/api'; // Menggunakan instance api global
 
 export default function RegisterModal({ open, onClose }) {
   const [formData, setFormData] = useState({
@@ -43,13 +43,12 @@ export default function RegisterModal({ open, onClose }) {
     }
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/register', {
+      // Memanggil endpoint menggunakan instance api dan path relatif proxy
+      const response = await api.post('/auth/register', {
         nip: formData.nip,
         nama: formData.nama,
         password: formData.password,
         confirmPassword: formData.confirmPassword
-      }, {
-        headers: { 'Content-Type': 'application/json' }
       });
 
       setSuccess('Registrasi berhasil! Silakan login.');

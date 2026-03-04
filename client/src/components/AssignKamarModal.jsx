@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../config/api";
 import { X, Save, Loader2, Home, User } from "lucide-react";
 
 export default function AssignKamarModal({ isOpen, onClose, isEditing, editData, onSubmit, saving, preSelectedKamar }) {
@@ -21,17 +21,8 @@ export default function AssignKamarModal({ isOpen, onClose, isEditing, editData,
   const fetchSantriOptions = async () => {
     setLoadingOptions(true);
     try {
-        const token = localStorage.getItem("token");
-        
-        const targetGender = editData?.kamar?.gender || preSelectedKamar?.gender || "";
-        if (targetGender != "Perempuan"){
-            const targetGender = "Laki-laki";
-        }
-
-        const res = await axios.get(`http://localhost:3000/api/pengurus/penempatan-kamar/options?gender=${targetGender}`, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
+        const targetGender = editData?.kamar?.gender || preSelectedKamar?.gender || "Laki-laki";
+        const res = await api.get(`/pengurus/penempatan-kamar/options?gender=${targetGender}`);
         setSantriOptions(res.data.santri);
     } catch (err) { 
         console.error(err); 

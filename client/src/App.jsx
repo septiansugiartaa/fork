@@ -24,7 +24,6 @@ import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
 import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
 import PengurusKeuangan from "./pages/pengurus/keuangan"
 
-import TimkesLayout from "./components/LayoutTimkes"
 import TimkesDashboard from "./pages/timkesehatan/dashboard"
 import TimkesScreening from "./pages/timkesehatan/daftarSantriScreening"
 import TimkesDetailScreening from "./pages/timkesehatan/portalScreening"
@@ -47,6 +46,7 @@ import PimpinanDashboard from "./pages/pimpinan/dashboard"
 import PimpinanSantri from "./pages/pimpinan/dataSantri"
 import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
 import PimpinanMateri from "./pages/pimpinan/viewMateri"
+import PimpinanDetailMateri from "./pages/pimpinan/detailMateri"
 import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 import PimpinanKeuangan from "./pages/pimpinan/keuangan"
 import PimpinanFeedback from "./pages/pimpinan/feedback"
@@ -58,8 +58,11 @@ import AdminUstadz from "./pages/admin/dataUstadz"
 import AdminKelas from "./pages/admin/dataKelas"
 import AdminKamar from "./pages/admin/dataKamar"
 import AdminJenisLayanan from "./pages/admin/jenisLayanan"
-import AdminMateri from "./pages/admin/viewMateri"
 import AdminPengaduan from "./pages/admin/pengaduan"
+import AdminScreening from "./pages/admin/screening/daftarSantriScreening"
+import AdminDetailScreening from "./pages/admin/screening/portalScreening"
+import AdminCreateScreening from "./pages/admin/screening/formScreening"
+import AdminViewScreening from "./pages/admin/screening/viewScreening"
 import AdminKegiatan from "./pages/admin/kegiatan"
 import AdminRiwayatLayanan from "./pages/admin/riwayatLayanan"
 import AdminKeuangan from "./pages/admin/keuangan"
@@ -106,7 +109,7 @@ function App() {
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['timkes']} />}>
-          <Route path="/timkesehatan" element={<TimkesLayout />}>
+          <Route path="/timkesehatan" element={<Layout />}>
             <Route index element={<TimkesDashboard />} />
             <Route path="manageMateri" element={<MateriManage />} />
             <Route path="manageMateri/:id" element={<DetailMateri />} />
@@ -157,6 +160,7 @@ function App() {
             <Route path="data-santri" element={<PimpinanSantri />} />
             <Route path="data-ustadz" element={<PimpinanUstadz />} />
             <Route path="scabies/materi" element={<PimpinanMateri />} />
+            <Route path="scabies/materi/:id" element={<PimpinanDetailMateri />} />
             <Route path="pengaduan" element={<PimpinanPengaduan />} />
             <Route path="keuangan" element={<PimpinanKeuangan />} />
             <Route path="feedback" element={<PimpinanFeedback />} />
@@ -172,13 +176,20 @@ function App() {
             <Route path="data-kelas" element={<AdminKelas />} />
             <Route path="data-kamar" element={<AdminKamar />} />
             <Route path="jenis-layanan" element={<AdminJenisLayanan />} />
-            <Route path="scabies/materi" element={<AdminMateri />} />
             <Route path="pengaduan" element={<AdminPengaduan />} />
             <Route path="kegiatan" element={<AdminKegiatan />} />
             <Route path="riwayat-layanan" element={<AdminRiwayatLayanan />} />
             <Route path="keuangan" element={<AdminKeuangan />} />
             <Route path="feedback" element={<AdminFeedback />} />
             <Route path="log" element={<AdminLog />} />
+
+            <Route path="manageMateri" element={<MateriManage />} />
+            <Route path="manageMateri/:id" element={<DetailMateri />} />
+            <Route path="daftarSantriScreening" element={<AdminScreening />} />
+            <Route path="daftarSantriScreening/:id/create" element={<AdminCreateScreening />} />
+            <Route path="daftarSantriScreening/:id/edit/:screeningId" element={<AdminCreateScreening />} />
+            <Route path="daftarSantriScreening/:id" element={<AdminDetailScreening />} />
+            <Route path="daftarSantriScreening/:id/view/:screeningId" element={<AdminViewScreening />} />
           </Route>
         </Route>
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, Users, Loader2, 
   AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MapPin, Home 
@@ -27,14 +27,12 @@ export default function DataKamar() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/pengurus/kamar";
-
   const showAlert = (type, text) => { setMessage({ type, text }); setTimeout(() => setMessage({ type: "", text: "" }), 3000); };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}?search=${search}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+      const res = await api.get(`/pengurus/kamar?search=${search}`);
       setDataList(res.data.data);
     } catch { showAlert("error", "Gagal memuat data kamar"); } finally { setLoading(false); }
   };
@@ -51,12 +49,11 @@ export default function DataKamar() {
   const handleSubmitKamar = async (formData) => {
     setIsSaving(true);
     try {
-      const token = localStorage.getItem("token");
       if (modalKamar.isEditing) {
-        await axios.put(`${API_URL}/${modalKamar.data.id}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.put(`/pengurus/kamar/${modalKamar.data.id}`, formData);
         showAlert("success", "Data kamar diperbarui");
       } else {
-        await axios.post(API_URL, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.post('/pengurus/kamar', formData);
         showAlert("success", "Kamar ditambahkan");
       }
       setModalKamar({ ...modalKamar, isOpen: false }); 
@@ -75,8 +72,7 @@ export default function DataKamar() {
   const handleAssignSubmit = async (formData) => {
     setIsSaving(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.post("http://localhost:3000/api/pengurus/penempatan-kamar", formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.post("/pengurus/penempatan-kamar", formData);
         showAlert("success", "Santri berhasil dimasukkan ke kamar");
         setModalAssign({ ...modalAssign, isOpen: false });
         setRefreshListKey(prev => prev + 1);

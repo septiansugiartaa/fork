@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import {
   Search,
   CreditCard,
@@ -26,7 +26,6 @@ export default function Keuangan() {
   const [selectedTagihanId, setSelectedTagihanId] = useState(null);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/pimpinan/keuangan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -38,12 +37,7 @@ export default function Keuangan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      // Jika backend sudah punya fitur search lewat query string, biarkan. 
-      // Jika tidak, kita tangani lewat client-side filtering di bawah.
-      const res = await axios.get(`${API_URL}/tagihan?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get(`pimpinan/keuangan/tagihan?search=${search}`);
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -60,28 +54,21 @@ export default function Keuangan() {
     return () => clearTimeout(delay);
   }, [search]);
 
-  // --- LOGIKA FILTER GABUNGAN (SEARCH + CHIP STATUS) ---
+  // --- SEARCH DAN FILTER ---
   const filteredData = dataList.filter(item => {
-      // 1. Cek Pencarian (Search)
-      // Mencari berdasarkan nama santri atau nama tagihan
       const searchTerm = search.toLowerCase();
       const matchSearch = 
         (item.nama_tagihan?.toLowerCase() || "").includes(searchTerm) || 
         (item.users?.nama?.toLowerCase() || "").includes(searchTerm);
       
-      // 2. Cek Chip Filter
-      // Asumsi default status dari backend adalah "Aktif" jika kosong/null
       const currentStatus = item.status || "Aktif"; 
       const matchStatus = filterStatus === "Semua" || currentStatus === filterStatus;
 
-      // Harus lolos kedua kondisi
       return matchSearch && matchStatus;
   });
 
-  // Custom Hook Pagination (Gunakan filteredData, BUKAN dataList)
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(filteredData, 10); // Asumsi 10 item per halaman
 
-  // Reset pagination ke halaman 1 setiap kali filter atau search berubah
   useEffect(() => {
       jump(1);
   }, [filterStatus, search, dataList]);

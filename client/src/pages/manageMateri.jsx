@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { Search, Plus } from "lucide-react";
 import CardMateri from "../components/CardMateri";
 import CreateMateriModal from "../components/CreateMateriModal";
@@ -18,20 +18,11 @@ export default function MateriManage (){
     const fetchMateri = async () => {
             try {
                 setLoading(true);
-                const token = localStorage.getItem("token");
-
-                const res = await fetch(
-                    "http://localhost:3000/api/global/manageMateri",
-                    {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }}
-                );
-                const result = await res.json();
-                    if (result.success) {
-                        setMateri(result.data.list_materi);
+                const res = await api.get("/global/manageMateri",);
+                    if (res.data.success) {
+                        setMateri(res.data.data.list_materi);
                     } else {
-                        console.error(result.message);
+                        console.error(res.data.message);
                         setMateri([]);
                     }
             } catch (err) {
@@ -65,16 +56,7 @@ export default function MateriManage (){
     const handleConfirmDelete = async (id) => {
         try {
             setLoadingDelete(true)
-            const token = localStorage.getItem("token");
-
-            await axios.delete(
-                `http://localhost:3000/api/global/manageMateri/${deleteId}`,
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`
-                    }
-                }
-            );
+            await api.delete(`/global/manageMateri/${deleteId}`);
 
             await fetchMateri(); 
             setShowDeleteModal(false);

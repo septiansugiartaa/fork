@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
 export default function FormScreening() {
@@ -85,21 +85,13 @@ export default function FormScreening() {
 
   const fetchData = async () => {
     try {
-      const token = localStorage.getItem("token");
-
       const [pertanyaanRes, santriRes, penangananRes] = await Promise.all([
-        axios.get(
-          "http://localhost:3000/api/timkesehatan/screening/pertanyaan",
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-        axios.get(
-          `http://localhost:3000/api/timkesehatan/screening/santri/${id}/detail`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        ),
-        axios.get(
-          "http://localhost:3000/api/timkesehatan/screening/penanganan",
-          { headers: { Authorization: `Bearer ${token}` } }
-        )
+        api.get(
+          "/timkesehatan/screening/pertanyaan"),
+        api.get(
+          `/timkesehatan/screening/santri/${id}/detail`),
+        api.get(
+          "/timkesehatan/screening/penanganan")
       ]);
 
       setBagianA(pertanyaanRes.data.data.bagianA);
@@ -109,10 +101,8 @@ export default function FormScreening() {
 
       // MODE EDIT
       if (isEditMode) {
-        const screeningRes = await axios.get(
-          `http://localhost:3000/api/timkesehatan/screening/${screeningId}`,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        const screeningRes = await api.get(
+          `/timkesehatan/screening/${screeningId}`);
 
         const screening = screeningRes.data.data;
 
@@ -182,8 +172,6 @@ export default function FormScreening() {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      const token = localStorage.getItem("token");
-
       const formData = new FormData();
       formData.append("foto", foto);
       if (fotoError) {
@@ -191,11 +179,9 @@ export default function FormScreening() {
         return;
       }
       if (isEditMode) {
-        await axios.put(
-          `http://localhost:3000/api/timkesehatan/screening/${screeningId}/foto`,
-          formData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.put(
+          `/timkesehatan/screening/${screeningId}/foto`,
+          formData);
       } else {
         if (!validateForm()) {
           setSubmitting(false);
@@ -209,11 +195,9 @@ export default function FormScreening() {
         formData.append("diagnosaManual", finalDiagnosa);
         formData.append("penanganan", JSON.stringify(penanganan));
 
-        await axios.post(
-          "http://localhost:3000/api/timkesehatan/screening/create",
-          formData,
-          { headers: { Authorization: `Bearer ${token}` } }
-        );
+        await api.post(
+          "/timkesehatan/screening/create",
+          formData);
       }
 
       navigate(`/timkesehatan/daftarSantriScreening/${id}`);

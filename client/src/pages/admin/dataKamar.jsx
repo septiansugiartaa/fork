@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, Users, Loader2, 
-  AlertTriangle, CheckCircle, ChevronLeft, ChevronRight, MapPin, Home 
+  AlertTriangle, CheckCircle, MapPin, Home 
 } from "lucide-react";
 import KamarModal from "../../components/KamarModal"; 
 import KamarSantriModal from "../../components/KamarSantriModal"; 
@@ -16,10 +16,8 @@ export default function DataKamar() {
   const [search, setSearch] = useState("");
   const [refreshListKey, setRefreshListKey] = useState(0);
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
-  // State Modals
   const [modalKamar, setModalKamar] = useState({ isOpen: false, isEditing: false, data: null });
   const [modalListSantri, setModalListSantri] = useState({ isOpen: false, data: null });
   const [modalAssign, setModalAssign] = useState({ isOpen: false, data: null });
@@ -27,60 +25,73 @@ export default function DataKamar() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/admin/kamar";
-
-  const showAlert = (type, text) => { setMessage({ type, text }); setTimeout(() => setMessage({ type: "", text: "" }), 3000); };
+  const showAlert = (type, text) => { 
+    setMessage({ type, text }); 
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000); 
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}?search=${search}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+      const res = await api.get("/admin/kamar", { params: { search } });
       setDataList(res.data.data);
-    } catch { showAlert("error", "Gagal memuat data kamar"); } finally { setLoading(false); }
+    } catch { 
+      showAlert("error", "Gagal memuat data kamar"); 
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   useEffect(() => { 
-      const delay = setTimeout(() => { 
-          fetchData(); 
-          jump(1); 
-      }, 500); 
-      return () => clearTimeout(delay); 
+    const delay = setTimeout(() => { 
+      fetchData(); 
+      jump(1); 
+    }, 500); 
+    return () => clearTimeout(delay); 
   }, [search, refreshListKey]);
 
-  // --- HANDLERS ---
   const handleSubmitKamar = async (formData) => {
     setIsSaving(true);
     try {
-      const token = localStorage.getItem("token");
       if (modalKamar.isEditing) {
-        await axios.put(`${API_URL}/${modalKamar.data.id}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.put(`/admin/kamar/${modalKamar.data.id}`, formData);
         showAlert("success", "Data kamar diperbarui");
       } else {
-        await axios.post(API_URL, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.post("/admin/kamar", formData);
         showAlert("success", "Kamar ditambahkan");
       }
       setModalKamar({ ...modalKamar, isOpen: false }); 
       fetchData();
-    } catch { showAlert("error", "Gagal menyimpan"); } finally { setIsSaving(false); }
+    } catch { 
+      showAlert("error", "Gagal menyimpan"); 
+    } finally { 
+      setIsSaving(false); 
+    }
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus kamar ini?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
-      showAlert("success", "Kamar dihapus"); fetchData();
-    } catch { showAlert("error", "Gagal menghapus"); }
+      await api.delete(`/admin/kamar/${id}`);
+      showAlert("success", "Kamar dihapus"); 
+      fetchData();
+    } catch { 
+      showAlert("error", "Gagal menghapus"); 
+    }
   };
 
   const handleAssignSubmit = async (formData) => {
     setIsSaving(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.post("http://localhost:3000/api/admin/penempatan-kamar", formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.post("/admin/penempatan-kamar", formData);
         showAlert("success", "Santri berhasil dimasukkan ke kamar");
         setModalAssign({ ...modalAssign, isOpen: false });
         setRefreshListKey(prev => prev + 1);
-    } catch (err) { showAlert("error", "Gagal assign santri"); } finally { setIsSaving(false); }
+    } catch { 
+      showAlert("error", "Gagal assign santri"); 
+    } finally { 
+      setIsSaving(false); 
+    }
   };
 
   const handleOpenListSantri = (kamar) => setModalListSantri({ isOpen: true, data: kamar });
@@ -94,7 +105,6 @@ export default function DataKamar() {
         </div>
       )}
 
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-800">Data Kamar</h1><p className="text-gray-500 text-sm">Kelola data asrama & kapasitas</p></div>
         <button onClick={() => setModalKamar({ isOpen: true, isEditing: false, data: null })} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition">
@@ -102,7 +112,6 @@ export default function DataKamar() {
         </button>
       </div>
 
-      {/* Search */}
       <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
@@ -112,7 +121,6 @@ export default function DataKamar() {
 
       {loading ? <div className="p-12 text-center"><Loader2 className="animate-spin text-green-500 mx-auto mb-2"/><p>Loading...</p></div> : (
         <>
-            {/* VIEW 1: TABLE (Desktop) */}
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -138,7 +146,6 @@ export default function DataKamar() {
                 </div>
             </div>
 
-            {/* VIEW 2: CARD (Mobile) */}
             <div className="block md:hidden space-y-4">
                 {currentData.length > 0 ? currentData.map(item => (
                     <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-3">
@@ -155,12 +162,8 @@ export default function DataKamar() {
                         </div>
                         
                         <div className="border-t border-gray-100 pt-3 grid grid-cols-2 gap-2 text-sm text-gray-600">
-                            <div className="flex items-center gap-2">
-                                <Users size={14} className="text-gray-400"/> {item.kapasitas} Orang
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <MapPin size={14} className="text-gray-400"/> <span className="truncate">{item.lokasi || "-"}</span>
-                            </div>
+                            <div className="flex items-center gap-2"><Users size={14} className="text-gray-400"/> {item.kapasitas} Orang</div>
+                            <div className="flex items-center gap-2"><MapPin size={14} className="text-gray-400"/> <span className="truncate">{item.lokasi || "-"}</span></div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 mt-1">
@@ -171,17 +174,10 @@ export default function DataKamar() {
                 )) : <div className="text-center p-8 bg-white rounded-xl text-gray-500">Data kosong.</div>}
             </div>
 
-            {/* Pagination Controls */}
-            <Pagination 
-                currentPage={currentPage}
-                totalPages={maxPage}
-                onNext={next}
-                onPrev={prev}
-            />
+            <Pagination currentPage={currentPage} totalPages={maxPage} onNext={next} onPrev={prev} />
         </>
       )}
 
-      {/* --- MODALS --- */}
       <KamarModal isOpen={modalKamar.isOpen} onClose={() => setModalKamar({ ...modalKamar, isOpen: false })} isEditing={modalKamar.isEditing} editData={modalKamar.data} onSubmit={handleSubmitKamar} saving={isSaving} />
       <KamarSantriModal isOpen={modalListSantri.isOpen} onClose={() => setModalListSantri({ ...modalListSantri, isOpen: false })} kamarData={modalListSantri.data} onAssignClick={handleOpenAssign} refreshTrigger={refreshListKey} />
       <AssignKamarModal isOpen={modalAssign.isOpen} onClose={() => setModalAssign({ ...modalAssign, isOpen: false })} isEditing={false} preSelectedKamar={modalAssign.data?.kamar} onSubmit={handleAssignSubmit} saving={isSaving} />

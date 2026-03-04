@@ -17,17 +17,22 @@ exports.getProfile = async (req, res) => {
     const ortu = await prisma.users.findUnique({
       where: { id: userId },
       include: {
+        // Relasi dari Users ke tabel OrangTua
         orangtua_orangtua_id_orangtuaTousers: {
           where: { is_active: true },
           include: {
-            users: {
+            users_orangtua_id_santriTousers: {
               include: {
                 kelas_santri: {
-                  where: { is_active: true }, take: 1, orderBy: { id: "desc" },
+                  where: { is_active: true },
+                  take: 1,
+                  orderBy: { id: "desc" },
                   include: { kelas: true }
                 },
                 kamar_santri: {
-                  where: { is_active: true }, take: 1, orderBy: { tanggal_masuk: "desc" },
+                  where: { is_active: true },
+                  take: 1,
+                  orderBy: { tanggal_masuk: "desc" },
                   include: { kamar: true }
                 }
               }
@@ -47,17 +52,20 @@ exports.getProfile = async (req, res) => {
         no_hp: ortu.no_hp || "",
         alamat: ortu.alamat || "",
       },
-      foto_profil: ortu.foto_profil ? `http://localhost:3000/foto-profil/${ortu.foto_profil}` : null,
+      foto_profil: ortu.foto_profil || null,
       
-      anak: ortu.orangtua_orangtua_id_orangtuaTousers.map((rel) => ({
-        id: rel.users.id,
-        nama: rel.users.nama,
-        nip: rel.users.nip || "-",
-        hubungan: rel.hubungan || "Wali",
-        kelas: rel.users.kelas_santri[0]?.kelas?.kelas || "-",
-        kamar: rel.users.kamar_santri[0]?.kamar?.kamar || "-",
-        foto: rel.users.foto_profil ? `http://localhost:3000/foto-profil/${rel.users.foto_profil}` : null
-      }))
+      anak: ortu.orangtua_orangtua_id_orangtuaTousers.map((rel) => {
+        const santri = rel.users_orangtua_id_santriTousers; 
+        return {
+          id: santri.id,
+          nama: santri.nama,
+          nip: santri.nip || "-",
+          hubungan: rel.hubungan || "Wali",
+          kelas: santri.kelas_santri[0]?.kelas?.kelas || "-",
+          kamar: santri.kamar_santri[0]?.kamar?.kamar || "-",
+          foto: santri.foto_profil || null
+        };
+      })
     };
 
     res.json({ success: true, data });
@@ -137,7 +145,7 @@ exports.updatePhoto = async (req, res) => {
     res.json({
       success: true,
       message: "Foto profil diperbarui",
-      data: { url: `http://localhost:3000/foto-profil/${req.file.filename}` },
+      data: { url: req.file.filename },
     });
   } catch (err) {
     console.error("Upload error:", err);

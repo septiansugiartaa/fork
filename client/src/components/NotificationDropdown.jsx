@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Bell, MessageSquare, CreditCard, Calendar, Clock, AlertTriangle, CheckCircle, List } from 'lucide-react';
-import axios from 'axios';
+import api from '../config/api'; // Menggunakan instance api global
 import { useNavigate } from 'react-router-dom';
 
 export default function NotificationDropdown() {
@@ -23,13 +23,8 @@ export default function NotificationDropdown() {
 
     const fetchNotifs = async () => {
         try {
-            const token = localStorage.getItem("token");
-            if (!token) return;
-
-            // Memanggil endpoint berdasarkan rolenya
-            const res = await axios.get(`http://localhost:3000/api/${userRole}/notifications`, {
-                headers: { Authorization: `Bearer ${token}` }
-            });
+            // Memanggil endpoint menggunakan instance api (Auth Token otomatis terkirim)
+            const res = await api.get(`/${userRole}/notifications`);
             
             if (res.data.success) {
                 setNotifs(res.data.data);
@@ -63,9 +58,7 @@ export default function NotificationDropdown() {
         // Jika dibuka dan ada yang unread, matikan titik merahnya ke database
         if (newState && hasUnread) {
             try {
-                await axios.put(`http://localhost:3000/api/${userRole}/notifications/read`, {}, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-                });
+                await api.put(`/${userRole}/notifications/read`);
                 setHasUnread(false);
                 // Ubah state lokal agar border biru hilang
                 setNotifs(notifs.map(n => ({...n, is_new: false})));
@@ -102,6 +95,7 @@ export default function NotificationDropdown() {
         if (diffHrs < 1) return `${diffMins} menit yang lalu`;
         if (diffHrs < 24) return `${diffHrs} jam yang lalu`;
         if (diffDays === 1) return "Kemarin";
+        if (diffDays < 7) return `${diffDays} hari yang lalu`;
         return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     };
 

@@ -43,7 +43,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
         return <Navigate to="/pimpinan" replace />;
     } else if (userRole === 'ustadz') {
         return <Navigate to="/ustadz" replace />;
-    } else if (userRole === 'admin' || userRole === 'administrator') {
+    } else if (userRole === 'admin') {
         return <Navigate to="/admin" replace />;
     } else if (userRole === 'timkes') {
         return <Navigate to="/timkesehatan" replace />;

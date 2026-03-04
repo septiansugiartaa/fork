@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { User, FileText, CreditCard, Calendar, AlertCircle, History, Clock, Bell, ChevronRight, CheckCircle, XCircle, AlertTriangle, Home, Settings, LogOut, Loader2, ChevronDown, Cross } from "lucide-react";
 import NotificationDropdown from "../../components/NotificationDropdown";
 
@@ -12,35 +12,6 @@ export default function SantriDashboard() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/santri";
-
-  // Create axios instance with token
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  // Add token to requests
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  });
-
-  // Handle response errors
-  api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-      if (error.response?.status === 401) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-        navigate("/login");
-      }
-      return Promise.reject(error);
-    }
-  );
 
   // Fetch dashboard data
   useEffect(() => {
@@ -52,7 +23,7 @@ export default function SantriDashboard() {
       setLoading(true);
       setError("");
       
-      const response = await api.get("/");
+      const response = await api.get("/santri");
       
       if (response.data.success) {
         setDashboardData(response.data.data);
@@ -255,7 +226,7 @@ export default function SantriDashboard() {
                     className="flex items-center space-x-3 text-left p-2 rounded-xl hover:bg-white/10 transition focus:outline-none"
                   >
                     <div className="w-10 h-10 rounded-full overflow-hidden bg-white/20 hover:bg-white/30 transition">
-                     <img src={`http://localhost:3000/foto-profil/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
+                     <img src={`/foto-profil/${santri.foto_profil}`} alt={santri.nama} className="w-full h-full object-cover"/>
                     </div>
                     <div>
                       <p className="font-medium leading-tight">{santri.nama}</p>

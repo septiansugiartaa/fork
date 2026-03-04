@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
-  Plus, Search, Eye, Trash2, Edit2, User, Loader2, Mail, Phone, 
-  AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight,
+  Plus, Search, Eye, Trash2, Edit2, Loader2, 
+  AlertTriangle, CheckCircle, X, MapPin, 
   Calendar, Clock, Users, Globe
 } from "lucide-react";
 import CreateKegiatanModal from "../../components/CreateKegiatanModal";
@@ -10,48 +10,35 @@ import DetailKegiatanModal from "../../components/DetailKegiatanModal";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
 
-export default function DataKegiatan() {
+export default function Kegiatan() {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
-  // State Modal Create/Edit
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
-  // State Modal Detail
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
-
-  // State Alert Inline
   const [message, setMessage] = useState({ type: "", text: "" });
 
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const userRole = (currentUser.role || "pengurus").toLowerCase().replace(/\s/g, '');
-  const API_URL = `http://localhost:3000/api/${userRole}/kegiatan`;
 
-  // Helper Alert
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
   };
 
-  // 1. Fetch Data
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-      if(res.data.success){
-          setDataList(res.data.data);
+      const res = await api.get(`/${userRole}/kegiatan`, { params: { search } });
+      if (res.data.success) {
+        setDataList(res.data.data);
       }
     } catch (err) {
-      console.error(err);
       showAlert("error", "Gagal memuat data kegiatan");
     } finally {
       setLoading(false);
@@ -61,12 +48,11 @@ export default function DataKegiatan() {
   useEffect(() => {
     const delayDebounce = setTimeout(() => {
         fetchData();
-        jump(1); // Reset page ke 1 saat search berubah
+        jump(1);
     }, 500);
     return () => clearTimeout(delayDebounce);
   }, [search]);
 
-  // 2. Handlers Modal
   const handleOpenDetail = (item) => {
     setSelectedData(item);
     setIsDetailOpen(true);
@@ -83,21 +69,16 @@ export default function DataKegiatan() {
     setIsFormOpen(true);
   };
 
-  // 3. Submit Handler (Create & Update diproses oleh CreateKegiatanModal)
   const handleSubmitForm = async (formData) => {
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
         let res;
-        // Asumsi CreateKegiatanModal mengirim 'id' jika mode edit
+        const endpoint = `/${userRole}/kegiatan`;
+        
         if (formData.id) {
-            res = await axios.put(`${API_URL}/${formData.id}`, formData, {
-                 headers: { Authorization: `Bearer ${token}` }
-            });
+            res = await api.put(`${endpoint}/${formData.id}`, formData);
         } else {
-            res = await axios.post(API_URL, formData, {
-                 headers: { Authorization: `Bearer ${token}` }
-            });
+            res = await api.post(endpoint, formData);
         }
 
         if (res.data.success) {
@@ -106,27 +87,20 @@ export default function DataKegiatan() {
             fetchData(); 
         }
     } catch (err) {
-        console.error(err);
         showAlert("error", err.response?.data?.message || "Terjadi kesalahan");
     } finally {
         setIsSaving(false);
     }
   };
 
-  // 4. Delete Handler
   const handleDelete = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menonaktifkan kegiatan ini?")) return;
-
-    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/${userRole}/kegiatan/${id}`);
       showAlert("success", "Kegiatan berhasil dinonaktifkan");
       setIsDetailOpen(false);
       fetchData();
     } catch (err) {
-      console.error(err);
       showAlert("error", "Gagal menghapus data");
     }
   };
@@ -134,9 +108,8 @@ export default function DataKegiatan() {
   return (
     <div className="space-y-6 relative">
         
-      {/* Alert */}
       {message.text && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 bg-white ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
           <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
             {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
           </div>
@@ -145,7 +118,6 @@ export default function DataKegiatan() {
         </div>
       )}
 
-      {/* Header Page */}
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-bold text-gray-800">Kegiatan</h1>
@@ -160,7 +132,6 @@ export default function DataKegiatan() {
         <Plus size={20} className="mr-2" /> Tambah Kegiatan
       </button>
 
-      {/* Search Bar */}
       <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus-within:ring-2 focus-within:ring-green-500 outline-none">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
@@ -175,17 +146,16 @@ export default function DataKegiatan() {
         </div>
       ) : (
         <>
-          {/* DESKTOP VIEW (TABEL) */}
           <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse table-fixed">
                 <thead>
                   <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase tracking-wider">
-                    <th className="p-4 font-semibold w-[30%]">Nama Kegiatan</th>
-                    <th className="p-4 font-semibold w-[20%]">Jadwal</th>
-                    <th className="p-4 font-semibold w-[20%]">Lokasi</th>
-                    <th className="p-4 font-semibold w-[20%]">Skala & Status</th>
-                    <th className="p-4 font-semibold text-center w-[10%]">Aksi</th>
+                    <th className="p-4 w-[30%]">Nama Kegiatan</th>
+                    <th className="p-4 w-[20%]">Jadwal</th>
+                    <th className="p-4 w-[20%]">Lokasi</th>
+                    <th className="p-4 w-[20%]">Skala & Status</th>
+                    <th className="p-4 text-center w-[10%]">Aksi</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -226,7 +196,6 @@ export default function DataKegiatan() {
                            </div>
                         </td>
                         <td className="p-4 text-center">
-                          {/* TOMBOL AKSI DITAMBAH EDIT */}
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => handleOpenDetail(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Lihat"><Eye size={18} /></button>
                             <button onClick={() => handleOpenEditForm(item)} className="p-2 text-amber-500 hover:bg-amber-50 rounded-lg transition" title="Edit"><Edit2 size={18} /></button>
@@ -243,7 +212,6 @@ export default function DataKegiatan() {
             </div>
           </div>
 
-          {/* MOBILE VIEW (CARD) */}
           <div className="block md:hidden space-y-4">
             {currentData.length > 0 ? (
                 currentData.map((item) => (
@@ -262,16 +230,12 @@ export default function DataKegiatan() {
                                 </div>
                             </div>
                         </div>
-
                         <div className="border-t border-gray-100"></div>
-
                         <div className="grid grid-cols-1 gap-y-2 text-sm text-gray-600">
                             <div className="flex items-center gap-2"><Calendar size={14} className="text-gray-400"/> <span>{item.tanggal}</span></div>
                             <div className="flex items-center gap-2"><Clock size={14} className="text-gray-400"/> <span>{item.waktu}</span></div>
                             <div className="flex items-start gap-2"><MapPin size={14} className="text-gray-400 mt-0.5 flex-shrink-0"/> <span className="line-clamp-2">{item.lokasi}</span></div>
                         </div>
-
-                        {/* TOMBOL AKSI MOBILE DITAMBAH EDIT */}
                         <div className="grid grid-cols-3 gap-2 mt-1">
                             <button onClick={() => handleOpenDetail(item)} className="py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition">
                                 <Eye size={16}/> View
@@ -290,7 +254,6 @@ export default function DataKegiatan() {
             )}
           </div>
 
-          {/* Pagination Controls */}
           <Pagination 
             currentPage={currentPage}
             totalPages={maxPage}
@@ -300,7 +263,6 @@ export default function DataKegiatan() {
         </>
       )}
 
-      {/* MODALS */}
       <CreateKegiatanModal 
           isOpen={isFormOpen}
           onClose={() => setIsFormOpen(false)}

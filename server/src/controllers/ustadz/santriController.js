@@ -59,36 +59,58 @@ exports.getDaftarSantri = async (req, res) => {
             where: whereCondition,
             orderBy: { nama: 'asc' },
             include: {
-                kelas_santri: { where: { is_active: true }, take: 1, include: { kelas: true } },
-                kamar_santri: { where: { is_active: true }, take: 1, include: { kamar: true } },
-                orangtua: { include: { users_orangtua_id_orangtuaTousers: true }, take: 2 },
-                absensi: { select: { status: true } }
+                kelas_santri: {
+                    where: { is_active: true },
+                    take: 1,
+                    include: { kelas: true }
+                },
+                kamar_santri: {
+                    where: { is_active: true },
+                    take: 1,
+                    include: { kamar: true }
+                },
+                orangtua_orangtua_id_santriTousers: {
+                    where: { is_active: true },
+                    include: {
+                        users_orangtua_id_orangtuaTousers: true
+                }
+                },
+                absensi: {
+                    select: { status: true }
+                }
             }
-        });
+            });
 
         const data = santris.map(s => {
             const totalAbsen = s.absensi.length;
             const totalHadir = s.absensi.filter(a => a.status === 'Hadir').length;
-            const persentaseHadir = totalAbsen > 0 ? Math.round((totalHadir / totalAbsen) * 100) : 0;
+            const persentaseHadir =
+                totalAbsen > 0 ? Math.round((totalHadir / totalAbsen) * 100) : 0;
 
             return {
                 id: s.id,
                 nip: s.nip || "-",
                 nama: s.nama,
                 foto_profil: s.foto_profil,
-                kelas: s.kelas_santri[0]?.kelas?.kelas || "Belum ada kelas",
-                kamar: s.kamar_santri[0]?.kamar?.kamar || "Belum ada kamar",
+                no_hp: s.no_hp || "-",
+                alamat: s.alamat || "-",
+
+                kelas_aktif: s.kelas_santri[0]?.kelas?.kelas || "Belum ada kelas",
+                kamar_aktif: s.kamar_santri[0]?.kamar?.kamar || "Belum ada kamar",
+
                 kehadiran: persentaseHadir,
-                kontak_darurat: s.orangtua.map(ortu => {
+                kontak_orangtua:
+                s.orangtua_orangtua_id_santriTousers?.map(ortu => {
                     const dataOrtu = ortu.users_orangtua_id_orangtuaTousers;
                     return {
                         nama: dataOrtu?.nama || "Tidak Diketahui",
                         hubungan: ortu.hubungan || "Orang Tua/Wali",
-                        no_hp: dataOrtu?.no_hp || "-"
+                        no_hp: dataOrtu?.no_hp || "-",
+                        foto_profil: dataOrtu?.foto_profil || "-"
                     };
-                })
+                }) || []
             };
-        });
+         });
 
         res.json({
             success: true,

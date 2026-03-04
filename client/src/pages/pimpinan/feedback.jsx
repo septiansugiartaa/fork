@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import {
   Search,
   Eye,
@@ -35,11 +35,8 @@ export default function FeedbackView() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
       // Sesuaikan URL dengan routing yang kamu buat
-      const res = await axios.get("http://localhost:3000/api/pimpinan/feedback", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await api.get("/pimpinan/feedback");
       if (res.data.success) {
           setDataList(res.data.data);
       }

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../../config/api';
 import { 
-  User, Loader2, Plus, CheckCircle, Search, AlertTriangle, X, Trash2
+  User, Loader2, CheckCircle, Search, AlertTriangle, X, Trash2
 } from 'lucide-react';
 
 import DetailPengaduanModal from '../../components/DetailPengaduanModal';
@@ -11,19 +11,11 @@ export default function Pengaduan() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState({ type: "", text: "" });
   
-  // Search & Filter state
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [selectedId, setSelectedId] = useState(null);
   
   const userRole = "admin";
-  const api = axios.create({ baseURL: `http://localhost:3000/api/admin/pengaduan` });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -35,9 +27,9 @@ export default function Pengaduan() {
   }, []);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      setLoading(true);
-      const res = await api.get("/");
+      const res = await api.get("/admin/pengaduan");
       if (res.data.success) setData(res.data.data);
     } catch (err) {
       console.error(err);
@@ -50,7 +42,7 @@ export default function Pengaduan() {
   const handleDeleteTiket = async (idAduan) => {
       if (!window.confirm("Yakin ingin menghapus/memoderasi laporan ini secara permanen dari layar utama?")) return;
       try {
-          const res = await api.delete(`/${idAduan}`);
+          const res = await api.delete(`/admin/pengaduan/${idAduan}`);
           if (res.data.success) {
               showAlert("success", "Laporan berhasil dihapus (Soft Delete)");
               fetchData();
@@ -69,13 +61,12 @@ export default function Pengaduan() {
       return matchSearch && matchStatus;
   });
 
-  // Cek apakah user punya hak aksi (Hanya Admin dan Pengurus)
   const canManageTicket = ['admin', 'pengurus'].includes(userRole);
 
   return (
     <div className="space-y-6 relative">
       {message.text && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
+        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
           <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
              {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
           </div>
@@ -98,7 +89,7 @@ export default function Pengaduan() {
             <input 
                 type="text" 
                 placeholder="Cari berdasarkan judul laporan atau nama santri..." 
-                className="w-full pl-10 pr-4 py-1.5 outline-none"
+                className="w-full pl-10 pr-4 py-1.5 outline-none bg-transparent"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
@@ -144,7 +135,7 @@ export default function Pengaduan() {
                 <div className="flex-shrink-0 pt-1">
                   <div className="w-10 h-10 rounded-full bg-orange-50 flex items-center justify-center border border-orange-100 overflow-hidden">
                       {item.santri.foto_profil ? (
-                          <img src={`http://localhost:3000/foto-profil/${item.santri.foto_profil}`} alt={item.santri.nama} className="w-full h-full object-cover" />
+                          <img src={`/foto-profil/${item.santri.foto_profil}`} alt={item.santri.nama} className="w-full h-full object-cover" />
                       ) : (
                           <User size={20} className="text-orange-500" />
                       )}
@@ -183,7 +174,6 @@ export default function Pengaduan() {
                       </div>
                     )}
                     
-                    {/* TOMBOL AKSI KHUSUS ADMIN / PENGURUS */}
                     {canManageTicket && (
                         <div className="flex gap-2 ml-auto">
                             <button 

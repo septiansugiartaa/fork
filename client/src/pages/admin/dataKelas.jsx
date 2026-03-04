@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, Users, Loader2, 
-  AlertTriangle, CheckCircle, ChevronLeft, ChevronRight 
+  AlertTriangle, CheckCircle 
 } from "lucide-react";
 import KelasModal from "../../components/KelasModal"; 
 import KelasSantriModal from "../../components/KelasSantriModal"; 
@@ -16,10 +16,8 @@ export default function DataKelas() {
   const [search, setSearch] = useState("");
   const [refreshListKey, setRefreshListKey] = useState(0);
   
-  // Custom Hook Pagination
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
-  // Modals State
   const [modalKelas, setKelasModal] = useState({ isOpen: false, isEditing: false, data: null });
   const [modalListSantri, setKelasSantriModal] = useState({ isOpen: false, data: null });
   const [modalAssign, setModalAssign] = useState({ isOpen: false, data: null });
@@ -27,59 +25,73 @@ export default function DataKelas() {
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/admin/kelas";
-
-  const showAlert = (type, text) => { setMessage({ type, text }); setTimeout(() => setMessage({ type: "", text: "" }), 3000); };
+  const showAlert = (type, text) => { 
+    setMessage({ type, text }); 
+    setTimeout(() => setMessage({ type: "", text: "" }), 3000); 
+  };
 
   const fetchData = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_URL}?search=${search}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+      const res = await api.get("/admin/kelas", { params: { search } });
       setDataList(res.data.data);
-    } catch { showAlert("error", "Gagal memuat data kelas"); } finally { setLoading(false); }
+    } catch { 
+      showAlert("error", "Gagal memuat data kelas"); 
+    } finally { 
+      setLoading(false); 
+    }
   };
 
   useEffect(() => { 
-      const delay = setTimeout(() => { 
-          fetchData(); 
-          jump(1); // Reset ke halaman 1 saat search berubah
-      }, 500); 
-      return () => clearTimeout(delay); 
+    const delay = setTimeout(() => { 
+      fetchData(); 
+      jump(1); 
+    }, 500); 
+    return () => clearTimeout(delay); 
   }, [search, refreshListKey]);
 
-  // Handlers
   const handleSubmitKelas = async (formData) => {
     setIsSaving(true);
     try {
-      const token = localStorage.getItem("token");
       if (modalKelas.isEditing) {
-        await axios.put(`${API_URL}/${modalKelas.data.id}`, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.put(`/admin/kelas/${modalKelas.data.id}`, formData);
         showAlert("success", "Kelas diperbarui");
       } else {
-        await axios.post(API_URL, formData, { headers: { Authorization: `Bearer ${token}` } });
+        await api.post("/admin/kelas", formData);
         showAlert("success", "Kelas ditambahkan");
       }
       setKelasModal({ ...modalKelas, isOpen: false }); 
       fetchData();
-    } catch { showAlert("error", "Gagal menyimpan"); } finally { setIsSaving(false); }
+    } catch { 
+      showAlert("error", "Gagal menyimpan"); 
+    } finally { 
+      setIsSaving(false); 
+    }
   };
 
   const handleDelete = async (id) => {
     if (!confirm("Hapus kelas ini?")) return;
     try {
-      await axios.delete(`${API_URL}/${id}`, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
-      showAlert("success", "Kelas dihapus"); fetchData();
-    } catch { showAlert("error", "Gagal menghapus"); }
+      await api.delete(`/admin/kelas/${id}`);
+      showAlert("success", "Kelas dihapus"); 
+      fetchData();
+    } catch { 
+      showAlert("error", "Gagal menghapus"); 
+    }
   };
 
   const handleAssignSubmit = async (formData) => {
     setIsSaving(true);
     try {
-        await axios.post("http://localhost:3000/api/admin/penempatan-kelas", formData, { headers: { Authorization: `Bearer ${localStorage.getItem("token")}` } });
+        await api.post("/admin/penempatan-kelas", formData);
         showAlert("success", "Santri berhasil dimasukkan");
         setModalAssign({ ...modalAssign, isOpen: false });
         setRefreshListKey(prev => prev + 1);
-    } catch { showAlert("error", "Gagal assign santri"); } finally { setIsSaving(false); }
+    } catch { 
+      showAlert("error", "Gagal assign santri"); 
+    } finally { 
+      setIsSaving(false); 
+    }
   };
 
   const handleOpenListSantri = (kelas) => setKelasSantriModal({ isOpen: true, data: kelas });
@@ -93,7 +105,6 @@ export default function DataKelas() {
         </div>
       )}
 
-      {/* Header */}
       <div className="flex justify-between items-center">
         <div><h1 className="text-2xl font-bold text-gray-800">Data Kelas</h1><p className="text-gray-500 text-sm">Kelola data kelas & tahun ajaran</p></div>
         <button onClick={() => setKelasModal({ isOpen: true, isEditing: false, data: null })} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition">
@@ -101,7 +112,6 @@ export default function DataKelas() {
         </button>
       </div>
 
-      {/* Search */}
       <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-3 text-gray-400" size={18} />
@@ -111,7 +121,6 @@ export default function DataKelas() {
 
       {loading ? <div className="p-12 text-center"><Loader2 className="animate-spin text-green-500 mx-auto mb-2"/><p>Loading...</p></div> : (
         <>
-            {/* VIEW 1: TABLE (Desktop) */}
             <div className="hidden md:block bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
@@ -140,7 +149,6 @@ export default function DataKelas() {
                 </div>
             </div>
 
-            {/* VIEW 2: CARD (Mobile) */}
             <div className="block md:hidden space-y-4">
                 {currentData.length > 0 ? currentData.map(item => (
                     <div key={item.id} className="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-3">
@@ -160,24 +168,17 @@ export default function DataKelas() {
                         </div>
 
                         <div className="grid grid-cols-2 gap-3 mt-1">
-                            <button onClick={() => setKelasModal({ isOpen: true, isEditing: true, data: item })} className="py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2"><Edit2 size={16}/> Edit</button>
+                            <button onClick={() => setModalKelas({ isOpen: true, isEditing: true, data: item })} className="py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2"><Edit2 size={16}/> Edit</button>
                             <button onClick={() => handleOpenListSantri(item)} className="py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2"><Users size={16}/> Santri</button>
                         </div>
                     </div>
                 )) : <div className="text-center p-8 bg-white rounded-xl text-gray-500">Data kosong.</div>}
             </div>
 
-            {/* Pagination Controls */}
-            <Pagination 
-                currentPage={currentPage}
-                totalPages={maxPage}
-                onNext={next}
-                onPrev={prev}
-            />
+            <Pagination currentPage={currentPage} totalPages={maxPage} onNext={next} onPrev={prev} />
         </>
       )}
 
-      {/* Modals */}
       <KelasModal isOpen={modalKelas.isOpen} onClose={() => setKelasModal({ ...modalKelas, isOpen: false })} isEditing={modalKelas.isEditing} editData={modalKelas.data} onSubmit={handleSubmitKelas} saving={isSaving} />
       <KelasSantriModal isOpen={modalListSantri.isOpen} onClose={() => setKelasSantriModal({ ...modalListSantri, isOpen: false })} kelasData={modalListSantri.data} onAssignClick={handleOpenAssign} refreshTrigger={refreshListKey} />
       <AssignKelasModal isOpen={modalAssign.isOpen} onClose={() => setModalAssign({ ...modalAssign, isOpen: false })} isEditing={false} preSelectedKelas={modalAssign.data?.kelas} onSubmit={handleAssignSubmit} saving={isSaving} />

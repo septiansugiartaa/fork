@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, User, Loader2, Mail, Phone, 
   AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight 
@@ -25,8 +25,6 @@ export default function DataUstadz() {
   // State Alert
   const [message, setMessage] = useState({ type: "", text: "" });
 
-  const API_URL = "http://localhost:3000/api/pengurus/ustadz";
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -36,10 +34,7 @@ export default function DataUstadz() {
   const fetchUstadz = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/ustadz?search=${search}`);
       setUstadzList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,17 +68,12 @@ export default function DataUstadz() {
   // 3. Submit Handler
   const handleSubmit = async (formData) => {
     setIsSaving(true);
-    const token = localStorage.getItem("token");
     try {
       if (isEditing) {
-        await axios.put(`${API_URL}/${selectedData.id}`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.put(`/pengurus/ustadz/${selectedData.id}`, formData);
         showAlert("success", "Data ustadz diperbarui");
       } else {
-        await axios.post(API_URL, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.post("/pengurus/ustadz", formData);
         showAlert("success", "Ustadz baru ditambahkan");
       }
       setIsModalOpen(false);
@@ -100,11 +90,8 @@ export default function DataUstadz() {
   const handleDelete = async (id) => {
     if (!window.confirm("Apakah Anda yakin ingin menonaktifkan akun ini?")) return;
 
-    const token = localStorage.getItem("token");
     try {
-      await axios.delete(`${API_URL}/${id}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.delete(`/pengurus/ustadz/${id}`);
       showAlert("success", "Akun berhasil dinonaktifkan");
       fetchUstadz();
     } catch (err) {

@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   User, Save, Lock, Camera, ArrowLeft, Loader2, 
   AlertTriangle, CheckCircle, X
@@ -25,19 +25,6 @@ export default function UstadzProfile() {
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
   
-  const API_URL = "http://localhost:3000/api/ustadz/profile"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
-
   const showAlert = (type, text) => {
     setMessage({ type, text });
     setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
@@ -50,7 +37,7 @@ export default function UstadzProfile() {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/");
+      const response = await api.get("/ustadz/profile");
       if (response.data.success) {
         const { data_kepegawaian, data_diri, foto_profil } = response.data.data;
         setDataKepegawaian(data_kepegawaian);
@@ -70,7 +57,7 @@ export default function UstadzProfile() {
     setSaving(true);
     setMessage({ type: "", text: "" });
     try {
-      await api.put("/update", dataDiri);
+      await api.put("/ustadz/profile/update", dataDiri);
       showAlert("success", "Data diri berhasil disimpan");
     } catch (err) {
       showAlert("error", "Gagal menyimpan perubahan");
@@ -83,7 +70,7 @@ export default function UstadzProfile() {
   const handleSubmitPassword = async (passwordBaru) => {
     setSaving(true);
     try {
-      await api.put("/password", { password_baru: passwordBaru });
+      await api.put("/ustadz/profile/password", { password_baru: passwordBaru });
       showAlert("success", "Password berhasil diubah");
       setShowPasswordModal(false);
     } catch (err) {
@@ -103,7 +90,7 @@ export default function UstadzProfile() {
     
     try {
       setSaving(true); 
-      const res = await api.post('/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
+      const res = await api.post('/ustadz/profile/photo', formData, { headers: { 'Content-Type': 'multipart/form-data' } });
       if (res.data.success) {
           setFotoProfil(res.data.data.url);
           showAlert("success", "Foto profil berhasil diperbarui");

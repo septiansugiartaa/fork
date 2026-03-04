@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Search, X, Loader2 } from "lucide-react";
 import CardMateri from "../../components/CardMateri";
+import api from "../../config/api";
 
 export default function MateriView() {
     const [materi, setMateri] = useState([]);
@@ -10,21 +11,13 @@ export default function MateriView() {
     const fetchMateri = async () => {
         setLoading(true);
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(
-                "http://localhost:3000/api/global/viewMateri",
-                {
-                    headers: {
-                        Authorization: `Bearer ${token}`,
-                        "Cache-Control": "no-cache"
-                    }
-                }
-            );
-            const result = await res.json();
-            if (result.success) {
-                setMateri(result.data.list_materi);
+            // Menggunakan instance api global dengan relative path (mendukung proxy)
+            const res = await api.get("/global/viewMateri");
+            
+            if (res.data.success) {
+                setMateri(res.data.data.list_materi);
             } else {
-                console.error(result.message);
+                console.error(res.data.message);
                 setMateri([]);
             }
         } catch (err) {
@@ -91,8 +84,7 @@ export default function MateriView() {
                                 <CardMateri 
                                     key={item.id} 
                                     materi={item} 
-                                    // Sesuaikan detailBasePath dengan routing di GlobalLayout kamu
-                                    detailBasePath="/materi/detail" 
+                                    detailBasePath="/pimpinan/scabies/materi" 
                                 />
                             ))
                         ) : (

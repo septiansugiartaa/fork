@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   ArrowLeft, Loader2, Search, Calendar, Clock, MapPin, ChevronDown, 
   AlertTriangle, CheckCircle, X, Plus, Users, Globe
@@ -27,18 +27,6 @@ export default function Kegiatan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
-  const API_URL = "http://localhost:3000/api/ustadz/kegiatan"; 
-
-  const api = axios.create({
-    baseURL: API_URL,
-    timeout: 10000,
-  });
-
-  api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
-    return config;
-  });
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -52,7 +40,7 @@ export default function Kegiatan() {
   const fetchKegiatan = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
+      const res = await api.get(`/ustadz/kegiatan/?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
       if (res.data.success) {
         setKegiatans(res.data.data);
         if(res.data.list_kelas) setMyClasses(res.data.list_kelas);
@@ -102,9 +90,9 @@ export default function Kegiatan() {
     try {
         let res;
         if (formData.id) {
-            res = await api.put(`/${formData.id}`, formData);
+            res = await api.put(`/ustadz/kegiatan/${formData.id}`, formData);
         } else {
-            res = await api.post("/", formData);
+            res = await api.post("/ustadz/kegiatan/", formData);
         }
 
         if (res.data.success) {
@@ -123,7 +111,7 @@ export default function Kegiatan() {
   const handleDelete = async (id) => {
     if(!window.confirm("Yakin hapus kegiatan ini?")) return;
     try {
-        await api.delete(`/${id}`);
+        await api.delete(`/ustadz/kegiatan/${id}`);
         showAlert("success", "Kegiatan berhasil dihapus");
         setIsDetailOpen(false);
         fetchKegiatan();

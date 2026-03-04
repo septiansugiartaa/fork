@@ -59,7 +59,7 @@ exports.createUstadz = async (req, res) => {
             if (existing) return res.status(400).json({ message: "NIP sudah terdaftar" });
         }
 
-        const hashedPassword = await bcrypt.hash(password || "123456", 10); // Default password
+        const hashedPassword = await bcrypt.hash(password || "12345678", 10); // Default password
 
         const newUstadz = await prisma.users.create({
             data: {
