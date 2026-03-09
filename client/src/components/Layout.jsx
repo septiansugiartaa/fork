@@ -18,7 +18,8 @@ import {
   AlertCircle,
   Loader2,
   Star,
-  History
+  History,
+  Receipt
 } from "lucide-react";
 
 export default function GlobalLayout() {
@@ -81,6 +82,12 @@ export default function GlobalLayout() {
       roles: ["pengurus", "admin", "pimpinan"],
     },
     {
+      name: "Data Orang Tua",
+      path: "/data-orangtua",
+      icon: Users,
+      roles: ["pengurus", "admin", "pimpinan"],
+    },
+    {
       name: "Data Ustadz",
       path: "/data-ustadz",
       icon: Users,
@@ -96,6 +103,12 @@ export default function GlobalLayout() {
       name: "Data Kamar",
       path: "/data-kamar",
       icon: BedDouble,
+      roles: ["pengurus", "admin"],
+    },
+    {
+      name: "Jenis Tagihan",
+      path: "/jenis-tagihan",
+      icon: Receipt,
       roles: ["pengurus", "admin"],
     },
     {
