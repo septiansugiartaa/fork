@@ -53,7 +53,7 @@ exports.getDashboardStats = async (req, res) => {
             prisma.jenis_tagihan.count({ where: { is_active: true } })
         ]);
 
-        // 5. SYSTEM HEALTH
+        // 5. SYSTEM HEALTH (Orphan Check)
         const orphanKamar = await prisma.user_role.count({
             where: {
                 role: { role: 'Santri' },
@@ -93,17 +93,40 @@ exports.getDashboardStats = async (req, res) => {
             orderBy: { created_at: 'desc' }
         });
 
+        // 8. DATA SANTRI BELUM LENGKAP (Baru)
+        const baseActiveSantri = {
+            is_active: true,
+            user_role: { some: { role: { role: 'Santri' }, is_active: true } }
+        };
+
+        const [noHp, noEmail, noOrtu, totalIncomplete] = await Promise.all([
+            prisma.users.count({ where: { ...baseActiveSantri, OR: [{ no_hp: null }, { no_hp: "" }] } }),
+            prisma.users.count({ where: { ...baseActiveSantri, OR: [{ email: null }, { email: "" }] } }),
+            prisma.users.count({ where: { ...baseActiveSantri, orangtua_orangtua_id_santriTousers: { none: { is_active: true } } } }),
+            prisma.users.count({
+                where: {
+                    ...baseActiveSantri,
+                    OR: [
+                        { no_hp: null }, { no_hp: "" },
+                        { email: null }, { email: "" },
+                        { orangtua_orangtua_id_santriTousers: { none: { is_active: true } } }
+                    ]
+                }
+            })
+        ]);
+
         res.json({
             success: true,
             stats: {
                 admin: {
                     nama: adminData.nama,
-                    role: adminRole // Mengirim string role yang sudah diekstrak
+                    role: adminRole 
                 },
                 totalUsers,
                 totalSantri,
                 totalStaff,
                 santriGender: { Laki: santriLaki, Perempuan: santriPerempuan },
+                incompleteSantri: { noHp, noEmail, noOrtu, totalIncomplete },
                 masterData: { kamar, kelas, layanan, tagihan },
                 systemHealth: { orphanKamar, orphanKelas }
             },
