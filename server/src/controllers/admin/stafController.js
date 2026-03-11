@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs');
 // Helper untuk mengambil list staf
 exports.getStaffList = async (req, res) => {
   try {
-    const targetRoles = ['Admin', 'Pimpinan', 'Timkes', 'Pengurus'];
+    const targetRoles = ['Admin', 'Pimpinan', 'Tim Kesehatan', 'Pengurus'];
     const staff = await prisma.users.findMany({
       where: {
         is_active: true,

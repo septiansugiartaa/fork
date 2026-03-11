@@ -45,7 +45,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
         return <Navigate to="/ustadz" replace />;
     } else if (userRole === 'admin') {
         return <Navigate to="/admin" replace />;
-    } else if (userRole === 'timkes') {
+    } else if (userRole === 'timkesehatan') {
         return <Navigate to="/timkesehatan" replace />;
     } else {
         // Fallback jika role tidak dikenali

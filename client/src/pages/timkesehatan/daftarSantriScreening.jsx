@@ -10,6 +10,14 @@ export default function DaftarSantriScreening() {
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(search);
+    }, 400);
+
+    return () => clearTimeout(timer);
+  }, [search]);
 
   const navigate = useNavigate();
   const limit = 5;
@@ -18,7 +26,7 @@ export default function DaftarSantriScreening() {
     setLoading(true);
     try {
       const res = await api.get("/timkesehatan/screening/santri", {
-        params: { search, page, limit }
+        params: { search: debouncedSearch, page, limit }
       });
 
       setSantriList(res.data.data);
@@ -35,11 +43,11 @@ export default function DaftarSantriScreening() {
 
   useEffect(() => {
     fetchSantri();
-  }, [search, page]);
+  }, [debouncedSearch, page]);
 
   useEffect(() => {
     setPage(1);
-  }, [search]);
+  }, [debouncedSearch]);
 
   const getDiagnosaStyle = (diagnosa) => {
     if (!diagnosa) return "text-gray-500";
@@ -117,7 +125,7 @@ export default function DaftarSantriScreening() {
                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                               {item.foto_profil ? (
                                 <img
-                                  src={`http://localhost:3000/foto-profil/${item.foto_profil}`}
+                                  src={`/foto-profil/${item.foto_profil}`}
                                   alt={item.nama}
                                   className="w-full h-full object-cover"
                                 />
@@ -160,7 +168,7 @@ export default function DaftarSantriScreening() {
 
                         {/* TOTAL SCREENING */}
                         <td className="p-4 text-center text-gray-700">
-                          {item.screening_screening_id_santriTousers?.length || 0}
+                          {item._count?.screening_screening_id_santriTousers || 0}
                         </td>
 
                         {/* AKSI */}
@@ -194,7 +202,7 @@ export default function DaftarSantriScreening() {
           <div className="md:hidden space-y-4">
             {santriList.map((item) => {
               const latest = item.screening_screening_id_santriTousers?.[0];
-              const total = item.screening_screening_id_santriTousers?.length || 0;
+              const total = item._count?.screening_screening_id_santriTousers || 0;
 
               return (
                 <div

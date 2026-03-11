@@ -74,14 +74,24 @@ export default function FormScreening() {
   }, [id]);
 
   useEffect(() => {
-    const totalYa = jawaban.filter(j => j.jawaban === true).length;
+    const bagianBIds = bagianB.map(
+      b => b.id_pertanyaan_screening
+    );
+    
+    const totalYa = jawaban.filter(
+      j =>
+        bagianBIds.includes(j.id_pertanyaan_screening) &&
+        j.jawaban === true
+    ).length;
 
     let hasil = "Bukan_Scabies";
-    if (totalYa > 5) hasil = "Scabies";
-    else if (totalYa >= 3) hasil = "Perlu_Evaluasi_Lebih_Lanjut";
+
+    if (totalYa > 4) hasil = "Scabies";
+    else if (totalYa >= 2) hasil = "Perlu_Evaluasi_Lebih_Lanjut";
 
     setDiagnosaOtomatis(hasil);
-  }, [jawaban]);
+
+  }, [jawaban, bagianB]);
 
   const fetchData = async () => {
     try {
@@ -109,7 +119,8 @@ export default function FormScreening() {
         setJawaban(
           screening.detail_screening.map(d => ({
             id_pertanyaan_screening: d.id_pertanyaan_screening,
-            jawaban: d.jawaban
+            jawaban: d.jawaban,
+            nilai_number: d.nilai_number
           }))
         );
 
@@ -121,7 +132,7 @@ export default function FormScreening() {
 
         if (screening.foto_predileksi) {
           setPreview(
-            `http://localhost:3000/uploads/screening/${screening.foto_predileksi}`
+            `/uploads/screening/${screening.foto_predileksi}`
           );
         }
       }
@@ -172,17 +183,27 @@ export default function FormScreening() {
   const handleSubmit = async () => {
     try {
       setSubmitting(true);
-      const formData = new FormData();
-      formData.append("foto", foto);
+
       if (fotoError) {
         setSubmitting(false);
         return;
       }
+
+      const formData = new FormData();
+
+      if (foto) {
+        formData.append("foto", foto);
+      }
+
       if (isEditMode) {
+
         await api.put(
           `/timkesehatan/screening/${screeningId}/foto`,
-          formData);
+          formData
+        );
+
       } else {
+
         if (!validateForm()) {
           setSubmitting(false);
           return;
@@ -197,13 +218,19 @@ export default function FormScreening() {
 
         await api.post(
           "/timkesehatan/screening/create",
-          formData);
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data"
+            }
+          }
+        );
       }
 
       navigate(`/timkesehatan/daftarSantriScreening/${id}`);
 
     } catch (err) {
-      console.error(err);
+      console.error("Submit Error:", err.response?.data || err.message);
     } finally {
       setSubmitting(false);
     }
@@ -485,8 +512,7 @@ function Radio({ item, value, handleChange, disabled, jawaban }) {
     j => j.id_pertanyaan_screening === item.id_pertanyaan_screening
   );
 
-  const isChecked =
-    selected && selected.jawaban === (value === "ya");
+  const isChecked = selected?.jawaban === (value === "ya");
 
   return (
     <label className="flex items-center gap-2">

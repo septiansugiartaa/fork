@@ -25,8 +25,8 @@ exports.getSantriList = async (req, res) => {
 
     if (search.trim()) {
       whereCondition.OR = [
-        { nama: { contains: search, mode: "insensitive" } },
-        { nip: { contains: search, mode: "insensitive" } }
+        { nama: { contains: search } },
+        { nip: { contains: search } }
       ];
     }
 
@@ -156,7 +156,7 @@ exports.postScreening = async (req, res) => {
   let uploadedFile = null;
 
   try {
-    if (req.user.role !== "timkes") {
+    if (req.user.role !== "timkesehatan") {
       return res.status(403).json({ success: false, message: "Akses ditolak" });
     }
 
@@ -232,7 +232,8 @@ exports.postScreening = async (req, res) => {
           total_skor: totalSkor,
           status: "Selesai",
           diagnosa,
-          foto_predileksi: uploadedFile
+          foto_predileksi: uploadedFile,
+          is_active: true
         }
       });
 
@@ -274,9 +275,11 @@ exports.postScreening = async (req, res) => {
       }
     }
 
+    console.error("POST SCREENING ERROR:", error);
+
     res.status(500).json({
       success: false,
-      message: "Gagal menyimpan screening"
+      message: error.message
     });
   }
 };

@@ -63,7 +63,7 @@ export default function Login() {
     else if (role === "pimpinan") navigate("/pimpinan", { replace });
     else if (role === "ustadz") navigate("/ustadz", { replace });
     else if (role === "admin") navigate("/admin", { replace });
-    else if (role === "timkes") navigate("/timkesehatan", { replace });
+    else if (role === "timkesehatan") navigate("/timkesehatan", { replace });
     else navigate("/login");
   };
 

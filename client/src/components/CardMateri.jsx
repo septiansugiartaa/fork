@@ -24,8 +24,8 @@ function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
           <button onClick={() => navigate(`${detailBasePath}/${materi.id}`)} className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm transition hover:bg-green-800 hover:text-white">Baca Selengkapnya</button>
           {isManage && (
             <div className="flex justify-between mt-1 mb-2 gap-1">
-              <button className="w-1/2 py-2.5 bg-yellow-50 text-yellow-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2" onClick={() => onEdit(materi)}><Edit2 size={16}/> Edit</button>
-              <button className="w-1/2 py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2" onClick={() => onDelete(materi.id)}><Trash2 size={16}/> Hapus</button>
+              <button className="w-1/2 py-2.5 bg-yellow-50 text-yellow-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition hover:bg-yellow-500 hover:text-white" onClick={() => onEdit(materi)}><Edit2 size={16}/> Edit</button>
+              <button className="w-1/2 py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition hover:bg-red-500 hover:text-white" onClick={() => onDelete(materi.id)}><Trash2 size={16}/> Hapus</button>
             </div>
           )}
         </div>

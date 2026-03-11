@@ -68,7 +68,7 @@ function DetailMateri() {
   if (!materi) return <div className="p-10 text-center text-gray-500">Materi tidak ditemukan</div>;
 
   // VIEW KHUSUS TIM KESEHATAN (Layout Dashboard)
-  if (role === "timkes") {
+  if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
         {/* Gambar - Menggunakan path relatif proxy */}

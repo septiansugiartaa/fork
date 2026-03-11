@@ -15,7 +15,7 @@ function DetailMateri() {
   const role = user?.role?.trim().toLowerCase();
 
   const rolePathMap = {
-    timkes: "/timkesehatan/manageMateri",
+    timkesehatan: "/timkesehatan/manageMateri",
     santri: "/santri/scabies/viewMateri",
     admin: "/admin/manageMateri",
     // orangtua: "orangtua/viewMateri"
@@ -83,7 +83,7 @@ function DetailMateri() {
     }
   if (!materi) return <p>Materi tidak ditemukan</p>;
 
-  if (role === "timkes") {
+  if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
 

@@ -110,7 +110,7 @@ model heading_absensi {
 
 model item_kebersihan {
   id_item          Int                               @id @default(autoincrement())
-  nama_item        String                            @db.VarChar(20)
+  nama_item        String                            @db.VarChar(500)
   waktu_pengerjaan item_kebersihan_waktu_pengerjaan?
   is_active        Boolean
   absensi_detail   absensi_detail[]
@@ -346,6 +346,7 @@ model screening {
   diagnosa                         screening_diagnosa
   catatan                          String?                @db.Text
   foto_predileksi                  String?                @db.VarChar(255)
+  is_active                        Boolean
   detail_screening                 detail_screening[]
   users_screening_id_timkesTousers users                  @relation("screening_id_timkesTousers", fields: [id_timkes], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "screening_users_FK")
   users_screening_id_santriTousers users                  @relation("screening_id_santriTousers", fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "screening_users_FK_1")
@@ -478,11 +479,6 @@ enum absensi_status {
   Alpa
 }
 
-enum absensi_detail_status {
-  Belum_Selesai @map("Belum Selesai")
-  Selesai
-}
-
 enum kamar_gender {
   Laki_laki @map("Laki-laki")
   Perempuan
@@ -555,4 +551,9 @@ enum activity_log_aksi {
 enum pertanyaan_screening_tipe_jawaban {
   BOOLEAN
   NUMBER
+}
+
+enum absensi_detail_status {
+  Tidak_Dilakukan @map("Tidak Dilakukan")
+  Dilakukan
 }

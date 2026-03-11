@@ -39,7 +39,7 @@ export default function ViewScreening() {
     if (!data) return null;
 
     const santri = data.users_screening_id_santriTousers;
-    const timkes = data.users_screening_id_timkesTousers;
+    const timkesehatan = data.users_screening_id_timkesTousers;
 
     const kelas =
         santri?.kelas_santri?.[0]?.kelas?.kelas || "-";
@@ -165,12 +165,12 @@ export default function ViewScreening() {
                 <div className="mb-8">
                     {data.foto_predileksi ? (
                         <a
-                        href={`http://localhost:3000/uploads/screening/${data.foto_predileksi}`}
+                        href={`/uploads/screening/${data.foto_predileksi}`}
                         target="_blank"
                         rel="noreferrer"
                         >
                             <img
-                                src={`http://localhost:3000/uploads/screening/${data.foto_predileksi}`}
+                                src={`/uploads/screening/${data.foto_predileksi}`}
                                 alt="foto"
                                 className="w-56 border border-green-600 rounded-md hover:scale-105 transition"
                             />
@@ -214,7 +214,7 @@ export default function ViewScreening() {
                 <div className="space-y-2 text-[12px]">
                     <div className="flex">
                         <p className="w-40">Nama Pemeriksa</p>
-                        <p>: {timkes?.nama}</p>
+                        <p>: {timkesehatan?.nama}</p>
                     </div>
 
                     <div className="flex">
