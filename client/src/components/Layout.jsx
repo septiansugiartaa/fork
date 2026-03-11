@@ -20,7 +20,8 @@ import {
   Loader2,
   Star,
   History,
-  BookCheck
+  BookCheck,
+  Receipt
 } from "lucide-react";
 
 export default function GlobalLayout() {
@@ -95,7 +96,6 @@ export default function GlobalLayout() {
       icon: Users,
       roles: ["pengurus", "admin", "pimpinan"],
     },
-
     {
       name: "Data Ustadz",
       path: "/data-ustadz",
@@ -116,7 +116,6 @@ export default function GlobalLayout() {
       icon: BedDouble,
       roles: ["pengurus", "admin"],
     },
-
     {
       name: "Jenis Layanan",
       path: "/jenis-layanan",

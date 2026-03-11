@@ -12,11 +12,9 @@ exports.getKelas = async (req, res) => {
             },
             orderBy: { kelas: 'asc' },
             include: {
-                // Include Wali Kelas Info
                 users: { 
                     select: { nama: true, nip: true } 
                 },
-                // Optional: Count active students for UI display if needed
                 _count: {
                     select: { kelas_santri: { where: { is_active: true } } }
                 }
@@ -39,6 +37,7 @@ exports.getSantriByKelas = async (req, res) => {
             },
             include: {
                 users: {
+                    where: {is_active: true},
                     select: { id: true, nama: true, nip: true, foto_profil: true }
                 }
             },

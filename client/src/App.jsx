@@ -17,12 +17,15 @@ import MateriManage from "./pages/manageMateri"
 
 import PengurusDashboard from "./pages/pengurus/dashboard"
 import PengurusSantri from "./pages/pengurus/dataSantri"
+import PengurusOrangtua from "./pages/pengurus/dataOrangtua"
 import PengurusUstadz from "./pages/pengurus/dataUstadz"
 import PengurusKelas from "./pages/pengurus/dataKelas"
 import PengurusKamar from "./pages/pengurus/dataKamar"
 import PengurusJenisLayanan from "./pages/pengurus/jenisLayanan"
+import PengurusJenisTagihan from "./pages/pengurus/jenisTagihan"
 import PengurusRiwayatLayanan from "./pages/pengurus/riwayatLayanan"
 import PengurusKeuangan from "./pages/pengurus/keuangan"
+import PengurusKegiatan from "./pages/pengurus/kegiatan"
 
 import TimkesDashboard from "./pages/timkesehatan/dashboard"
 import TimkesScreening from "./pages/timkesehatan/daftarSantriScreening"
@@ -58,10 +61,12 @@ import PimpinanFeedback from "./pages/pimpinan/feedback"
 import AdminDashboard from "./pages/admin/dashboard"
 import AdminStaf from "./pages/admin/manajemenStaf"
 import AdminSantri from "./pages/admin/dataSantri"
+import AdminOrangtua from "./pages/admin/dataOrangtua"
 import AdminUstadz from "./pages/admin/dataUstadz"
 import AdminKelas from "./pages/admin/dataKelas"
 import AdminKamar from "./pages/admin/dataKamar"
 import AdminJenisLayanan from "./pages/admin/jenisLayanan"
+import AdminJenisTagihan from "./pages/admin/jenisTagihan"
 import AdminPengaduan from "./pages/admin/pengaduan"
 import AdminScreening from "./pages/admin/screening/daftarSantriScreening"
 import AdminDetailScreening from "./pages/admin/screening/portalScreening"
@@ -103,12 +108,15 @@ function App() {
           <Route path="/pengurus" element={<Layout />}>
             <Route index element={<PengurusDashboard />} />
             <Route path="data-santri" element={<PengurusSantri />} />
+            <Route path="data-orangtua" element={<PengurusOrangtua />} />
             <Route path="data-ustadz" element={<PengurusUstadz />} />
             <Route path="data-kelas" element={<PengurusKelas />} />
             <Route path="data-kamar" element={<PengurusKamar />} />
             <Route path="jenis-layanan" element={<PengurusJenisLayanan />} />
+            <Route path="jenis-tagihan" element={<PengurusJenisTagihan />} />
             <Route path="riwayat-layanan" element={<PengurusRiwayatLayanan />} />
             <Route path="keuangan" element={<PengurusKeuangan />} />
+            <Route path="kegiatan" element={<PengurusKegiatan />} />
           </Route>
         </Route>
 
@@ -183,10 +191,12 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="data-staf" element={<AdminStaf />} />
             <Route path="data-santri" element={<AdminSantri />} />
+            <Route path="data-orangtua" element={<AdminOrangtua />} />
             <Route path="data-ustadz" element={<AdminUstadz />} />
             <Route path="data-kelas" element={<AdminKelas />} />
             <Route path="data-kamar" element={<AdminKamar />} />
             <Route path="jenis-layanan" element={<AdminJenisLayanan />} />
+            <Route path="jenis-tagihan" element={<AdminJenisTagihan />} />
             <Route path="pengaduan" element={<AdminPengaduan />} />
             <Route path="kegiatan" element={<AdminKegiatan />} />
             <Route path="riwayat-layanan" element={<AdminRiwayatLayanan />} />
