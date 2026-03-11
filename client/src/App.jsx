@@ -29,6 +29,10 @@ import TimkesScreening from "./pages/timkesehatan/daftarSantriScreening"
 import TimkesDetailScreening from "./pages/timkesehatan/portalScreening"
 import TimkesCreateScreening from "./pages/timkesehatan/formScreening"
 import TimkesViewScreening from "./pages/timkesehatan/viewScreening"
+import TimkesAbsensiKebersihan from "./pages/timkesehatan/daftarKamarAbsensi"
+import TimkesDetailAbsensi from "./pages/timkesehatan/portalAbsensi"
+import TimkesCreateAbsensi from "./pages/timkesehatan/formAbsensi"
+import TimkesLaporanAbsensi from "./pages/timkesehatan/viewAbsensi"
 
 import OrangtuaDashboard from "./pages/orangtua/dashboard"
 import OrangtuaProfile from "./pages/orangtua/pendataan"
@@ -108,7 +112,7 @@ function App() {
           </Route>
         </Route>
 
-        <Route element={<ProtectedRoute allowedRoles={['timkes']} />}>
+        <Route element={<ProtectedRoute allowedRoles={['timkesehatan']} />}>
           <Route path="/timkesehatan" element={<Layout />}>
             <Route index element={<TimkesDashboard />} />
             <Route path="manageMateri" element={<MateriManage />} />
@@ -130,8 +134,15 @@ function App() {
               path="/timkesehatan/daftarSantriScreening/:id/view/:screeningId"
               element={<TimkesViewScreening />}
             />
+            <Route path="daftarAbsensiKamar" element={<TimkesAbsensiKebersihan />}/>
+            <Route path="daftarAbsensiKamar/:id" element={<TimkesDetailAbsensi />} />
+            <Route path="daftarAbsensiKamar/:id/create" element={<TimkesCreateAbsensi />} />
+            <Route
+              path="/timkesehatan/daftarAbsensiKamar/:id/edit/:id_heading"
+              element={<TimkesCreateAbsensi/>}
+              />
+            <Route path="daftarAbsensiKamar/:id/laporan" element={<TimkesLaporanAbsensi />} />
           </Route>
-          
         </Route>
 
         <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>

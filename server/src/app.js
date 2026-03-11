@@ -88,6 +88,7 @@ app.use('/api/admin/log', require('./routes/admin/logRoutes'));
 app.use('/api/admin/screening', require('./routes/admin/screeningRoutes'));
 
 app.use('/api/timkesehatan/screening', require('./routes/timkesehatan/screeningRoutes'));
+app.use('/api/timkesehatan/absensi', require('./routes/timkesehatan/absensiRoutes'));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -12,7 +12,7 @@ export default function InputStafModal({ isOpen, onClose, isEditing, editData, o
   };
 
   const [formData, setFormData] = useState(initialForm);
-  const availableRoles = ["Admin", "Pimpinan", "Timkes", "Pengurus", "Ustadz"];
+  const availableRoles = ["Admin", "Pimpinan", "Tim Kesehatan", "Pengurus", "Ustadz"];
 
   useEffect(() => {
     if (isOpen) {

@@ -55,7 +55,7 @@ export default function ViewScreening() {
     if (!data) return null;
 
     const santri = data.users_screening_id_santriTousers;
-    const timkes = data.users_screening_id_timkesTousers;
+    const timkesehatan = data.users_screening_id_timkesTousers;
     const kelas = santri?.kelas_santri?.[0]?.kelas?.kelas || "-";
     const kamar = santri?.kamar_santri?.[0]?.kamar?.kamar || "-";
     const bagianA = data.detail_screening.filter(d => d.pertanyaan_screening.bagian === "A");
@@ -137,7 +137,7 @@ export default function ViewScreening() {
                 </div>
 
                 <div className="mt-10 space-y-2 text-[12px] border-t pt-6">
-                    <div className="flex"><p className="w-40">Pemeriksa</p><p>: {timkes?.nama || "Tim Kesehatan"}</p></div>
+                    <div className="flex"><p className="w-40">Pemeriksa</p><p>: {timkesehatan?.nama || "Tim Kesehatan"}</p></div>
                     <div className="flex"><p className="w-40">Status</p><p>: Terverifikasi Sistem</p></div>
                 </div>
             </div>
