@@ -3,6 +3,7 @@ const router = express.Router();
 const santriController = require('../../controllers/admin/santriController');
 
 router.get('/', santriController.getSantri);
+router.get('/:id/ortu', santriController.getOrtuBySantri);
 router.post('/', santriController.createSantri);
 router.put('/:id', santriController.updateSantri);
 router.delete('/:id', santriController.deleteSantri);

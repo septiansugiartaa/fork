@@ -36,10 +36,9 @@ exports.getSantri = async (req, res) => {
                 tanggal_lahir: true,
                 foto_profil: true,
                 is_active: true,
-                // --- NEW: Fetch Active Class & Room ---
                 kelas_santri: {
                     where: { is_active: true },
-                    take: 1, // Only get the current/latest active one
+                    take: 1, 
                     select: {
                         kelas: { select: { kelas: true } }
                     }
@@ -50,8 +49,10 @@ exports.getSantri = async (req, res) => {
                     select: {
                         kamar: { select: { kamar: true, lokasi: true } }
                     }
+                },
+                _count: {
+                    select: { orangtua_orangtua_id_santriTousers: { where: { is_active: true } } }
                 }
-                // --------------------------------------
             }
         });
 
@@ -59,7 +60,8 @@ exports.getSantri = async (req, res) => {
         const formattedData = santriList.map(santri => ({
             ...santri,
             kelas_aktif: santri.kelas_santri[0]?.kelas?.kelas || "-",
-            kamar_aktif: santri.kamar_santri[0]?.kamar?.kamar || "-"
+            kamar_aktif: santri.kamar_santri[0]?.kamar?.kamar || "-",
+            jumlah_ortu: santri._count.orangtua_orangtua_id_santriTousers
         }));
 
         res.json({ success: true, data: formattedData });
@@ -143,19 +145,78 @@ exports.updateSantri = async (req, res) => {
     }
 };
 
-// 4. DELETE: Soft Delete (Set is_active = false)
+// 4. DELETE: Cascading Soft Delete (Set is_active = false)
 exports.deleteSantri = async (req, res) => {
     const { id } = req.params;
+    const userId = parseInt(id);
 
     try {
-        await prisma.users.update({
-            where: { id: parseInt(id) },
-            data: { is_active: false } // Soft Delete
+        await prisma.$transaction([
+            // 1. Nonaktifkan User utama
+            prisma.users.update({
+                where: { id: userId },
+                data: { is_active: false }
+            }),
+            
+            // 2. Nonaktifkan Role-nya
+            prisma.user_role.updateMany({
+                where: { id_user: userId },
+                data: { is_active: false }
+            }),
+
+            // 3. Keluarkan dari Kamar aktif
+            prisma.kamar_santri.updateMany({
+                where: { id_santri: userId, is_active: true },
+                data: { 
+                    is_active: false,
+                    tanggal_keluar: new Date()
+                }
+            }),
+
+            // 4. Keluarkan dari Kelas aktif
+            prisma.kelas_santri.updateMany({
+                where: { id_santri: userId, is_active: true },
+                data: { is_active: false }
+            }),
+
+            // 5. Nonaktifkan relasi Wali / Orang Tuanya
+            prisma.orangtua.updateMany({
+                where: { id_santri: userId },
+                data: { is_active: false }
+            })
+        ]);
+
+        res.json({ success: true, message: "Santri beserta seluruh relasi datanya berhasil dinonaktifkan" });
+    } catch (error) {
+        console.error("Error Soft Delete Santri:", error);
+        res.status(500).json({ success: false, message: "Gagal menonaktifkan santri beserta datanya" });
+    }
+};
+
+// 5. GET: Daftar Orang Tua/Wali
+exports.getOrtuBySantri = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const relasi = await prisma.orangtua.findMany({
+            where: { id_santri: parseInt(id), is_active: true },
+            include: {
+                users_orangtua_id_orangtuaTousers: {
+                    select: { id: true, nama: true, no_hp: true, foto_profil: true }
+                }
+            }
         });
 
-        res.json({ success: true, message: "Santri berhasil dinonaktifkan" });
+        const data = relasi.map(r => ({
+            id_relasi: r.id,
+            id_ortu: r.users_orangtua_id_orangtuaTousers.id,
+            nama: r.users_orangtua_id_orangtuaTousers.nama,
+            no_hp: r.users_orangtua_id_orangtuaTousers.no_hp,
+            foto_profil: r.users_orangtua_id_orangtuaTousers.foto_profil,
+            hubungan: r.hubungan
+        }));
+
+        res.json({ success: true, data });
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ success: false, message: "Gagal menghapus santri" });
+        res.status(500).json({ success: false, message: "Gagal memuat data orang tua" });
     }
 };
