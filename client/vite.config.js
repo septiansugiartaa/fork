@@ -10,10 +10,10 @@ export default defineConfig({
   ],
   server: {
     proxy: {
-      '/api': {target: 'http://localhost:3000', changeOrigin: true},
-      '/foto-profil': {target: 'http://localhost:3000', changeOrigin: true},
-      '/uploads': {target: 'http://localhost:3000', changeOrigin: true},
-      '/payments': {target: 'http://localhost:3000', changeOrigin: true}
+      '/api': {target: 'https://55ggsk56-3000.asse.devtunnels.ms', changeOrigin: true},
+      '/foto-profil': {target: 'https://55ggsk56-3000.asse.devtunnels.ms', changeOrigin: true},
+      '/uploads': {target: 'https://55ggsk56-3000.asse.devtunnels.ms', changeOrigin: true},
+      '/payments': {target: 'https://55ggsk56-3000.asse.devtunnels.ms', changeOrigin: true}
     }
   }
 })

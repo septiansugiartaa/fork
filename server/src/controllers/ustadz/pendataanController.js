@@ -32,10 +32,8 @@ exports.getProfile = async (req, res) => {
         email: ustadz.email,
         no_hp: ustadz.no_hp,
         alamat: ustadz.alamat,
-      },
-      foto_profil: ustadz.foto_profil
-        ? `/foto-profil/${ustadz.foto_profil}`
-        : null
+        foto_profil: ustadz.foto_profil
+      }
     };
 
     res.json({ success: true, data });

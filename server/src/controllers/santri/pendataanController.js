@@ -61,11 +61,8 @@ exports.getProfile = async (req, res) => {
         email: santri.email,
         no_hp: santri.no_hp,
         alamat: santri.alamat,
+        foto_profil: santri.foto_profil
       },
-      // URL Foto: Pastikan app.js sudah set static folder ke /uploads
-      foto_profil: santri.foto_profil
-        ? `http://localhost:3000/foto-profil/${santri.foto_profil}`
-        : null,
 
       // PERBAIKAN 2: Mapping array juga harus pakai nama relasi yang panjang
       orang_tua: santri.orangtua_orangtua_id_santriTousers.map((ot) => ({

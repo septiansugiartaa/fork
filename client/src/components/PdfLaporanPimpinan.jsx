@@ -2,11 +2,23 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import html2canvas from "html2canvas-pro";
 
+import logoPesantren from "../assets/logo-border.png"; 
+
+const getBase64ImageFromUrl = async (imageUrl) => {
+  const res = await fetch(imageUrl);
+  const blob = await res.blob();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+};
+
 export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
   if (!data) return;
 
   try {
-    // 1. OPTIMASI
     const doc = new jsPDF({
       orientation: "p",
       unit: "mm",
@@ -14,45 +26,68 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
       compress: true 
     });
 
-    const margin = { left: 30, top: 20, right: 30, bottom: 25 }; 
+    const margin = { left: 20, right: 20, bottom: 20 }; 
+    const firstPageMarginTop = 10; 
+    const normalMarginTop = 20;
     const printWidth = 210 - margin.left - margin.right;
-    let cursorY = margin.top;
+    let cursorY = firstPageMarginTop;
 
     const checkPageBreak = (requiredSpace) => {
       if (cursorY + requiredSpace > 297 - margin.bottom) {
         doc.addPage();
-        cursorY = margin.top;
+        cursorY = normalMarginTop;
       }
     };
 
     const formatRupiah = (angka) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(angka);
 
-
     // KOP SURAT
-    doc.setFont("times", "bold");
-    doc.setFontSize(14);
-    doc.text("LAPORAN PIMPINAN", 105, cursorY, { align: "center" });
+    // a. Sisipkan Logo di pojok kiri Kop Surat
+    try {
+      const logoBase64 = await getBase64ImageFromUrl(logoPesantren);
+      doc.addImage(logoBase64, "PNG", margin.left, cursorY, 21, 21, undefined, 'FAST');
+    } catch (error) {
+      console.warn("Gagal memuat logo kop surat:", error);
+    }
+
+    // b. Teks Kop Surat 
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(10);
+    doc.text("YAYASAN DARUNNA'IM YAPIA", 105, cursorY + 6, { align: "center" });
     
-    cursorY += 6;
     doc.setFontSize(12);
-    doc.setFont("times", "normal");
-    doc.text("Sistem Informasi Manajemen Pondok Pesantren (SIM-Tren)", 105, cursorY, { align: "center" });
-    cursorY += 6;
-    doc.text("Pondok Pesantren Darunna'im Yapia", 105, cursorY, { align: "center" });
+    doc.text("PONDOK PESANTREN MODERN DARUN-NA'IM YAPIA", 105, cursorY + 11, { align: "center" });
+    
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(8);
+    doc.text("Jl. Demang Aria Rt. 01 Rw. 03 Desa Waru Jaya, Kec. Parung, Kab. Bogor", 105, cursorY + 15, { align: "center" });
+    doc.text("Email: ponpesmodern.darunnaimyapia@gmail.com | IG: @ponpes_modern_darun_naim_yapia", 105, cursorY + 18, { align: "center" });
+
+    // c. Garis Bawah Kop Surat
+    cursorY += 23; 
+    doc.setLineWidth(0.8);
+    doc.line(margin.left, cursorY, 210 - margin.right, cursorY);
+    cursorY += 1;
+    doc.setLineWidth(0.2);
+    doc.line(margin.left, cursorY, 210 - margin.right, cursorY);
+    
+    // JUDUL DOKUMEN & TANGGAL
+    cursorY += 8;
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(14);
+    doc.text("LAPORAN MANAJEMEN PIMPINAN", 105, cursorY, { align: "center" });
     
     cursorY += 6;
     doc.setFontSize(10);
-    doc.setFont("times", "italic");
+    doc.setFont("helvetica", "italic");
     const tglCetak = new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
     doc.text(`Tanggal Cetak: ${tglCetak}`, 105, cursorY, { align: "center" });
 
-    cursorY += 5;
-    doc.setLineWidth(0.5);
-    doc.line(margin.left, cursorY, 210 - margin.right, cursorY);
-    cursorY += 10;
+    cursorY += 12; 
+
 
     // 1. RINGKASAN KEUANGAN
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("1. Ringkasan Keuangan", margin.left, cursorY);
     cursorY += 4;
@@ -68,15 +103,14 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
       theme: 'grid',
       headStyles: { fillColor: [22, 163, 74], halign: 'center' }, 
       columnStyles: { 0: { cellWidth: 100 }, 1: { halign: 'center' } },
-      styles: { font: 'times', fontSize: 10 }
+      styles: { font: 'helvetica', fontSize: 10 }
     });
     cursorY = doc.lastAutoTable.finalY + 8;
 
-    // Sisipkan Grafik Keuangan (Bar Chart)
+    // Grafik Keuangan (Bar Chart)
     if (barChartRef && barChartRef.current) {
       const barCanvas = await html2canvas(barChartRef.current, { scale: 2, backgroundColor: "#FFFFFF" });
       
-      // 2. OPTIMASI: Ubah ke JPEG dan turunkan kualitas ke 70% (0.7)
       const barImg = barCanvas.toDataURL("image/jpeg", 0.7);
       const imgProps = doc.getImageProperties(barImg);
       const pdfImgWidth = 120; 
@@ -85,14 +119,13 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
 
       checkPageBreak(pdfImgHeight + 10);
       
-      // 3. OPTIMASI: Set format JPEG dan gunakan parameter kompresi 'FAST'
       doc.addImage(barImg, "JPEG", centeredX, cursorY, pdfImgWidth, pdfImgHeight, undefined, 'FAST');
       cursorY += pdfImgHeight + 12;
     }
 
     // 2. REKAPITULASI KESEHATAN SANTRI
     checkPageBreak(30);
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("2. Rekapitulasi Kesehatan (Screening Scabies)", margin.left, cursorY);
     cursorY += 4;
@@ -109,7 +142,7 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
       theme: 'grid',
       headStyles: { fillColor: [22, 163, 74], halign: 'center' },
       columnStyles: { 0: { cellWidth: 100 }, 1: { halign: 'center' } },
-      styles: { font: 'times', fontSize: 10 }
+      styles: { font: 'helvetica', fontSize: 10 }
     });
     cursorY = doc.lastAutoTable.finalY + 8;
 
@@ -117,7 +150,6 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
     if (pieChartRef && pieChartRef.current) {
       const pieCanvas = await html2canvas(pieChartRef.current, { scale: 2, backgroundColor: "#FFFFFF" });
       
-      // 2. OPTIMASI: Ubah ke JPEG dan turunkan kualitas ke 70% (0.7)
       const pieImg = pieCanvas.toDataURL("image/jpeg", 0.7);
       const pieSize = 90; 
       const imgProps = doc.getImageProperties(pieImg);
@@ -126,14 +158,13 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
 
       checkPageBreak(pdfImgHeight + 10);
       
-      // 3. OPTIMASI: Set format JPEG dan gunakan parameter kompresi 'FAST'
       doc.addImage(pieImg, "JPEG", centeredX, cursorY, pieSize, pdfImgHeight, undefined, 'FAST');
       cursorY += pdfImgHeight + 12;
     }
 
     // 3. REKAPITULASI PENGADUAN
     checkPageBreak(40);
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("3. Rekapitulasi Pengaduan", margin.left, cursorY);
     cursorY += 4;
@@ -150,13 +181,13 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
       theme: 'grid',
       headStyles: { fillColor: [22, 163, 74], halign: 'center' },
       columnStyles: { 0: { cellWidth: 100 }, 1: { halign: 'center', fontStyle: 'bold' } },
-      styles: { font: 'times', fontSize: 10 }
+      styles: { font: 'helvetica', fontSize: 10 }
     });
     cursorY = doc.lastAutoTable.finalY + 12;
 
     // 4. INDEKS KEPUASAN SANTRI
     checkPageBreak(20);
-    doc.setFont("times", "bold");
+    doc.setFont("helvetica", "bold");
     doc.setFontSize(11);
     doc.text("4. Indeks Kepuasan Santri", margin.left, cursorY);
     cursorY += 4;
@@ -171,7 +202,7 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
       theme: 'grid',
       headStyles: { fillColor: [22, 163, 74], halign: 'center' },
       columnStyles: { 0: { cellWidth: 100 }, 1: { halign: 'center', fontStyle: 'bold' } },
-      styles: { font: 'times', fontSize: 10 }
+      styles: { font: 'helvetica', fontSize: 10 }
     });
 
     // FOOTER HALAMAN
@@ -179,9 +210,9 @@ export const PdfLaporanPimpinan = async (data, barChartRef, pieChartRef) => {
     for (let i = 1; i <= pageCount; i++) {
       doc.setPage(i);
       doc.setFontSize(8);
-      doc.setFont("times", "italic");
+      doc.setFont("helvetica", "italic");
       doc.setTextColor(100);
-      doc.text("Dokumen ini dihasilkan secara otomatis oleh sistem SIM-Tren.", 105, 297 - 15, { align: "center" });
+      doc.text("Dokumen ini dihasilkan secara otomatis oleh SIM-Tren.", 105, 297 - 15, { align: "center" });
       doc.text(`Halaman ${i} dari ${pageCount}`, 210 - margin.right, 297 - 15, { align: "right" });
     }
 
