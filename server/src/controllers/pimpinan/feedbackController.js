@@ -114,7 +114,6 @@ exports.getFeedbackDetail = async (req, res) => {
       if (jl) {
         const rawFeedbacks = await prisma.feedback.findMany({
           where: {
-            is_active: true,
             riwayat_layanan: { id_layanan: targetId }
           },
           orderBy: { tanggal: 'desc' },
@@ -146,7 +145,8 @@ exports.getFeedbackDetail = async (req, res) => {
         foto_user: f.users?.foto_profil || null,
         rating: f.rating,
         komentar: f.isi_text,
-        tanggal: formatDate(f.tanggal)
+        tanggal: formatDate(f.tanggal),
+        is_active: f.is_active
     }));
 
     res.json({ success: true, detail, feedbacks: formattedFeedbacks });

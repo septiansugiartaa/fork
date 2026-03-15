@@ -256,7 +256,10 @@ export default function Dashboard() {
                         <span className="text-xs text-gray-400 flex items-center">
                           <Clock size={12} className="mr-1"/> {formatDate(item.waktu)}
                         </span>
-                        <button onClick={() => navigate(`/ustadz/pengaduan/${item.id}`)} className="text-xs font-bold text-orange-600 hover:text-orange-700">
+                        <button 
+                          onClick={() => navigate('/ustadz/pengaduan', { state: { openAduanId: item.id } })} 
+                          className="text-xs font-bold text-orange-600 hover:text-orange-700"
+                        >
                           Lihat Selengkapnya &rarr;
                         </button>
                       </div>

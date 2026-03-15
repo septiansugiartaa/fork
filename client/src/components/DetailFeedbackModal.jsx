@@ -58,7 +58,7 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
             <div className="space-y-6">
               <div className="bg-green-50 p-4 rounded-xl border border-green-100">
                 <p className="text-xs text-green-600 font-bold uppercase mb-1">Target {targetItem.tipe}</p>
-                <h4 className="text-lg font-bold text-gray-800">{data.judul}</h4>
+                <h4 className="text-lg font-bold text-gray-800">{data.detail.judul}</h4>
               </div>
 
               <div>
@@ -70,11 +70,15 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
                     <div key={f.id} className="p-4 rounded-xl border border-gray-100 bg-white shadow-sm relative group">
                       <div className="flex justify-between items-start mb-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500">
-                            <span className="text-xs font-bold">{f.users?.nama?.charAt(0)}</span>
+                          <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 overflow-hidden">
+                            {f.foto_user ? (
+                                <img src={`/uploads/profil/${f.foto_user}`} alt="" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-xs font-bold">{f.nama_user?.charAt(0)}</span>
+                            )}
                           </div>
                           <div>
-                            <p className="text-sm font-bold text-gray-800">{f.users?.nama}</p>
+                            <p className="text-sm font-bold text-gray-800">{f.nama_user}</p>
                             <p className="text-[10px] text-gray-400">{new Date(f.tanggal).toLocaleDateString('id-ID')}</p>
                           </div>
                         </div>
@@ -86,7 +90,7 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
                       </div>
                       <div className="pl-11">
                         {f.is_active ? (
-                          <p className="text-sm text-gray-600 leading-relaxed italic">"{f.isi_text || 'Tidak ada komentar.'}"</p>
+                          <p className="text-sm text-gray-600 leading-relaxed italic">"{f.komentar || 'Tidak ada komentar.'}"</p>
                         ) : (
                           <div className="flex items-center gap-2 text-red-400 text-xs bg-red-50 p-2 rounded-lg">
                             <span>🚫</span>
@@ -95,7 +99,7 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
                         )}
                       </div>
                       {role === 'admin' && f.is_active && (
-                        <button onClick={() => handleHideFeedback(f.id)} className="absolute right-4 top-4 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-md transition">
+                        <button onClick={() => handleHideFeedback(f.id)} className="absolute right-4 top-8 p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-md transition">
                           <Trash2 size={16} />
                         </button>
                       )}
