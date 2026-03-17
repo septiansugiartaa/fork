@@ -253,7 +253,8 @@ export default function FeedbackView() {
       <DetailFeedbackModal 
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
-          targetItem={selectedItem}
+          targetItem={selectedItem} 
+          role="pimpinan"
       />
     </div>
   );

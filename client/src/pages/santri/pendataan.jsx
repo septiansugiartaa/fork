@@ -257,7 +257,7 @@ export default function SantriProfile() {
           <h2 className="text-lg font-bold text-gray-800 mb-6 text-left">Foto Profil</h2>
           <div className="relative inline-block group">
             <div className="w-28 h-28 md:w-32 md:h-32 rounded-full bg-green-100 flex items-center justify-center border-4 border-white shadow-md mx-auto overflow-hidden">
-              {fotoProfil ? <img src={fotoProfil} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : <User size={64} className="text-green-400" />}
+              {dataDiri.foto_profil ? <img src={`/foto-profil/${dataDiri.foto_profil}`} alt="Profil" className="w-full h-full object-cover" onError={(e) => { e.target.onerror = null; e.target.src = ""; setFotoProfil(null); }} /> : <User size={64} className="text-green-400" />}
             </div>
             <input type="file" ref={fileInputRef} className="hidden" accept="image/png, image/jpeg, image/jpg" onChange={handlePhotoUpload} />
             <button onClick={() => fileInputRef.current.click()} disabled={saving} className="absolute bottom-0 right-0 bg-green-600 text-white p-2 rounded-full hover:bg-green-700 shadow-sm transition border-2 border-white cursor-pointer">{saving ? <Loader2 size={18} className="animate-spin" /> : <Camera size={18} />}</button>

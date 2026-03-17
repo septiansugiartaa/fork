@@ -12,8 +12,8 @@ const ConfirmDeleteModal = ({ isOpen, onClose, onConfirm, loading }) => {
         </div>
         <p className="text-gray-600 mb-6">Apakah Anda yakin ingin menghapus data ini?</p>
         <div className="flex justify-end gap-3">
-          <button onClick={onClose} className="w-1/4 py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm transition">Batal</button>
-          <button onClick={onConfirm} disabled={loading} className="w-1/4 py-2.5 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition">
+          <button onClick={onClose} className="w-1/4 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold text-sm transition">Batal</button>
+          <button onClick={onConfirm} disabled={loading} className="w-1/4 py-2.5 bg-white border border-gray-300 hover:bg-gray-200 text-gray-800 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 transition">
             <Trash2 size={16}/> {loading ? "Loading.." : "Hapus"}
           </button>
         </div>

@@ -89,7 +89,7 @@ export default function Pengaduan() {
             <input 
                 type="text" 
                 placeholder="Cari berdasarkan judul laporan atau nama santri..." 
-                className="w-full pl-10 pr-4 py-1.5 outline-none bg-transparent"
+                className="w-full pl-10 pr-4 py-2.5 outline-none bg-transparent"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
             />
