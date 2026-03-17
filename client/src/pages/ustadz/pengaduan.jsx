@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../../config/api';
 import { 
   ArrowLeft, User, Loader2, Plus, CheckCircle, Search, AlertTriangle, X 
@@ -23,6 +23,7 @@ export default function UstadzPengaduan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -32,6 +33,21 @@ export default function UstadzPengaduan() {
   useEffect(() => {
     fetchData();
   }, []);
+
+  useEffect(() => {
+    if (!loading && data.length > 0 && location.state?.openAduanId) {
+      
+      const targetId = location.state.openAduanId;
+      
+      const isExist = data.find(item => item.id === targetId);
+      
+      if (isExist) {
+        setSelectedId(targetId);
+        
+        window.history.replaceState({}, document.title);
+      }
+    }
+  }, [loading, data, location.state]);
 
   const fetchData = async () => {
     try {

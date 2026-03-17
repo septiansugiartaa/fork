@@ -21,7 +21,10 @@ import {
   Star,
   History,
   BookCheck,
-  Receipt
+  Receipt,
+  BarChart3,
+  UserPlus,
+  ClipboardCheck
 } from "lucide-react";
 
 export default function GlobalLayout() {
@@ -193,6 +196,32 @@ export default function GlobalLayout() {
       path: "/feedback",
       icon: Star,
       roles: ["admin", "pimpinan"],
+    },
+
+    {
+      category: "PPDB",
+      roles: ["pengurus", "admin", "pimpinan"],
+    },
+
+    {
+      name: "Rekapitulasi",
+      path: "/ppdb/rekapitulasi",
+      icon: BarChart3,
+      roles: ["pengurus", "admin", "pimpinan"],
+    },
+
+    {
+      name: "Pendaftar",
+      path: "/ppdb/pendaftar",
+      icon: UserPlus,
+      roles: ["pengurus", "admin", "pimpinan"],
+    },
+
+    {
+      name: "Seleksi",
+      path: "/ppdb/seleksi",
+      icon: ClipboardCheck,
+      roles: ["pengurus", "admin", "pimpinan"],
     },
 
     { category: "LOG AKTIVITAS", roles: ["admin"] },

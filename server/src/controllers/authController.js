@@ -44,7 +44,6 @@ exports.register = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // 5. Transaction: Create User & Assign Role sekaligus
-    // Kita gunakan transaction agar kalau salah satu gagal, semuanya dibatalkan
     const newUser = await prisma.$transaction(async (tx) => {
       // A. Buat User
       const user = await tx.users.create({
