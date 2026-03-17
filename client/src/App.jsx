@@ -13,7 +13,8 @@ import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
 import MateriView from "./pages/viewMateri"
 import DetailMateri from "./pages/detailMateri"
-import MateriManage from "./pages/manageMateri" 
+import MateriManage from "./pages/manageMateri"
+import FaqPage from "./pages/faq"
 
 import PengurusDashboard from "./pages/pengurus/dashboard"
 import PengurusSantri from "./pages/pengurus/dataSantri"
@@ -117,6 +118,7 @@ function App() {
             <Route path="riwayat-layanan" element={<PengurusRiwayatLayanan />} />
             <Route path="keuangan" element={<PengurusKeuangan />} />
             <Route path="kegiatan" element={<PengurusKegiatan />} />
+            <Route path="faq" element={<FaqPage />} />
           </Route>
         </Route>
 
@@ -150,6 +152,7 @@ function App() {
               element={<TimkesCreateAbsensi/>}
               />
             <Route path="daftarAbsensiKamar/:id/laporan" element={<TimkesLaporanAbsensi />} />
+            <Route path="faq" element={<FaqPage />} />
           </Route>
         </Route>
 
@@ -183,6 +186,7 @@ function App() {
             <Route path="pengaduan" element={<PimpinanPengaduan />} />
             <Route path="keuangan" element={<PimpinanKeuangan />} />
             <Route path="feedback" element={<PimpinanFeedback />} />
+            <Route path="faq" element={<FaqPage />} />
           </Route>
         </Route>
 
@@ -211,6 +215,7 @@ function App() {
             <Route path="daftarSantriScreening/:id/edit/:screeningId" element={<AdminCreateScreening />} />
             <Route path="daftarSantriScreening/:id" element={<AdminDetailScreening />} />
             <Route path="daftarSantriScreening/:id/view/:screeningId" element={<AdminViewScreening />} />
+            <Route path="faq" element={<FaqPage />} />
           </Route>
         </Route>
 

@@ -2,6 +2,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import LinkMateri from "../components/LinkMateri";
+import CommentSection from "../components/CommentSection";
 import api from "../config/api"
 
 function DetailMateri() {
@@ -83,6 +84,14 @@ function DetailMateri() {
     }
   if (!materi) return <p>Materi tidak ditemukan</p>;
 
+  const tanggalMateri = materi?.tanggal_dibuat
+    ? new Date(materi.tanggal_dibuat).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "long",
+        year: "numeric"
+      })
+    : "-";
+
   if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
@@ -127,6 +136,9 @@ function DetailMateri() {
             <div className="mt-6 pt-4 text-gray-500 text-sm">
               Penulis: {materi.penulis}
             </div>
+            <div className="mt-2 text-gray-500 text-sm">
+              Tanggal: {tanggalMateri}
+            </div>
           </div>
 
           {/* KANAN - MATERI LAIN */}
@@ -141,7 +153,8 @@ function DetailMateri() {
           </div>
 
         </div>
-      </div>
+      </div> 
+      <CommentSection materiId={id} />
     </div>
     )
   }
@@ -204,6 +217,9 @@ function DetailMateri() {
             <div className="mt-6 pt-4 text-gray-600 text-sm">
               Penulis: {materi.penulis}
             </div>
+            <div className="mt-2 text-gray-600 text-sm">
+              Tanggal: {tanggalMateri}
+            </div>
           </div>
 
           {/* KANAN - MATERI LAINNYA */}
@@ -221,7 +237,9 @@ function DetailMateri() {
         </div>
       </div>
     </div>
-
+    <div className="max-w-6xl mx-auto px-4 mb-12">
+      <CommentSection materiId={id} />
+    </div>
   </div>
   );
 }

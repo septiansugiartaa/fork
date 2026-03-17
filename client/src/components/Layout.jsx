@@ -202,8 +202,16 @@ export default function GlobalLayout() {
       path: "/log",
       icon: History,
       roles: ["admin"],
-    }
+    },
 
+    { category: "BANTUAN", roles: ["pengurus", "timkesehatan", "pimpinan", "admin"] },
+
+    {
+      name: "FAQ",
+      path: "/faq",
+      icon: Receipt,
+      roles: ["pengurus", "timkesehatan", "pimpinan", "admin"],
+    }
   ];
 
   const filteredMenu = masterMenu.filter((item) =>

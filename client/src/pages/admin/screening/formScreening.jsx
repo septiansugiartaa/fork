@@ -23,6 +23,8 @@ export default function FormScreening() {
   const [opsiPenanganan, setOpsiPenanganan] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [riwayatScreeningCount, setRiwayatScreeningCount] = useState(0);
+  const [areaPredileksi, setAreaPredileksi] = useState([]);
   const [errors, setErrors] = useState({ bagianA: "", bagianB: "", penanganan: "" });
   const [fotoError, setFotoError] = useState("");
 
@@ -57,16 +59,18 @@ export default function FormScreening() {
 
   const fetchInitialData = async () => {
     try {
-      const [pertanyaanRes, santriRes, penangananRes] = await Promise.all([
+      const [pertanyaanRes, santriRes, penangananRes, riwayatRes] = await Promise.all([
         api.get("/admin/screening/pertanyaan"),
         api.get(`/admin/screening/santri/${id}/detail`),
-        api.get("/admin/screening/penanganan")
+        api.get("/admin/screening/penanganan"),
+        api.get(`/admin/screening/santri/${id}/screening`, { params: { page: 1, limit: 1 } })
       ]);
 
       setBagianA(pertanyaanRes.data.data.bagianA);
       setBagianB(pertanyaanRes.data.data.bagianB);
       setSantri(santriRes.data.data);
       setOpsiPenanganan(penangananRes.data.data);
+      setRiwayatScreeningCount(riwayatRes.data?.pagination?.total || 0);
 
       if (isEditMode) {
         const screeningRes = await api.get(`/admin/screening/${screeningId}`);
@@ -78,6 +82,13 @@ export default function FormScreening() {
         })));
         setDiagnosaManual(screening.diagnosa);
         setPenanganan(screening.screening_penanganan.map(p => p.id_penanganan));
+        try {
+          const parsedCatatan = screening.catatan ? JSON.parse(screening.catatan) : null;
+          setAreaPredileksi(parsedCatatan?.area_predileksi || []);
+        } catch {
+          setAreaPredileksi([]);
+        }
+
         if (screening.foto_predileksi) {
           setPreview(`/uploads/screening/${screening.foto_predileksi}`);
         }
@@ -115,6 +126,7 @@ export default function FormScreening() {
         formData.append("jawaban", JSON.stringify(jawaban));
         formData.append("diagnosaManual", finalDiagnosa);
         formData.append("penanganan", JSON.stringify(penanganan));
+        formData.append("areaPredileksi", JSON.stringify(areaPredileksi));
 
         await api.post("/admin/screening/create", formData);
       }
@@ -156,6 +168,14 @@ export default function FormScreening() {
             <Info label="Kamar" value={santri.kamar?.kamar || "-"} />
           </div>
         </Card>
+
+        {!isEditMode && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-800">
+            {riwayatScreeningCount === 0
+              ? 'Screening pertama: jika hasil awal "Perlu Evaluasi Lebih Lanjut", sistem akan mengarahkan rekomendasi ke "Kemungkinan Scabies".'
+              : 'Screening lanjutan: hasil "Perlu Evaluasi Lebih Lanjut" mengikuti aturan default sistem.'}
+          </div>
+        )}
 
         <Section title="Bagian A — Riwayat 14-30 Hari Terakhir" data={bagianA} handleChange={handleChange} disabled={isEditMode} jawaban={jawaban} error={errors.bagianA} />
         <Section title="Bagian B — Gejala Klinis" data={bagianB} handleChange={handleChange} disabled={isEditMode} jawaban={jawaban} error={errors.bagianB} />

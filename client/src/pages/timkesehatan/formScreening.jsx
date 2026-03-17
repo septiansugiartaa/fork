@@ -21,12 +21,28 @@ export default function FormScreening() {
   const [opsiPenanganan, setOpsiPenanganan] = useState([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [riwayatScreeningCount, setRiwayatScreeningCount] = useState(0);
+  const [areaPredileksi, setAreaPredileksi] = useState([]);
   const [errors, setErrors] = useState({
     bagianA: "",
     bagianB: "",
     penanganan: ""
   });
   const [fotoError, setFotoError] = useState("");
+
+  const anatomiAreaOptions = [
+    { key: "kepala", label: "Kepala" },
+    { key: "leher", label: "Leher" },
+    { key: "dada", label: "Dada" },
+    { key: "perut", label: "Perut" },
+    { key: "tangan_kiri", label: "Tangan Kiri" },
+    { key: "tangan_kanan", label: "Tangan Kanan" },
+    { key: "selangkangan", label: "Selangkangan" },
+    { key: "paha_kiri", label: "Paha Kiri" },
+    { key: "paha_kanan", label: "Paha Kanan" },
+    { key: "betis_kiri", label: "Betis Kiri" },
+    { key: "betis_kanan", label: "Betis Kanan" }
+  ];
 
   const validateForm = () => {
     let newErrors = {
@@ -95,19 +111,24 @@ export default function FormScreening() {
 
   const fetchData = async () => {
     try {
-      const [pertanyaanRes, santriRes, penangananRes] = await Promise.all([
+      const [pertanyaanRes, santriRes, penangananRes, riwayatRes] = await Promise.all([
         api.get(
           "/timkesehatan/screening/pertanyaan"),
         api.get(
           `/timkesehatan/screening/santri/${id}/detail`),
         api.get(
-          "/timkesehatan/screening/penanganan")
+          "/timkesehatan/screening/penanganan"),
+        api.get(
+          `/timkesehatan/screening/santri/${id}/screening`, {
+          params: { page: 1, limit: 1 }
+        })
       ]);
 
       setBagianA(pertanyaanRes.data.data.bagianA);
       setBagianB(pertanyaanRes.data.data.bagianB);
       setSantri(santriRes.data.data);
       setOpsiPenanganan(penangananRes.data.data);
+      setRiwayatScreeningCount(riwayatRes.data?.pagination?.total || 0);
 
       // MODE EDIT
       if (isEditMode) {
@@ -129,6 +150,13 @@ export default function FormScreening() {
         setPenanganan(
           screening.screening_penanganan.map(p => p.id_penanganan)
         );
+
+        try {
+          const parsedCatatan = screening.catatan ? JSON.parse(screening.catatan) : null;
+          setAreaPredileksi(parsedCatatan?.area_predileksi || []);
+        } catch {
+          setAreaPredileksi([]);
+        }
 
         if (screening.foto_predileksi) {
           setPreview(
@@ -215,6 +243,7 @@ export default function FormScreening() {
         formData.append("jawaban", JSON.stringify(jawaban));
         formData.append("diagnosaManual", finalDiagnosa);
         formData.append("penanganan", JSON.stringify(penanganan));
+        formData.append("areaPredileksi", JSON.stringify(areaPredileksi));
 
         await api.post(
           "/timkesehatan/screening/create",
@@ -242,6 +271,15 @@ export default function FormScreening() {
         <Loader2 className="h-10 w-10 animate-spin text-green-600" />
       </div>
     );
+
+  const toggleAreaPredileksi = (key) => {
+    if (isEditMode) return;
+    setAreaPredileksi((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key]
+    );
+  };
+
+  const isActiveArea = (key) => areaPredileksi.includes(key);
 
   const getDiagnosaStyle = (diagnosa) => {
     if (!diagnosa) return "text-gray-500";
@@ -283,6 +321,14 @@ export default function FormScreening() {
             <Info label="Kamar" value={santri.kamar?.kamar || "-"} />
           </div>
         </Card>
+
+        {!isEditMode && (
+          <div className="bg-yellow-50 border border-yellow-200 rounded-xl px-4 py-3 text-sm text-yellow-800">
+            {riwayatScreeningCount === 0
+              ? 'Screening pertama: jika hasil awal "Perlu Evaluasi Lebih Lanjut", sistem akan mengarahkan rekomendasi ke "Kemungkinan Scabies".'
+              : 'Screening lanjutan: hasil "Perlu Evaluasi Lebih Lanjut" mengikuti aturan default sistem.'}
+          </div>
+        )}
 
         <Section
           title="Bagian A — Riwayat 14-30 Hari Terakhir"
@@ -356,6 +402,44 @@ export default function FormScreening() {
           )}
         </Card>
 
+        <Card title="Bagian C2 — Area Predileksi (Anatomi)">
+          <p className="text-sm text-gray-600 mb-4">
+            Centang area yang terindikasi. Area yang dipilih akan berubah warna pada diagram.
+          </p>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            <div className="grid grid-cols-2 gap-2">
+              {anatomiAreaOptions.map((item) => (
+                <label key={item.key} className="flex items-center gap-2 text-sm text-gray-700">
+                  <input
+                    type="checkbox"
+                    checked={isActiveArea(item.key)}
+                    onChange={() => toggleAreaPredileksi(item.key)}
+                    disabled={isEditMode}
+                  />
+                  {item.label}
+                </label>
+              ))}
+            </div>
+
+            <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 flex justify-center">
+              <svg viewBox="0 0 160 380" className="w-40 h-auto">
+                <circle cx="80" cy="30" r="18" fill={isActiveArea("kepala") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="72" y="48" width="16" height="14" rx="6" fill={isActiveArea("leher") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="50" y="62" width="60" height="44" rx="20" fill={isActiveArea("dada") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="58" y="104" width="44" height="46" rx="18" fill={isActiveArea("perut") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="30" y="70" width="18" height="95" rx="10" fill={isActiveArea("tangan_kiri") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="112" y="70" width="18" height="95" rx="10" fill={isActiveArea("tangan_kanan") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="66" y="150" width="28" height="30" rx="12" fill={isActiveArea("selangkangan") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="52" y="178" width="22" height="80" rx="12" fill={isActiveArea("paha_kiri") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="86" y="178" width="22" height="80" rx="12" fill={isActiveArea("paha_kanan") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="56" y="258" width="16" height="92" rx="10" fill={isActiveArea("betis_kiri") ? "#ff0c0c" : "#d1d5db"} />
+                <rect x="88" y="258" width="16" height="92" rx="10" fill={isActiveArea("betis_kanan") ? "#ff0c0c" : "#d1d5db"} />
+              </svg>
+            </div>
+          </div>
+        </Card>
+        
         <Card title="Bagian D — Diagnosis">
           <select
             value={diagnosaManual}

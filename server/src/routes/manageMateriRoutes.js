@@ -41,6 +41,10 @@ const upload = multer({
 });
 
 // Route Materi List
+router.get('/comments/:commentId/replies', manageMateriController.getReplyKomentar);
+router.post('/comments/:commentId/replies', manageMateriController.createReplyKomentar);
+router.get('/:id/comments', manageMateriController.getKomentarMateri);
+router.post('/:id/comments', manageMateriController.createKomentarMateri);
 router.get('/:id', manageMateriController.getDetailMateri);
 router.get('/', manageMateriController.getViewMateri);
 router.post('/', (req, res, next) => {

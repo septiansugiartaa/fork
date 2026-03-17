@@ -4,6 +4,7 @@ import api from "../../config/api";
 import { Loader2, ArrowLeft } from "lucide-react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas-pro";
+import logoPesantren from "../../assets/logo.png";
 
 export default function ViewScreening() {
     const { screeningId } = useParams();
@@ -54,6 +55,14 @@ export default function ViewScreening() {
     const bagianB = data.detail_screening.filter(
         (d) => d.pertanyaan_screening.bagian === "B"
     );
+
+    let areaPredileksi = [];
+    try {
+      const parsed = data.catatan ? JSON.parse(data.catatan) : null;
+      areaPredileksi = parsed?.area_predileksi || [];
+    } catch {
+      areaPredileksi = [];
+    }
 
     const handleDownload = async () => {
         const element = document.getElementById("paper");
@@ -126,14 +135,25 @@ export default function ViewScreening() {
                 >
 
                 {/* HEADER */}
+                <div className="relative border-b-2 border-black pb-3 mb-7">
+                  <img
+                    src={logoPesantren}
+                    alt="Logo"
+                    className="absolute left-0 top-1 w-14 h-14"
+                  />
+                  <div className="text-center pl-16 sm:pl-0">
+                    <p className="text-[10px] font-bold">YAYASAN DARUNNA'IM YAPIA</p>
+                    <p className="text-[14px] font-bold">PONDOK PESANTREN MODERN DARUN-NA'IM YAPIA</p>
+                    <p className="text-[9px]">Jl. Demang Aria Rt.01 Rw.03 Desa Waru Jaya, Kec. Parung, Kab. Bogor</p>
+                    <p className="text-[9px]">Email: ponpesmodern.darunnaimyapia@gmail.com | IG: @ponpes_modern_darun_naim_yapia</p>
+                  </div>
+                </div>
+
                 <div className="text-center mb-8">
-                    <h1 className="text-xl font-bold text-black tracking-wide">
-                        LAPORAN HASIL SCREENING KESEHATAN
-                    </h1>
-                    <p className="text-[12px] text-gray-500">
-                        Sistem Screening Kesehatan
-                    </p>
-                    <div className="h-[1px] bg-black my-4"></div>
+                    <h1 className="text-xl font-bold text-black tracking-wide">LAPORAN HASIL SCREENING KESEHATAN</h1>
+                  <p className="text-[11px] text-gray-500 italic">
+                    Tanggal Cetak: {new Date().toLocaleDateString("id-ID", { day: "2-digit", month: "long", year: "numeric" })}
+                  </p>
                 </div>
 
                 {/* DATA SANTRI */}
@@ -208,6 +228,20 @@ export default function ViewScreening() {
                     ))}
                 </ul>
                 )}
+                </div>
+                <div>
+                  <SectionTitle title="F. AREA PREDILEKSI" />
+                  {areaPredileksi.length > 0 ? (
+                    <ul className="mb-10 space-y-1">
+                      {areaPredileksi.map((area) => (
+                        <li key={area} className="text-[12px] list-disc list-outside ml-4">
+                          {area.replaceAll("_", " ")}
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p className="text-gray-500 italic text-[12px] mb-10">Tidak ada area yang dipilih</p>
+                  )}
                 </div>
                 </div>
                 {/* FOOTER */}

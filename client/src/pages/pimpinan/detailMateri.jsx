@@ -2,7 +2,8 @@ import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import LinkMateri from "../../components/LinkMateri";
-import api from "../../config/api"; // MENGGUNAKAN API GLOBAL
+import api from "../../config/api";
+import CommentSection from "../../components/CommentSection";
 
 function DetailMateri() {
   const { id } = useParams();
@@ -71,6 +72,7 @@ function DetailMateri() {
   if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
+        
         {/* Gambar - Menggunakan path relatif proxy */}
         {materi.gambar && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -120,7 +122,7 @@ function DetailMateri() {
       {/* Gambar */}
       {materi.gambar && (
         <div className="max-w-6xl mx-auto px-4 mb-6 pt-6">
-          <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
+          <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-sm">
             <img
               src={`/uploads/${materi.gambar}`}
               alt={materi.judul_materi}
@@ -132,7 +134,7 @@ function DetailMateri() {
 
       {/* Content Area */}
       <div className="max-w-6xl mx-auto px-4 mb-12">
-        <div className="bg-white rounded-2xl shadow-xl p-6 lg:p-8">
+        <div className="bg-white rounded-2xl shadow-sm p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="w-full lg:w-2/3">
               <h1 className="text-2xl font-bold text-gray-800 mb-6">{materi.judul_materi}</h1>
@@ -158,6 +160,9 @@ function DetailMateri() {
             </div>
           </div>
         </div>
+      </div>
+      <div className="max-w-6xl mx-auto px-4 mb-12">
+        <CommentSection materiId={id} />
       </div>
     </div>
   );

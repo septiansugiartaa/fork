@@ -158,6 +158,7 @@ exports.postScreening = async (req, res) => {
     const jawaban = JSON.parse(req.body.jawaban || "[]");
     const diagnosaManual = req.body.diagnosaManual;
     const penanganan = JSON.parse(req.body.penanganan || "[]");
+    const areaPredileksi = JSON.parse(req.body.areaPredileksi || "[]");
 
     if (!id_santri || jawaban.length === 0) {
       return res.status(400).json({
@@ -171,6 +172,14 @@ exports.postScreening = async (req, res) => {
     let diagnosa = "Bukan_Scabies";
     if (totalYa > 5) diagnosa = "Scabies";
     else if (totalYa >= 3) diagnosa = "Perlu_Evaluasi_Lebih_Lanjut";
+
+    const totalScreeningSebelumnya = await prisma.screening.count({
+      where: { id_santri }
+    });
+
+    if (diagnosa === "Perlu_Evaluasi_Lebih_Lanjut" && totalScreeningSebelumnya === 0) {
+      diagnosa = "Kemungkinan_Scabies";
+    }
 
     if (diagnosaManual) diagnosa = diagnosaManual;
 
@@ -186,6 +195,9 @@ exports.postScreening = async (req, res) => {
           total_skor: totalYa,
           status: "Selesai",
           diagnosa,
+          catatan: JSON.stringify({
+            area_predileksi: Array.isArray(areaPredileksi) ? areaPredileksi : []
+          }),
           foto_predileksi: uploadedFile
         }
       });

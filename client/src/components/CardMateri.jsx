@@ -3,6 +3,13 @@ import { Edit2, Trash2 } from "lucide-react";
 
 function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
   const navigate = useNavigate();
+  const tanggalMateri = materi?.tanggal_dibuat
+    ? new Date(materi.tanggal_dibuat).toLocaleDateString("id-ID", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric"
+      })
+    : "-";
 
   return (
     <div className="bg-white rounded-3xl shadow-md overflow-hidden hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col">
@@ -19,6 +26,7 @@ function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
         <div className="mb-5">
           <p className="text-gray-900 text-sm line-clamp-2">{materi.ringkasan}</p>
           <p className="text-xs text-gray-400 mt-2 mb-2">Penulis: {materi.penulis}</p>
+          <p className="text-xs text-gray-400">Tanggal: {tanggalMateri}</p>
         </div>
         <div className="mt-auto">
           <button onClick={() => navigate(`${detailBasePath}/${materi.id}`)} className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm transition hover:bg-green-800 hover:text-white">Baca Selengkapnya</button>
