@@ -1,7 +1,5 @@
 const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const fs = require("fs");
-const path = require("path");
 
 const VALID_DIAGNOSA = [
   "Scabies",
@@ -9,6 +7,21 @@ const VALID_DIAGNOSA = [
   "Perlu_Evaluasi_Lebih_Lanjut",
   "Bukan_Scabies"
 ];
+
+const safeParseArray = (value) => {
+  if (Array.isArray(value)) return value;
+  if (value === undefined || value === null || value === "") return [];
+  if (typeof value === "string") {
+    try {
+      const parsed = JSON.parse(value);
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+  }
+  if (typeof value === "object") return [value];
+  return [];
+};
 
 exports.getSantriList = async (req, res) => {
   try {
@@ -153,8 +166,6 @@ exports.getScreeningBySantri = async (req, res) => {
 };
 
 exports.postScreening = async (req, res) => {
-  let uploadedFile = null;
-
   try {
     if (req.user.role !== "timkesehatan") {
       return res.status(403).json({ success: false, message: "Akses ditolak" });
@@ -179,9 +190,9 @@ exports.postScreening = async (req, res) => {
       return res.status(404).json({ success: false, message: "Santri tidak ditemukan" });
     }
 
-    const jawaban = JSON.parse(req.body.jawaban || "[]");
-    const penanganan = JSON.parse(req.body.penanganan || "[]");
-    const areaPredileksi = JSON.parse(req.body.areaPredileksi || "[]");
+    const jawaban = safeParseArray(req.body.jawaban);
+    const penanganan = safeParseArray(req.body.penanganan);
+    const predileksi = safeParseArray(req.body.predileksi);
     let diagnosaManual = req.body.diagnosaManual;
 
     if (!Array.isArray(jawaban) || jawaban.length === 0) {
@@ -191,8 +202,6 @@ exports.postScreening = async (req, res) => {
     if (diagnosaManual && !VALID_DIAGNOSA.includes(diagnosaManual)) {
       return res.status(400).json({ success: false, message: "Diagnosa tidak valid" });
     }
-
-    if (req.file) uploadedFile = req.file.filename;
 
     const pertanyaanDB = await prisma.pertanyaan_screening.findMany({
       where: { is_active: true }
@@ -231,8 +240,18 @@ exports.postScreening = async (req, res) => {
 
     if (diagnosaManual) diagnosa = diagnosaManual;
 
-    await prisma.$transaction(async (tx) => {
+    const validBentuk = [
+      "Ruam_Merah",
+      "Bintil_Merah_Kecil",
+      "Terowongan_Kecil_di_Kulit",
+      "Bintil_Bernanah"
+    ];
 
+    const predileksiValid = Array.isArray(predileksi)
+      ? predileksi.filter((item) => item && item.area && validBentuk.includes(item.bentuk_kelainan))
+      : [];
+
+    await prisma.$transaction(async (tx) => {
       const screening = await tx.screening.create({
         data: {
           id_timkes,
@@ -241,10 +260,7 @@ exports.postScreening = async (req, res) => {
           total_skor: totalSkor,
           status: "Selesai",
           diagnosa,
-          catatan: JSON.stringify({
-            area_predileksi: Array.isArray(areaPredileksi) ? areaPredileksi : []
-          }),
-          foto_predileksi: uploadedFile,
+          catatan: null,
           is_active: true
         }
       });
@@ -267,6 +283,17 @@ exports.postScreening = async (req, res) => {
           }))
         });
       }
+
+      if (predileksiValid.length > 0) {
+        await tx.screening_predileksi.createMany({
+          data: predileksiValid.map((item) => ({
+            id_screening: screening.id_screening,
+            area: item.area,
+            bentuk_kelainan: item.bentuk_kelainan,
+            is_active: true
+          }))
+        });
+      }
     });
 
     res.status(201).json({
@@ -275,20 +302,7 @@ exports.postScreening = async (req, res) => {
     });
 
   } catch (error) {
-
-    if (uploadedFile) {
-      const filePath = path.join(
-        __dirname,
-        "../../../public/uploads/screening",
-        uploadedFile
-      );
-      if (fs.existsSync(filePath)) {
-        fs.unlinkSync(filePath);
-      }
-    }
-
     console.error("POST SCREENING ERROR:", error);
-
     res.status(500).json({
       success: false,
       message: error.message
@@ -330,48 +344,6 @@ exports.getPenanganan = async (req, res) => {
   }
 };
 
-exports.updateFotoPredileksi = async (req, res) => {
-  try {
-    const { id } = req.params; // id_screening
-
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Foto wajib diupload"
-      });
-    }
-
-    const existing = await prisma.screening.findUnique({
-      where: { id_screening: Number(id) }
-    });
-
-    if (!existing) {
-      return res.status(404).json({
-        success: false,
-        message: "Data screening tidak ditemukan"
-      });
-    }
-
-    await prisma.screening.update({
-      where: { id_screening: Number(id) },
-      data: {
-        foto_predileksi: req.file.filename
-      }
-    });
-
-    res.json({
-      success: true,
-      message: "Foto predileksi berhasil diperbarui"
-    });
-
-  } catch (error) {
-    res.status(500).json({
-      success: false,
-      message: error.message
-    });
-  }
-};
-
 exports.getDetailScreening = async (req, res) => {
   try {
     const { id } = req.params;
@@ -410,6 +382,10 @@ exports.getDetailScreening = async (req, res) => {
           include: {
             penanganan: true
           }
+        },
+        screening_predileksi: {
+          where: { is_active: true },
+          orderBy: { id_predileksi: "asc" }
         }
       }
     });

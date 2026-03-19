@@ -198,14 +198,6 @@ export default function PortalScreening() {
                                 </td>
                                 <td className="text-center space-x-2">
                                     <button
-                                    onClick={() =>
-                                        navigate(`/timkesehatan/daftarSantriScreening/${id}/edit/${latest.id_screening}`)
-                                    }
-                                    className="px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition"
-                                    >
-                                    Edit
-                                    </button>
-                                    <button
                                         onClick={() =>
                                         navigate(`/timkesehatan/daftarSantriScreening/${id}/view/${latest.id_screening}`)
                                         }
@@ -261,14 +253,6 @@ export default function PortalScreening() {
                                         {item.users_screening_id_timkesTousers?.nama || "-"}
                                     </td>
                                     <td className="text-center space-x-2">
-                                        <button
-                                            onClick={() =>
-                                            navigate(`/timkesehatan/daftarSantriScreening/${id}/edit/${item.id_screening}`)
-                                            }
-                                            className="px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition"
-                                        >
-                                            Edit
-                                        </button>
                                         <button
                                             onClick={() =>
                                             navigate(`/timkesehatan/daftarSantriScreening/${id}/view/${item.id_screening}`)
