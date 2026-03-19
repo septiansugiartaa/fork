@@ -30,3 +30,15 @@
 .recharts-surface:active, .recharts-sector:active{
   outline: none;
 }
+
+.pdf-page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  background: white;
+  page-break-after: always;
+}
+
+.avoid-break {
+  page-break-inside: avoid;
+}
