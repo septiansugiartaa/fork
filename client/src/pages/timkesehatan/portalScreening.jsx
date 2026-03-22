@@ -209,7 +209,7 @@ export default function PortalScreening() {
                                 </tr>
                             ) : (
                                 <tr>
-                                <td colSpan="5" className="p-8 text-center text-gray-400">
+                                <td colSpan="4" className="p-8 text-center text-gray-400">
                                     Belum ada screening.
                                 </td>
                                 </tr>
@@ -266,7 +266,7 @@ export default function PortalScreening() {
                                 ))
                             ) : (
                                 <tr>
-                                <td colSpan="5" className="p-8 text-center text-gray-400">
+                                <td colSpan="4" className="p-8 text-center text-gray-400">
                                     Belum ada riwayat screening.
                                 </td>
                                 </tr>
