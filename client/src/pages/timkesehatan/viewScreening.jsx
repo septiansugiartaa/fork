@@ -376,7 +376,6 @@ function RenderBlock({ block, data, predileksi }) {
     return (
       <div>
         <QuestionRow item={block.item} index={block.index} />
-        <QuestionRow item={block.item} index={block.index} />
       </div>
     );
   }
