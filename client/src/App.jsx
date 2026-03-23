@@ -40,6 +40,10 @@ import TimkesAbsensiKebersihan from "./pages/timkesehatan/daftarKamarAbsensi"
 import TimkesDetailAbsensi from "./pages/timkesehatan/portalAbsensi"
 import TimkesCreateAbsensi from "./pages/timkesehatan/formAbsensi"
 import TimkesLaporanAbsensi from "./pages/timkesehatan/viewAbsensi"
+import TimkesObservasi from "./pages/timkesehatan/observasi/daftarSantriObservasi"
+import TimkesDetailObservasi from "./pages/timkesehatan/observasi/portalObservasi"
+import TimkesCreateObservasi from "./pages/timkesehatan/observasi/formObservasi"
+import TimkesViewObservasi from "./pages/timkesehatan/observasi/viewObservasi"
 
 import OrangtuaDashboard from "./pages/orangtua/dashboard"
 import OrangtuaProfile from "./pages/orangtua/pendataan"
@@ -61,6 +65,9 @@ import PimpinanDetailMateri from "./pages/pimpinan/detailMateri"
 import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 import PimpinanKeuangan from "./pages/pimpinan/keuangan"
 import PimpinanFeedback from "./pages/pimpinan/feedback"
+import PimpinanObservasi from "./pages/pimpinan/observasi/daftarSantriObservasi"
+import PimpinanDetailObservasi from "./pages/pimpinan/observasi/portalObservasi"
+import PimpinanViewObservasi from "./pages/pimpinan/observasi/viewObservasi"
 
 import AdminDashboard from "./pages/admin/dashboard"
 import AdminStaf from "./pages/admin/manajemenStaf"
@@ -81,6 +88,10 @@ import AdminRiwayatLayanan from "./pages/admin/riwayatLayanan"
 import AdminKeuangan from "./pages/admin/keuangan"
 import AdminFeedback from "./pages/admin/feedback"
 import AdminLog from "./pages/admin/log"
+import AdminObservasi from "./pages/admin/observasi/daftarSantriObservasi"
+import AdminDetailObservasi from "./pages/admin/observasi/portalObservasi"
+import AdminCreateObservasi from "./pages/admin/observasi/formObservasi"
+import AdminViewObservasi from "./pages/admin/observasi/viewObservasi"
 
 import PpdbDashboard from "./pages/ppdb/adminDashboard";
 import Pendaftar     from "./pages/ppdb/adminPendaftar";
@@ -140,9 +151,13 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['timkesehatan']} />}>
             <Route path="/timkesehatan" element={<Layout />}>
               <Route index element={<TimkesDashboard />} />
+
+              {/* MATERI */}
               <Route path="manageMateri" element={<MateriManage />} />
               <Route path="manageMateri/:id" element={<DetailMateri />} />
               <Route path="daftarSantriScreening" element={<TimkesScreening />} />
+              
+              {/* SCREENING */}
               <Route
                 path="daftarSantriScreening/:id/create"
                 element={<TimkesCreateScreening />}
@@ -159,6 +174,8 @@ function App() {
                 path="/timkesehatan/daftarSantriScreening/:id/view/:screeningId"
                 element={<TimkesViewScreening />}
               />
+
+              {/* ABSENSI KEBERSIHAN */}
               <Route path="daftarAbsensiKamar" element={<TimkesAbsensiKebersihan />}/>
               <Route path="daftarAbsensiKamar/:id" element={<TimkesDetailAbsensi />} />
               <Route path="daftarAbsensiKamar/:id/create" element={<TimkesCreateAbsensi />} />
@@ -167,6 +184,14 @@ function App() {
                 element={<TimkesCreateAbsensi/>}
                 />
               <Route path="daftarAbsensiKamar/:id/laporan" element={<TimkesLaporanAbsensi />} />
+
+              {/* OBSERVASI */}
+              <Route path="daftarSantriObservasi" element={<TimkesObservasi />} />
+              <Route path="daftarSantriObservasi/:id" element={<TimkesDetailObservasi />} />
+              <Route path="daftarSantriObservasi/:id/create" element={<TimkesCreateObservasi />} />
+              <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<TimkesViewObservasi />} />
+
+              {/* FAQ */}
               <Route path="faq" element={<FaqPage />} />
             </Route>
           </Route>
@@ -204,6 +229,9 @@ function App() {
               <Route path="ppdb/rekapitulasi" element={<PpdbDashboard />} />
               <Route path="ppdb/pendaftar" element={<Pendaftar />} />
               <Route path="ppdb/seleksi" element={<Seleksi />} />
+              <Route path="daftarSantriObservasi" element={<PimpinanObservasi />} />
+              <Route path="daftarSantriObservasi/:id" element={<PimpinanDetailObservasi />} />
+              <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<PimpinanViewObservasi />} />
               <Route path="faq" element={<FaqPage />} />
             </Route>
           </Route>
@@ -233,7 +261,10 @@ function App() {
               <Route path="daftarSantriScreening/:id/edit/:screeningId" element={<AdminCreateScreening />} />
               <Route path="daftarSantriScreening/:id" element={<AdminDetailScreening />} />
               <Route path="daftarSantriScreening/:id/view/:screeningId" element={<AdminViewScreening />} />
-
+              <Route path="daftarSantriObservasi" element={<AdminObservasi />} />
+              <Route path="daftarSantriObservasi/:id" element={<AdminDetailObservasi />} />
+              <Route path="daftarSantriObservasi/:id/create" element={<AdminCreateObservasi />} />
+              <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<AdminViewObservasi />} />
               <Route path="ppdb/rekapitulasi" element={<PpdbDashboard />} />
               <Route path="ppdb/pendaftar" element={<Pendaftar />} />
               <Route path="ppdb/seleksi" element={<Seleksi />} />

@@ -75,6 +75,7 @@ app.use("/api/pimpinan/ustadz", require("./routes/pimpinan/ustadzRoutes"));
 app.use("/api/pimpinan/pengaduan",require("./routes/pimpinan/pengaduanRoutes"));
 app.use("/api/pimpinan/keuangan", require("./routes/pimpinan/keuanganRoutes"));
 app.use("/api/pimpinan/feedback", require("./routes/pimpinan/feedbackRoutes"));
+app.use("/api/pimpinan/observasi", require("./routes/pimpinan/observasiRoutes"));
 
 app.use("/api/admin/dashboard", require("./routes/admin/dashboardRoutes"));
 app.use("/api/admin/staf", require("./routes/admin/stafRoutes"));
@@ -94,9 +95,11 @@ app.use("/api/admin/keuangan", require("./routes/admin/keuanganRoutes"));
 app.use("/api/admin/feedback", require("./routes/admin/feedbackRoutes"));
 app.use("/api/admin/log", require("./routes/admin/logRoutes"));
 app.use("/api/admin/screening", require("./routes/admin/screeningRoutes"));
+app.use("/api/admin/observasi", require("./routes/admin/observasiRoutes"));
 
 app.use("/api/timkesehatan/screening",require("./routes/timkesehatan/screeningRoutes"));
 app.use("/api/timkesehatan/absensi",require("./routes/timkesehatan/absensiRoutes"));
+app.use("/api/timkesehatan/observasi",require("./routes/timkesehatan/observasiRoutes"));
 
 app.use("/api/ppdb/admin", require("./routes/ppdb/adminPpdbRoutes"));
 app.use("/api/ppdb/panitia", require("./routes/ppdb/panitiaPpdbRoutes"));
