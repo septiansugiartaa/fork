@@ -150,6 +150,13 @@ export default function GlobalLayout() {
     },
 
     {
+      name: "Observasi Cuci Tangan",
+      path: "/daftarSantriObservasi",
+      icon: ClipboardCheck,
+      roles: ["timkesehatan", "admin", "pimpinan"],
+    },
+
+    {
       name: "Absensi Kesehatan",
       path: "/daftarAbsensiKamar",
       icon: BookCheck,

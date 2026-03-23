@@ -264,7 +264,7 @@ export const exportScreeningPdf = async (data, screeningId, action='download') =
 
     // 3. PREDILEKSI (Menggunakan fungsi custom drawAnatomySection)
     renderSubTitle("C. AREA PREDILEKSI DAN BENTUK KELAINAN KULIT");
-    checkPageBreak(115); // Pastikan space cukup untuk kotak 105mm
+    checkPageBreak(115);
     
     const areaHeight = drawAnatomySection(doc, margin.left, cursorY, predileksi, printWidth);
     cursorY += areaHeight; 

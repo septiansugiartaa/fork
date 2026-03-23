@@ -64,9 +64,6 @@ model detail_observasi {
   id_observasi            Int?
   id_pertanyaan_observasi Int?
   jawaban                 Boolean
-  skor_diperoleh          Int?
-  catatan                 String?               @db.Text
-  tindak_lanjut           String?               @db.Text
   is_active               Boolean
   observasi               observasi?            @relation(fields: [id_observasi], references: [id_observasi], onDelete: NoAction, onUpdate: NoAction, map: "detail_observasi_observasi_FK")
   pertanyaan_observasi    pertanyaan_observasi? @relation(fields: [id_pertanyaan_observasi], references: [id_pertanyaan_observasi], onDelete: NoAction, onUpdate: NoAction, map: "detail_observasi_pertanyaan_observasi_FK")
@@ -240,6 +237,9 @@ model observasi {
   tanggal                          DateTime?          @db.DateTime(0)
   waktu                            observasi_waktu?
   is_active                        Boolean
+  skor_diperoleh                   Int?
+  catatan                          String?            @db.Text
+  tindak_lanjut                    String?            @db.Text
   detail_observasi                 detail_observasi[]
   kamar                            kamar?             @relation(fields: [id_kamar], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "observasi_kamar_FK")
   users_observasi_id_santriTousers users?             @relation("observasi_id_santriTousers", fields: [id_santri], references: [id], onDelete: Restrict, onUpdate: Restrict, map: "observasi_users_FK")
