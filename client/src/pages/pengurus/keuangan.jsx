@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Plus, Search, Edit2, Trash2, CreditCard, Loader2, 
   AlertTriangle, CheckCircle, X, ChevronLeft, ChevronRight, User, Calendar
@@ -15,7 +15,7 @@ export default function Keuangan() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 5);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // Modals
   const [isTagihanOpen, setIsTagihanOpen] = useState(false);
@@ -26,7 +26,6 @@ export default function Keuangan() {
   const [selectedTagihanId, setSelectedTagihanId] = useState(null);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/pengurus/keuangan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -36,10 +35,7 @@ export default function Keuangan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}/tagihan?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/keuangan/tagihan?search=${search}`);
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,8 +69,7 @@ export default function Keuangan() {
   const handleDelete = async (id) => {
     if (!confirm("Hapus tagihan ini? Data pembayaran terkait mungkin akan terpengaruh.")) return;
     try {
-        const token = localStorage.getItem("token");
-        await axios.delete(`${API_URL}/tagihan/${id}`, { headers: { Authorization: `Bearer ${token}` }});
+        await api.delete(`/pengurus/keuangan/tagihan/${id}`);
         showAlert("success", "Tagihan dihapus");
         fetchData();
     } catch (err) { showAlert("error", "Gagal menghapus"); }
@@ -87,12 +82,11 @@ export default function Keuangan() {
 
   const handleSubmitTagihan = async (formData) => {
     try {
-        const token = localStorage.getItem("token");
         if (isEditing) {
-            await axios.put(`${API_URL}/tagihan/${selectedTagihan.id}`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.put(`/pengurus/keuangan/tagihan/${selectedTagihan.id}`, formData);
             showAlert("success", "Tagihan diperbarui");
         } else {
-            await axios.post(`${API_URL}/tagihan`, formData, { headers: { Authorization: `Bearer ${token}` }});
+            await api.post(`/pengurus/keuangan/tagihan`, formData);
             showAlert("success", "Tagihan berhasil dibuat");
         }
         setIsTagihanOpen(false);
@@ -127,13 +121,13 @@ export default function Keuangan() {
             <h1 className="text-2xl font-bold text-gray-800">Keuangan</h1>
             <p className="text-gray-500 text-sm">Kelola tagihan santri dan monitoring pembayaran</p>
         </div>
-        <button onClick={handleCreate} className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition">
+        <button onClick={handleCreate} className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition">
             <Plus size={20}/><span className="ml-2 hidden md:inline">Buat Tagihan</span>
         </button>
       </div>
 
       {/* Toolbar */}
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
             <input type="text" placeholder="Cari tagihan..." className="w-full pl-10 pr-4 py-2.5 outline-none" value={search} onChange={(e) => setSearch(e.target.value)}/>
@@ -142,7 +136,7 @@ export default function Keuangan() {
 
       {loading ? (
         <div className="p-12 text-center flex flex-col items-center justify-center">
-            <Loader2 className="animate-spin text-blue-500 mb-2" size={32} />
+            <Loader2 className="animate-spin text-green-500 mb-2" size={32} />
             <p className="text-gray-500">Memuat data...</p>
         </div>
       ) : (
@@ -153,12 +147,12 @@ export default function Keuangan() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase">
-                                <th className="p-4">Santri</th>
-                                <th className="p-4">Tagihan</th>
-                                <th className="p-4">Nominal</th>
-                                <th className="p-4">Jatuh Tempo</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4 text-center">Aksi</th>
+                                <th className="p-4 w-[30%]">Santri</th>
+                                <th className="p-4 w-[20%]">Tagihan</th>
+                                <th className="p-4 w-[15%]">Nominal</th>
+                                <th className="p-4 w-[15%]">Jatuh Tempo</th>
+                                <th className="p-4 w-[10%]">Status</th>
+                                <th className="p-4 text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -182,7 +176,7 @@ export default function Keuangan() {
                                     <td className="p-4 text-center">
                                         <div className="flex justify-center gap-2">
                                             <button onClick={() => handleOpenListBayar(item.id)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Riwayat Pembayaran"><CreditCard size={18}/></button>
-                                            <button onClick={() => handleEdit(item)} className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition" title="Edit"><Edit2 size={18}/></button>
+                                            <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition" title="Edit"><Edit2 size={18}/></button>
                                             <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Hapus"><Trash2 size={18}/></button>
                                         </div>
                                     </td>
@@ -200,7 +194,7 @@ export default function Keuangan() {
                         {/* Header: Nama Santri & Status */}
                         <div className="flex justify-between items-start">
                             <div className="flex items-center gap-3">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+                                <div className="w-10 h-10 rounded-full bg-green-50 text-green-600 flex items-center justify-center font-bold">
                                     {item.users.nama.charAt(0)}
                                 </div>
                                 <div>
@@ -232,7 +226,7 @@ export default function Keuangan() {
                         {/* Actions */}
                         <div className="grid grid-cols-3 gap-2 mt-2">
                             <button onClick={() => handleOpenListBayar(item.id)} className="py-2 bg-green-50 text-green-600 rounded-lg flex justify-center items-center"><CreditCard size={16}/></button>
-                            <button onClick={() => handleEdit(item)} className="py-2 bg-blue-50 text-blue-600 rounded-lg flex justify-center items-center"><Edit2 size={16}/></button>
+                            <button onClick={() => handleEdit(item)} className="py-2 bg-green-50 text-green-600 rounded-lg flex justify-center items-center"><Edit2 size={16}/></button>
                             <button onClick={() => handleDelete(item.id)} className="py-2 bg-red-50 text-red-600 rounded-lg flex justify-center items-center"><Trash2 size={16}/></button>
                         </div>
                     </div>
@@ -251,7 +245,7 @@ export default function Keuangan() {
 
       {/* Modals */}
       <InputTagihanModal isOpen={isTagihanOpen} onClose={() => setIsTagihanOpen(false)} isEditing={isEditing} editData={selectedTagihan} onSubmit={handleSubmitTagihan} />
-      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} />
+      <DaftarPembayaranModal isOpen={isListBayarOpen} onClose={() => setIsListBayarOpen(false)} idTagihan={selectedTagihanId} userRole={"pengurus"}/>
     </div>
   );
 }

@@ -12,6 +12,7 @@ exports.getViewMateri = async (req, res) => {
                 judul_materi: true,
                 ringkasan: true,
                 penulis: true,
+                tanggal_dibuat: true,
             },
             orderBy: { id_materi: 'desc' }
         });
@@ -23,6 +24,7 @@ exports.getViewMateri = async (req, res) => {
             judul: item.judul_materi,
             ringkasan: item.ringkasan,
             penulis: item.penulis || "Admin",
+            tanggal_dibuat: item.tanggal_dibuat,
         }));
 
         res.status(200).json({

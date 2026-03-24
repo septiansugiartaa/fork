@@ -85,7 +85,7 @@ exports.getDashboardStats = async (req, res) => {
                 }
             },
             chartData,
-            recentLayanan: await prisma.riwayat_layanan.findMany({ take: 5, orderBy: { waktu: 'desc' }, include: { users: { select: { nama: true } }, jenis_layanan: { select: { nama_layanan: true } } } }),
+            recentLayanan: await prisma.riwayat_layanan.findMany({ where: { status_sesudah: 'Proses', is_active: true }, take: 5, orderBy: { waktu: 'desc' }, include: { users: { select: { nama: true } }, jenis_layanan: { select: { nama_layanan: true } } } }),
         });
     } catch (error) {
         res.status(500).json({ success: false, message: error.message });
