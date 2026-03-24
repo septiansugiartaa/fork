@@ -1,0 +1,400 @@
+const { PrismaClient } = require("@prisma/client");
+const prisma = new PrismaClient();
+const fs = require("fs");
+const path = require("path");
+
+exports.getSantriList = async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 5 } = req.query;
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const whereCondition = {
+      is_active: true,
+      user_role: {
+        some: {
+          id_role: 1,
+          is_active: true
+        }
+      }
+    };
+
+    if (search.trim() !== "") {
+      whereCondition.OR = [
+        { nama: { contains: search } },
+        { nip: { contains: search } }
+      ];
+    }
+
+    const [santri, total] = await prisma.$transaction([
+      prisma.users.findMany({
+        where: whereCondition,
+        skip,
+        take: Number(limit),
+        orderBy: { nama: "asc" },
+        select: {
+          id: true,
+          nama: true,
+          nip: true,
+          foto_profil: true,
+          screening_screening_id_santriTousers: {
+            orderBy: { tanggal: "desc" },
+            select: {
+              tanggal: true,
+              diagnosa: true
+            }
+          }
+        }
+      }),
+      prisma.users.count({ where: whereCondition })
+    ]);
+
+    res.json({
+      success: true,
+      data: santri,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit)
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getSantriDetail = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const santri = await prisma.users.findUnique({
+      where: { id: Number(id) },
+      include: {
+        kelas_santri: {
+          where: { is_active: true },
+          include: { kelas: true }
+        },
+        kamar_santri: {
+          where: { is_active: true },
+          include: { kamar: true }
+        }
+      }
+    });
+
+    if (!santri) {
+      return res.status(404).json({
+        success: false,
+        message: "Santri tidak ditemukan"
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        ...santri,
+        kelas: santri.kelas_santri[0]?.kelas || null,
+        kamar: santri.kamar_santri[0]?.kamar || null
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getScreeningBySantri = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { page = 1, limit = 5 } = req.query;
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [total, data] = await Promise.all([
+      prisma.screening.count({
+        where: { id_santri: Number(id) }
+      }),
+      prisma.screening.findMany({
+        where: { id_santri: Number(id) },
+        orderBy: { tanggal: "desc" },
+        skip,
+        take: Number(limit),
+        include: {
+          users_screening_id_timkesTousers: {
+            select: { id: true, nama: true }
+          }
+        }
+      })
+    ]);
+
+    res.json({
+      success: true,
+      data,
+      pagination: {
+        total,
+        page: Number(page),
+        limit: Number(limit)
+      }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.postScreening = async (req, res) => {
+  let uploadedFile = null;
+
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({
+        success: false,
+        message: "Akses ditolak"
+      });
+    }
+
+    const id_timkes = req.user.id;
+    const id_santri = Number(req.body.id_santri);
+    const jawaban = JSON.parse(req.body.jawaban || "[]");
+    const diagnosaManual = req.body.diagnosaManual;
+    const penanganan = JSON.parse(req.body.penanganan || "[]");
+    const areaPredileksi = JSON.parse(req.body.areaPredileksi || "[]");
+
+    if (!id_santri || jawaban.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Data tidak lengkap"
+      });
+    }
+
+    const totalYa = jawaban.filter(j => j.jawaban === true).length;
+
+    let diagnosa = "Bukan_Scabies";
+    if (totalYa > 5) diagnosa = "Scabies";
+    else if (totalYa >= 3) diagnosa = "Perlu_Evaluasi_Lebih_Lanjut";
+
+    const totalScreeningSebelumnya = await prisma.screening.count({
+      where: { id_santri }
+    });
+
+    if (diagnosa === "Perlu_Evaluasi_Lebih_Lanjut" && totalScreeningSebelumnya === 0) {
+      diagnosa = "Kemungkinan_Scabies";
+    }
+
+    if (diagnosaManual) diagnosa = diagnosaManual;
+
+    if (req.file) uploadedFile = req.file.filename;
+
+    await prisma.$transaction(async (tx) => {
+
+      const screening = await tx.screening.create({
+        data: {
+          id_timkes,
+          id_santri,
+          tanggal: new Date(),
+          total_skor: totalYa,
+          status: "Selesai",
+          diagnosa,
+          catatan: JSON.stringify({
+            area_predileksi: Array.isArray(areaPredileksi) ? areaPredileksi : []
+          }),
+          foto_predileksi: uploadedFile
+        }
+      });
+
+      await tx.detail_screening.createMany({
+        data: jawaban.map(j => ({
+          id_screening: screening.id_screening,
+          id_pertanyaan_screening: j.id_pertanyaan_screening,
+          jawaban: j.jawaban,
+          is_active: true
+        }))
+      });
+
+      if (penanganan.length > 0) {
+        await tx.screening_penanganan.createMany({
+          data: penanganan.map(id_penanganan => ({
+            id_screening: screening.id_screening,
+            id_penanganan: Number(id_penanganan)
+          }))
+        });
+      }
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Screening berhasil disimpan"
+    });
+
+  } catch (error) {
+
+    // cleanup file jika gagal
+    if (uploadedFile) {
+      const filePath = path.join(
+        __dirname,
+        "../../../public/uploads/screening",
+        uploadedFile
+      );
+      if (fs.existsSync(filePath)) {
+        fs.unlinkSync(filePath);
+      }
+    }
+
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+exports.getPertanyaan = async (req, res) => {
+  try {
+    const data = await prisma.pertanyaan_screening.findMany({
+      where: { is_active: true },
+      orderBy: { id_pertanyaan_screening: "asc" }
+    });
+
+    const bagianA = data.filter(p => p.bagian === "A");
+    const bagianB = data.filter(p => p.bagian === "B");
+
+    res.json({
+      success: true,
+      data: { bagianA, bagianB }
+    });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getPenanganan = async (req, res) => {
+  try {
+    const data = await prisma.penanganan.findMany({
+      where: { is_active: true },
+      orderBy: { id_penanganan: "asc" }
+    });
+
+    res.json({ success: true, data });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.updateFotoPredileksi = async (req, res) => {
+  try {
+    const { id } = req.params; // id_screening
+
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: "Foto wajib diupload"
+      });
+    }
+
+    const existing = await prisma.screening.findUnique({
+      where: { id_screening: Number(id) }
+    });
+
+    if (!existing) {
+      return res.status(404).json({
+        success: false,
+        message: "Data screening tidak ditemukan"
+      });
+    }
+
+    await prisma.screening.update({
+      where: { id_screening: Number(id) },
+      data: {
+        foto_predileksi: req.file.filename
+      }
+    });
+
+    res.json({
+      success: true,
+      message: "Foto predileksi berhasil diperbarui"
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+exports.getDetailScreening = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const data = await prisma.screening.findUnique({
+      where: { id_screening: Number(id) },
+      include: {
+        users_screening_id_timkesTousers: {
+          select: { id: true, nama: true }
+        },
+        users_screening_id_santriTousers: {
+          select: {
+            id: true,
+            nama: true,
+            nip: true,
+            kelas_santri: {
+              where: { is_active: true },
+              include: {
+                kelas: true
+              }
+            },
+            kamar_santri: {
+              where: { is_active: true },
+              include: {
+                kamar: true
+              }
+            }
+          }
+        },
+        detail_screening: {
+          include: {
+            pertanyaan_screening: true
+          }
+        },
+        screening_penanganan: {
+          include: {
+            penanganan: true
+          }
+        }
+      }
+    });
+
+    res.json({ success: true, data });
+
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
+};
+
+exports.getLatestScreening = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const latest = await prisma.screening.findFirst({
+      where: { id_santri: Number(id) },
+      orderBy: { tanggal: "desc" },
+      include: {
+        users_screening_id_timkesTousers: {
+          select: { id: true, nama: true }
+        }
+      }
+    });
+
+    res.json({
+      success: true,
+      data: latest
+    });
+
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../../config/api";
 import { 
   Search, Eye, Loader2, Calendar, User, 
   AlertTriangle, CheckCircle, X, Star, ChevronLeft, ChevronRight 
@@ -15,7 +15,7 @@ export default function RiwayatLayanan() {
   const [search, setSearch] = useState("");
   
   // Custom Hook Pagination
-  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList, 10);
+  const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(dataList);
 
   // State Modals
   const [detailData, setDetailData] = useState(null);
@@ -25,7 +25,6 @@ export default function RiwayatLayanan() {
   const [isSaving, setIsSaving] = useState(false);
 
   const [message, setMessage] = useState({ type: "", text: "" });
-  const API_URL = "http://localhost:3000/api/pengurus/riwayat-layanan";
 
   const showAlert = (type, text) => {
     setMessage({ type, text });
@@ -35,10 +34,7 @@ export default function RiwayatLayanan() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const token = localStorage.getItem("token");
-      const res = await axios.get(`${API_URL}?search=${search}`, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      const res = await api.get(`/pengurus/riwayat-layanan?search=${search}`);
       setDataList(res.data.data);
     } catch (err) {
       console.error(err);
@@ -73,11 +69,7 @@ export default function RiwayatLayanan() {
   const handleSubmitProcess = async (id, formData) => {
     setIsSaving(true);
     try {
-        const token = localStorage.getItem("token");
-        await axios.put(`${API_URL}/${id}/status`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-        });
-        
+        await api.put(`/pengurus/riwayat-layanan/${id}/status`, formData);        
         showAlert("success", "Status layanan berhasil diperbarui");
         setIsProcessOpen(false);
         fetchData();
@@ -100,7 +92,7 @@ export default function RiwayatLayanan() {
     const s = status || "Proses"; 
     const styles = {
         'Selesai': 'bg-green-100 text-green-700',
-        'Proses': 'bg-blue-100 text-blue-700',
+        'Proses': 'bg-green-100 text-green-700',
         'Batal': 'bg-red-100 text-red-700'
     };
     return (
@@ -130,7 +122,7 @@ export default function RiwayatLayanan() {
         </div>
       </div>
 
-      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-blue-500 outline-none">
+      <div className="w-full pl-2 pr-4 py-2.5 rounded-xl shadow-sm border border-gray-200 bg-white focus:ring-2 focus:ring-green-500 outline-none">
         <div className="relative flex-1">
             <Search className="absolute left-3 top-3 text-gray-400" size={18} />
             <input 
@@ -144,7 +136,7 @@ export default function RiwayatLayanan() {
       </div>
 
       {loading ? (
-        <div className="p-12 text-center"><Loader2 className="animate-spin text-blue-500 mx-auto mb-2"/><p>Loading...</p></div>
+        <div className="p-12 text-center"><Loader2 className="animate-spin text-green-500 mx-auto mb-2"/><p>Loading...</p></div>
       ) : (
         <>
             {/* VIEW 1: TABLE (Desktop) */}
@@ -153,11 +145,11 @@ export default function RiwayatLayanan() {
                     <table className="w-full text-left border-collapse">
                         <thead>
                             <tr className="bg-gray-50 border-b border-gray-100 text-gray-600 text-sm uppercase">
-                                <th className="p-4">Waktu & Layanan</th>
-                                <th className="p-4">Santri</th>
-                                <th className="p-4">Status</th>
-                                <th className="p-4 text-center">Rating</th> 
-                                <th className="p-4 text-center">Aksi</th>
+                                <th className="p-4 w-[20%]">Waktu & Layanan</th>
+                                <th className="p-4 w-[40%]">Santri</th>
+                                <th className="p-4 w-[10%]">Status</th>
+                                <th className="p-4 text-center w-[20%]">Rating</th> 
+                                <th className="p-4 text-center w-[10%]">Aksi</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-gray-100">
@@ -173,9 +165,9 @@ export default function RiwayatLayanan() {
                                         <div className="flex items-center gap-2">
                                             <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden border border-gray-100 flex-shrink-0">
                                                 {item.users.foto_profil ? (
-                                                    <img src={`http://localhost:3000/uploads/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
+                                                    <img src={`/foto-profil/${item.users.foto_profil}`} alt={item.users.nama} className="w-full h-full object-cover"/>
                                                 ) : (
-                                                    <span className="text-blue-600 font-bold text-sm bg-blue-100 w-full h-full flex items-center justify-center">
+                                                    <span className="text-green-600 font-bold text-sm bg-green-100 w-full h-full flex items-center justify-center">
                                                         {item.users.nama.charAt(0).toUpperCase()}
                                                     </span>
                                                 )}
@@ -202,7 +194,7 @@ export default function RiwayatLayanan() {
                                     <td className="p-4 text-center">
                                         <button 
                                             onClick={() => handleOpenDetail(item)}
-                                            className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition border border-blue-100 hover:border-blue-300" 
+                                            className="p-2 text-green-600 hover:bg-green-50 rounded-lg transition border border-green-100 hover:border-green-300" 
                                             title="Lihat Detail & Feedback"
                                         >
                                             <Eye size={18} />
@@ -225,9 +217,9 @@ export default function RiwayatLayanan() {
                             <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 rounded-full bg-gray-200 flex-shrink-0 overflow-hidden border border-gray-100">
                                     {item.users.foto_profil ? (
-                                        <img src={`http://localhost:3000/uploads/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
+                                        <img src={`/foto-profil/${item.users.foto_profil}`} className="w-full h-full object-cover"/>
                                     ) : (
-                                        <div className="w-full h-full flex items-center justify-center bg-blue-100 text-blue-600 font-bold">{item.users.nama.charAt(0)}</div>
+                                        <div className="w-full h-full flex items-center justify-center bg-green-100 text-green-600 font-bold">{item.users.nama.charAt(0)}</div>
                                     )}
                                 </div>
                                 <div>
@@ -253,7 +245,7 @@ export default function RiwayatLayanan() {
 
                         <button 
                             onClick={() => handleOpenDetail(item)}
-                            className="w-full py-2.5 bg-blue-50 text-blue-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"
+                            className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"
                         >
                             <Eye size={16}/> Lihat Detail
                         </button>

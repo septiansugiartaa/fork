@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
+import api from '../config/api';
 import { useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
@@ -11,35 +11,42 @@ import CardMateri from "../components/CardMateri";
 export default function MateriView (){
     const [materi, setMateri] = useState([]);
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     
     const fetchMateri = async () => {
-        
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(
-                "http://localhost:3000/api/global/viewMateri",
-                {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Cache-Control": "no-cache"
-                }}
-            );
-            const result = await res.json();
-                if (result.success) {
-                    setMateri(result.data.list_materi);
+            setLoading(true);
+            const res = await api.get("/global/viewMateri");
+                if (res.data.success) {
+                    setMateri(res.data.data.list_materi);
                 } else {
-                    console.error(result.message);
+                    console.error(res.data.message);
                     setMateri([]);
                 }
         } catch (err) {
             console.error("Fetch error:", err);
+        } finally {
+            setLoading(false);
         }
     };
     
     useEffect(() => {
         fetchMateri();
     }, []);
+
+    if (loading) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50">
+                <div className="text-center">
+                    <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
+                    <p className="mt-4 text-gray-600 font-medium">
+                    Memuat data...
+                    </p>
+                </div>
+            </div>
+        );
+    }
 
     const filteredMateri = materi.filter((item) =>
         item.judul.toLowerCase().includes(search.toLowerCase())
@@ -48,7 +55,7 @@ export default function MateriView (){
     return (
         <div className="min-h-screen bg-gray-50">
             {/* HEADER */}
-            <div className='bg-gradient-to-br from-blue-600 to-blue-500 text-white p-6 pb-24 shadow-lg'>
+            <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
                 <div className="max-w-6xl mx-auto flex items-center gap-4">
                     <button
                         onClick={() => navigate("/santri")}
@@ -58,7 +65,7 @@ export default function MateriView (){
                     </button>
                     <div className="min-w-0">
                         <h1 className="text-2xl font-bold truncate">Daftar Materi</h1>
-                        <p className="text-blue-100 text-sm truncate">
+                        <p className="text-green-100 text-sm truncate">
                         Jendela Ilmu Pengetahuan Tentang Scabies
                         </p>
                     </div>
@@ -75,7 +82,7 @@ export default function MateriView (){
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         className="w-full pl-12 pr-12 py-3 rounded-xl
-                                    focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    focus:outline-none focus:ring-2 focus:ring-green-500"
                     />
                     {search && (
                         <button

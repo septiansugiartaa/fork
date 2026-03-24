@@ -30,12 +30,10 @@ exports.getProfile = async (req, res) => {
           orderBy: { tanggal_masuk: "desc" },
           include: { kamar: true },
         },
-        // Ambil data orang tua (dimana user ini adalah ANAK / id_santri)
-        orangtua: {
+        // PERBAIKAN 1: Gunakan nama relasi yang digenerate oleh Prisma
+        orangtua_orangtua_id_santriTousers: {
           where: { is_active: true },
           include: {
-            // Relasi ke data User si Orang Tua
-            // Sesuai schema: users_orangtua_id_orangtuaTousers
             users_orangtua_id_orangtuaTousers: true,
           },
         },
@@ -63,13 +61,11 @@ exports.getProfile = async (req, res) => {
         email: santri.email,
         no_hp: santri.no_hp,
         alamat: santri.alamat,
+        foto_profil: santri.foto_profil
       },
-      // URL Foto: Pastikan app.js sudah set static folder ke /uploads
-      foto_profil: santri.foto_profil
-        ? `http://localhost:3000/uploads/${santri.foto_profil}`
-        : null,
 
-      orang_tua: santri.orangtua.map((ot) => ({
+      // PERBAIKAN 2: Mapping array juga harus pakai nama relasi yang panjang
+      orang_tua: santri.orangtua_orangtua_id_santriTousers.map((ot) => ({
         id: ot.id,
         // Ambil nama & hp dari relasi users_orangtua_id_orangtuaTousers
         nama: ot.users_orangtua_id_orangtuaTousers?.nama || "Tanpa Nama",

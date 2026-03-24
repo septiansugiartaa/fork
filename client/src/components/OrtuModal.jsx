@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { User, X, Search, Loader2, CheckCircle, Plus, AlertTriangle } from "lucide-react";
+import api from "../config/api"; // Menggunakan instance api global
 
 export default function OrtuModal({
   isOpen,
   onClose,
-  api,
   isEditing,
   editData,
   onSubmit,
@@ -60,6 +60,7 @@ export default function OrtuModal({
       if (!isEditing && formStep === 1 && searchQuery.length >= 3) {
         setIsSearchingUser(true);
         try {
+          // Memanggil API global
           const res = await api.get(`/orangtua/search?q=${searchQuery}`);
           if (res.data.success) {
             setSearchResults(res.data.data);
@@ -75,7 +76,7 @@ export default function OrtuModal({
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchQuery, formStep, isEditing, api]);
+  }, [searchQuery, formStep, isEditing]);
 
   // Handlers
   const handleSelectUser = (user) => {
@@ -125,7 +126,7 @@ export default function OrtuModal({
         {/* Header */}
         <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50">
           <h3 className="font-bold text-gray-800 text-lg flex items-center">
-            <User className="mr-2 text-blue-600" size={20} />
+            <User className="mr-2 text-green-600" size={20} />
             {isEditing ? "Edit Data Wali" : "Tambah Data Wali"}
           </h3>
           <button
@@ -144,7 +145,7 @@ export default function OrtuModal({
                 <input
                   type="text"
                   placeholder="Cari Nama atau No. HP..."
-                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 focus:ring-2 focus:ring-green-500 outline-none"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
@@ -155,7 +156,7 @@ export default function OrtuModal({
                 />
                 {isSearchingUser && (
                   <Loader2
-                    className="absolute right-3 top-3.5 text-blue-500 animate-spin"
+                    className="absolute right-3 top-3.5 text-green-500 animate-spin"
                     size={20}
                   />
                 )}
@@ -168,7 +169,7 @@ export default function OrtuModal({
                     <button
                       key={user.id}
                       onClick={() => handleSelectUser(user)}
-                      className="w-full text-left p-3 rounded-lg border border-gray-100 hover:border-blue-300 hover:bg-blue-50 transition flex justify-between items-center group"
+                      className="w-full text-left p-3 rounded-lg border border-gray-100 hover:border-green-300 hover:bg-green-50 transition flex justify-between items-center group"
                     >
                       <div>
                         <p className="font-semibold text-gray-800">
@@ -176,7 +177,7 @@ export default function OrtuModal({
                         </p>
                         <p className="text-xs text-gray-500">{user.no_hp}</p>
                       </div>
-                      <div className="text-xs font-bold text-blue-600 opacity-0 group-hover:opacity-100 transition">
+                      <div className="text-xs font-bold text-green-600 opacity-0 group-hover:opacity-100 transition">
                         Pilih
                       </div>
                     </button>
@@ -206,7 +207,7 @@ export default function OrtuModal({
               <div className="pt-2 border-t border-gray-100">
                 <button
                   onClick={handleManualInput}
-                  className="w-full flex items-center justify-center p-3 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition"
+                  className="w-full flex items-center justify-center p-3 text-sm font-medium text-green-600 bg-green-50 hover:bg-green-100 rounded-xl transition"
                 >
                   <Plus size={16} className="mr-2" />
                   Input Manual / Buat Baru
@@ -222,12 +223,12 @@ export default function OrtuModal({
           {formStep === 2 && (
             <form onSubmit={handleSubmit} className="space-y-4">
               {!isEditing && !isManualInput && (
-                <div className="bg-blue-50 p-3 rounded-lg flex items-start gap-3 mb-2">
+                <div className="bg-green-50 p-3 rounded-lg flex items-start gap-3 mb-2">
                   <CheckCircle
-                    className="text-blue-600 flex-shrink-0 mt-0.5"
+                    className="text-green-600 flex-shrink-0 mt-0.5"
                     size={18}
                   />
-                  <div className="text-sm text-blue-800">
+                  <div className="text-sm text-green-800">
                     <p className="font-bold">Data Ditemukan!</p>
                     <p className="text-xs mt-1">
                       Akun wali sudah ada. Silakan isi hubungan keluarga saja.
@@ -247,7 +248,7 @@ export default function OrtuModal({
                     setFormData({ ...formData, nama: e.target.value })
                   }
                   disabled={!isManualInput && !isEditing}
-                  className={`w-full p-3 border rounded-xl outline-none ${!isManualInput && !isEditing ? "bg-gray-100 border-gray-200 text-gray-500" : "bg-white border-gray-200 focus:ring-2 focus:ring-blue-500"}`}
+                  className={`w-full p-3 border rounded-xl outline-none ${!isManualInput && !isEditing ? "bg-gray-100 border-gray-200 text-gray-500" : "bg-white border-gray-200 focus:ring-2 focus:ring-green-500"}`}
                 />
               </div>
 
@@ -262,7 +263,7 @@ export default function OrtuModal({
                     setFormData({ ...formData, no_hp: e.target.value })
                   }
                   disabled={!isManualInput && !isEditing}
-                  className={`w-full p-3 border rounded-xl outline-none ${!isManualInput && !isEditing ? "bg-gray-100 border-gray-200 text-gray-500" : "bg-white border-gray-200 focus:ring-2 focus:ring-blue-500"}`}
+                  className={`w-full p-3 border rounded-xl outline-none ${!isManualInput && !isEditing ? "bg-gray-100 border-gray-200 text-gray-500" : "bg-white border-gray-200 focus:ring-2 focus:ring-green-500"}`}
                 />
               </div>
 
@@ -277,7 +278,7 @@ export default function OrtuModal({
                   onChange={(e) =>
                     setFormData({ ...formData, hubungan: e.target.value })
                   }
-                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none"
+                  className="w-full p-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none"
                   autoFocus
                 />
               </div>
@@ -296,7 +297,7 @@ export default function OrtuModal({
                 <button
                   type="submit"
                   disabled={saving}
-                  className="flex-1 px-4 py-3 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition disabled:bg-blue-300 flex justify-center items-center"
+                  className="flex-1 px-4 py-3 bg-green-600 text-white font-medium rounded-xl hover:bg-green-700 transition disabled:bg-green-300 flex justify-center items-center"
                 >
                   {saving && (
                     <Loader2 className="animate-spin mr-2" size={18} />

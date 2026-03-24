@@ -4,3 +4,41 @@
 *{
     font-family: "Geist", sans-serif;
 }
+
+.simtren{
+    font-family: 'Gotham', sans-serif;
+}
+
+
+.ql-editor {
+    min-height: 200px;
+}
+
+/* label default */
+.ql-snow .ql-picker.ql-size .ql-picker-label::before {
+  content: attr(data-value);
+}
+
+.prose p, ul, ol{
+  font-size: 16px;
+}
+
+.recharts-surface, .recharts-sector{
+  outline: none;
+}
+
+.recharts-surface:active, .recharts-sector:active{
+  outline: none;
+}
+
+.pdf-page {
+  width: 210mm;
+  min-height: 297mm;
+  padding: 20mm;
+  background: white;
+  page-break-after: always;
+}
+
+.avoid-break {
+  page-break-inside: avoid;
+}
