@@ -2,10 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/api";
 import { 
-  ArrowLeft, Loader2, Search, Calendar, Clock, MapPin, ChevronDown, 
-  AlertTriangle, CheckCircle, X, UserCheck
+  ArrowLeft, Loader2, Search, Calendar, Clock, MapPin, ChevronDown
 } from "lucide-react";
-import DetailKegiatanModal from "../../components/DetailKegiatanModal"; // Kita pakai modal yang sama
+import DetailKegiatanModal from "../../components/DetailKegiatanModal";
 
 export default function OrangTuaKegiatan() {
   const [loading, setLoading] = useState(true);
@@ -19,15 +18,23 @@ export default function OrangTuaKegiatan() {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const navigate = useNavigate();
+  // Ambil ID anak aktif
+  const activeSantriId = localStorage.getItem('active_santri_id') || "";
 
   useEffect(() => {
     fetchKegiatan();
-  }, [filterType]); 
+  }, [filterType, activeSantriId]); 
 
   const fetchKegiatan = async () => {
     try {
       setLoading(true);
-      const res = await api.get(`/orangtua/kegiatan?search=${search}&type=${filterType === "Semua" ? "" : filterType}`);
+      const res = await api.get(`/orangtua/kegiatan`, {
+          params: {
+              search: search,
+              type: filterType === "Semua" ? "" : filterType,
+              id_santri: activeSantriId
+          }
+      });
       if (res.data.success) {
         setKegiatans(res.data.data);
       }
@@ -40,9 +47,7 @@ export default function OrangTuaKegiatan() {
   };
 
   useEffect(() => {
-    const delayDebounce = setTimeout(() => {
-        fetchKegiatan();
-    }, 500);
+    const delayDebounce = setTimeout(() => { fetchKegiatan(); }, 500);
     return () => clearTimeout(delayDebounce);
   }, [search]);
 
@@ -136,7 +141,6 @@ export default function OrangTuaKegiatan() {
         onClose={() => setIsDetailOpen(false)}
         data={selectedKegiatan}
       />
-
     </div>
   );
 }

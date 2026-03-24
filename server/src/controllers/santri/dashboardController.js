@@ -97,7 +97,7 @@ exports.getDashboardData = async (req, res) => {
             santri: {
                 nama: pengguna.nama || '-',
                 nip: pengguna.nip || '-',
-                foto_profil: pengguna.foto_profil || '-',
+                foto_profil: pengguna.foto_profil,
                 kelas: pengguna.kelas_santri[0]?.kelas?.kelas || '-',
                 kamar: pengguna.kamar_santri[0]?.kamar?.kamar || '-', 
                 status: pengguna.is_active ? 'Aktif' : 'Tidak Aktif'
