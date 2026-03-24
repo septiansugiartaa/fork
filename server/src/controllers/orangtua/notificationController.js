@@ -6,19 +6,16 @@ exports.getOrtuNotifs = async (req, res) => {
         const userId = req.user.id;
         const user = await prisma.users.findUnique({ where: { id: userId } });
         
-        const relasi = await prisma.orangtua.findFirst({
-            where: { id_orangtua: userId, is_active: true }
-        });
-
+        // Ambil semua anak yang terhubung
+        const relasiAll = await prisma.orangtua.findMany({ where: { id_orangtua: userId, is_active: true } });
         let notifs = [];
         
-        if (relasi && relasi.id_santri) {
-            const idAnak = relasi.id_santri;
+        if (relasiAll.length > 0) {
+            const idAnakList = relasiAll.map(r => r.id_santri);
 
-            // A. Tagihan Anak Aktif
             const tagihan = await prisma.tagihan.findMany({
-                where: { id_santri: idAnak, status: 'Aktif' },
-                take: 3, orderBy: { tanggal_tagihan: 'desc' }
+                where: { id_santri: { in: idAnakList }, status: 'Aktif' },
+                take: 5, orderBy: { tanggal_tagihan: 'desc' }
             });
             tagihan.forEach(t => {
                 notifs.push({
@@ -29,10 +26,9 @@ exports.getOrtuNotifs = async (req, res) => {
                 });
             });
 
-            // B. PERBAIKAN: Pengaduan/Laporan Baru (Dari Ustadz ke Anak)
             const aduanBaru = await prisma.pengaduan.findMany({
-                where: { id_santri: idAnak, is_active: true },
-                take: 3, orderBy: { waktu_aduan: 'desc' }
+                where: { id_santri: { in: idAnakList }, is_active: true },
+                take: 5, orderBy: { waktu_aduan: 'desc' }
             });
             aduanBaru.forEach(a => {
                 notifs.push({
