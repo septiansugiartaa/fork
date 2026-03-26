@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../config/api";
+import api from "../../../config/api";
 import {
   ArrowLeft,
   Loader2,
@@ -8,9 +8,9 @@ import {
   History,
   ClipboardList
 } from "lucide-react";
-import Pagination from "../../components/pagination/Pagination";
+import Pagination from "../../../components/pagination/Pagination";
 
-export default function PortalScreening() {
+export default function PortalScreeningPage({ rolePrefix }) {
     const { id } = useParams();
     const navigate = useNavigate();
     const topRef = useRef(null);
@@ -28,11 +28,11 @@ export default function PortalScreening() {
         try {
         const [santriRes, screeningRes, latestRes] = await Promise.all([
             api.get(
-            `/timkesehatan/screening/santri/${id}/detail`),
+            `/${rolePrefix}/screening/santri/${id}/detail`),
             api.get(
-            `/timkesehatan/screening/santri/${id}/screening`, {params: { page, limit }}),
+            `/${rolePrefix}/screening/santri/${id}/screening`, {params: { page, limit }}),
             api.get(
-            `/timkesehatan/screening/santri/${id}/latest`)
+            `/${rolePrefix}/screening/santri/${id}/latest`)
         ]);
 
         setSantri(santriRes.data.data);
@@ -92,11 +92,62 @@ export default function PortalScreening() {
         return "text-gray-600";
     };
 
+    const renderScreeningCards = (items, emptyText) => {
+        if (!items.length) {
+            return (
+                <div className="p-6 text-center text-gray-400 text-sm">
+                    {emptyText}
+                </div>
+            );
+        }
+
+        return (
+            <div className="grid grid-cols-1 gap-3 p-3">
+                {items.map((item) => (
+                    <div
+                        key={item.id_screening}
+                        className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm"
+                    >
+                        <div className="space-y-2 text-sm">
+                            <div className="flex justify-between gap-3">
+                                <span className="text-gray-500">Tanggal</span>
+                                <span className="font-medium text-gray-800 text-right">
+                                    {new Date(item.tanggal).toLocaleDateString("id-ID")}
+                                </span>
+                            </div>
+                            <div className="flex justify-between gap-3">
+                                <span className="text-gray-500">Diagnosa</span>
+                                <span className={`font-semibold text-right ${getDiagnosaStyle(item.diagnosa)}`}>
+                                    {item.diagnosa?.replaceAll("_", " ") || "-"}
+                                </span>
+                            </div>
+                            <div className="flex justify-between gap-3">
+                                <span className="text-gray-500">Pemeriksa</span>
+                                <span className="font-medium text-gray-800 text-right">
+                                    {item.users_screening_id_timkesTousers?.nama || "-"}
+                                </span>
+                            </div>
+                        </div>
+
+                        <button
+                            onClick={() =>
+                                navigate(`/${rolePrefix}/daftarSantriScreening/${id}/view/${item.id_screening}`)
+                            }
+                            className="mt-4 w-full px-4 py-2 border border-green-200 text-green-600 rounded-lg text-sm hover:bg-green-50 transition"
+                        >
+                            View
+                        </button>
+                    </div>
+                ))}
+            </div>
+        );
+    };
+
     return (
         <div ref={topRef} className="space-y-6">
             <div className="flex items-center mb-6">
                 <button
-                onClick={() => navigate("/timkesehatan/daftarSantriScreening")}
+                onClick={() => navigate(`/${rolePrefix}/daftarSantriScreening`)}
                 className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
                 >
                 <ArrowLeft size={24} />
@@ -163,7 +214,7 @@ export default function PortalScreening() {
 
                         <button
                         onClick={() =>
-                            navigate(`/timkesehatan/daftarSantriScreening/${id}/create`)
+                            navigate(`/${rolePrefix}/daftarSantriScreening/${id}/create`)
                         }
                         className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"
                         >
@@ -173,7 +224,7 @@ export default function PortalScreening() {
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                        <div className="overflow-x-auto">
+                        <div className="hidden lg:block overflow-x-auto">
                         <table className="w-full table-fixed border-collapse">
                             <thead>
                             <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -199,7 +250,7 @@ export default function PortalScreening() {
                                 <td className="text-center space-x-2">
                                     <button
                                         onClick={() =>
-                                        navigate(`/timkesehatan/daftarSantriScreening/${id}/view/${latest.id_screening}`)
+                                        navigate(`/${rolePrefix}/daftarSantriScreening/${id}/view/${latest.id_screening}`)
                                         }
                                         className="px-4 py-2 border border-green-200 text-green-600 rounded-lg text-sm hover:bg-green-50 transition"
                                     >
@@ -217,6 +268,12 @@ export default function PortalScreening() {
                             </tbody>
                         </table>
                         </div>
+                        <div className="lg:hidden">
+                            {renderScreeningCards(
+                                latest ? [latest] : [],
+                                "Belum ada screening."
+                            )}
+                        </div>
                     </div>
                 </div>
 
@@ -228,7 +285,7 @@ export default function PortalScreening() {
                 </h2>
 
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                    <div className="overflow-x-auto">
+                    <div className="hidden lg:block overflow-x-auto">
                     <table className="w-full table-fixed border-collapse">
                         <thead>
                         <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -255,7 +312,7 @@ export default function PortalScreening() {
                                     <td className="text-center space-x-2">
                                         <button
                                             onClick={() =>
-                                            navigate(`/timkesehatan/daftarSantriScreening/${id}/view/${item.id_screening}`)
+                                            navigate(`/${rolePrefix}/daftarSantriScreening/${id}/view/${item.id_screening}`)
                                             }
                                             className="px-4 py-2 border border-green-200 text-green-600 rounded-lg text-sm hover:bg-green-50 transition"
                                         >
@@ -273,6 +330,12 @@ export default function PortalScreening() {
                             )}
                             </tbody>
                     </table>
+                    </div>
+                    <div className="lg:hidden">
+                        {renderScreeningCards(
+                            riwayat,
+                            "Belum ada riwayat screening."
+                        )}
                     </div>
                 </div>
                 <Pagination

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Search, Mail, Phone, FileText, MapPin } from "lucide-react";
-import Pagination from "../../components/pagination/Pagination";
-import api from "../../config/api";
+import Pagination from "../../../components/pagination/Pagination";
+import api from "../../../config/api";
 
-export default function DaftarSantriScreening() {
+export default function DaftarSantriScreeningPage({ rolePrefix }) {
   const [santriList, setSantriList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
@@ -25,7 +25,7 @@ export default function DaftarSantriScreening() {
   const fetchSantri = async () => {
     setLoading(true);
     try {
-      const res = await api.get("/timkesehatan/screening/santri", {
+      const res = await api.get(`/${rolePrefix}/screening/santri`, {
         params: { search: debouncedSearch, page, limit }
       });
 
@@ -175,7 +175,7 @@ export default function DaftarSantriScreening() {
                         <td className="flex justify-center items-center p-4 align-top">
                           <button
                             onClick={() =>
-                              navigate(`/timkesehatan/daftarSantriScreening/${item.id}`)
+                              navigate(`/${rolePrefix}/daftarSantriScreening/${item.id}`)
                             }
                             className="px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-100 transition truncate"
                           >
@@ -209,16 +209,16 @@ export default function DaftarSantriScreening() {
                   key={item.id}
                   className="bg-white p-4 rounded-2xl shadow-sm space-y-3"
                 >
-                  <div className="flex justify-between items-center">
-                    <div>
-                      <p className="font-semibold text-gray-800">
+                  <div className="flex justify-between items-center gap-3">
+                    <div className="min-w-0 flex-1">
+                        <p className="font-semibold text-gray-800 truncate">
                         {item.nama}
-                      </p>
-                      <p className="text-xs text-gray-500">
+                        </p>
+                      <p className="text-xs text-gray-500 truncate">
                         NIS: {item.nip}
                       </p>
                     </div>
-                    <span className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-sm font-semibold">
+                    <span className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 text-sm font-semibold flex-shrink-0">
                       {total}
                     </span>
                   </div>
@@ -246,7 +246,7 @@ export default function DaftarSantriScreening() {
 
                   <button
                     onClick={() =>
-                      navigate(`/timkesehatan/daftarSantriScreening/${item.id}`)
+                      navigate(`/${rolePrefix}/daftarSantriScreening/${item.id}`)
                     }
                     className="w-full px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-100 transition"
                   >

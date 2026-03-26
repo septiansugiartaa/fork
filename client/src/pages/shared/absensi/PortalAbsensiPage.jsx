@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../config/api";
+import api from "../../../config/api";
 import {
   ArrowLeft,
   Loader2,
@@ -8,9 +8,9 @@ import {
   History,
   ClipboardList
 } from "lucide-react";
-import Pagination from "../../components/pagination/Pagination";
+import Pagination from "../../../components/pagination/Pagination";
 
-export default function PortalAbsensi() {
+export default function PortalAbsensiPage({ rolePrefix }) {
 
   const { id } = useParams();
   const navigate = useNavigate();
@@ -32,11 +32,11 @@ export default function PortalAbsensi() {
     try {
 
       const [kamarRes, absensiRes, latestRes] = await Promise.all([
-        api.get(`/timkesehatan/absensi/kamar/${id}/detail`),
-        api.get(`/timkesehatan/absensi/kamar/${id}/absensi`, {
+        api.get(`/${rolePrefix}/absensi/kamar/${id}/detail`),
+        api.get(`/${rolePrefix}/absensi/kamar/${id}/absensi`, {
           params: { page, limit }
         }),
-        api.get(`/timkesehatan/absensi/kamar/${id}/latest`)
+        api.get(`/${rolePrefix}/absensi/kamar/${id}/latest`)
       ]);
 
       setKamar(kamarRes.data?.data || null);
@@ -94,12 +94,54 @@ export default function PortalAbsensi() {
   const isTodayAbsensi = latest
     ? new Date(latest.tanggal).toDateString() === new Date().toDateString()
     : false;
+  
+  const renderAbsensiCards = (items, emptyText) => {
+    if (!items.length) {
+      return (
+        <div className="p-6 text-center text-gray-400 text-sm">
+          {emptyText}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 gap-3 p-3">
+        {items.map((item) => (
+          <div key={item.id_heading} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between gap-3">
+                <span className="text-gray-500">Tanggal</span>
+                <span className="font-medium text-gray-800 text-right">
+                  {new Date(item.tanggal).toLocaleDateString("id-ID")}
+                </span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-gray-500">Pemeriksa</span>
+                <span className="font-medium text-gray-800 text-right">
+                  {item.users?.nama || "-"}
+                </span>
+              </div>
+            </div>
+
+            <button
+              onClick={() =>
+                navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}/edit/${item.id_heading}`)
+              }
+              className="mt-4 w-full px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition"
+            >
+              Edit
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div ref={topRef} className="space-y-6">
       <div className="flex items-center mb-6">
         <button
-          onClick={() => navigate("/timkesehatan/daftarAbsensiKamar")}
+          onClick={() => navigate(`/${rolePrefix}/daftarAbsensiKamar`)}
           className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
         >
           <ArrowLeft size={24} />
@@ -166,12 +208,12 @@ export default function PortalAbsensi() {
               Absensi Terakhir
             </h2>
 
-            <div className="flex gap-3">
+            <div className="flex w-full sm:w-auto gap-3">
               <button
                 onClick={() =>
-                  navigate(`/timkesehatan/daftarAbsensiKamar/${id}/laporan`)
+                  navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}/laporan`)
                 }
-                className="px-4 py-2.5 border border-green-200 text-green-600 rounded-xl font-medium flex items-center hover:bg-green-50 transition"
+                className="w-full sm:w-auto px-4 py-2.5 border border-green-200 text-green-600 rounded-xl font-medium flex items-center justify-center hover:bg-green-50 transition"
               >
                 Lihat Laporan
               </button>
@@ -179,9 +221,9 @@ export default function PortalAbsensi() {
               <button
                 disabled={isTodayAbsensi}
                 onClick={() =>
-                  navigate(`/timkesehatan/daftarAbsensiKamar/${id}/create`)
+                  navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}/create`)
                 }
-                className={`px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition
+                className={`w-full sm:w-auto px-4 py-2.5 rounded-xl font-medium flex items-center justify-center shadow-lg transition
                 ${
                   isTodayAbsensi
                     ? "bg-gray-300 text-gray-500 cursor-not-allowed"
@@ -201,7 +243,7 @@ export default function PortalAbsensi() {
           )}
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
+             <div className="hidden lg:block overflow-x-auto"> 
               <table className="w-full table-fixed border-collapse">
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -224,7 +266,7 @@ export default function PortalAbsensi() {
                       <td className="text-center space-x-2">
                         <button
                           onClick={() =>
-                            navigate(`/timkesehatan/daftarAbsensiKamar/${id}/edit/${latest.id_heading}`)
+                            navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}/edit/${latest.id_heading}`)
                           }
                           className="px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition"
                         >
@@ -242,6 +284,9 @@ export default function PortalAbsensi() {
                 </tbody>
               </table>
             </div>
+            <div className="lg:hidden">
+              {renderAbsensiCards(latest ? [latest] : [], "Belum ada absensi.")}
+            </div>
           </div>
         </div>
 
@@ -253,7 +298,7 @@ export default function PortalAbsensi() {
           </h2>
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full table-fixed border-collapse">
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -280,7 +325,7 @@ export default function PortalAbsensi() {
                         <td className="text-center space-x-2">
                           <button
                             onClick={() =>
-                              navigate(`/timkesehatan/daftarAbsensiKamar/${id}/edit/${item.id_heading}`)
+                              navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}/edit/${item.id_heading}`)
                             }
                             className="px-4 py-2 border border-blue-200 text-blue-600 rounded-lg text-sm hover:bg-blue-50 transition"
                           >
@@ -298,6 +343,9 @@ export default function PortalAbsensi() {
                   )}
                 </tbody>
               </table>
+            </div>
+            <div className="lg:hidden">
+              {renderAbsensiCards(riwayat, "Belum ada riwayat absensi.")}
             </div>
           </div>
 

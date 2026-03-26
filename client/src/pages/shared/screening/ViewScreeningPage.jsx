@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../config/api";
+import api from "../../../config/api";
 import { Loader2, ArrowLeft } from "lucide-react";
-import { exportScreeningPdf } from "../../components/PdfScreening";
+import { exportScreeningPdf } from "../../../components/PdfScreening";
 
-export default function ViewScreening() {
+export default function ViewScreeningPage({ rolePrefix }) {
   const { screeningId } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,7 +16,7 @@ export default function ViewScreening() {
     setError(null);
     setLoading(true);
     try {
-      const res = await api.get(`/timkesehatan/screening/${screeningId}`);
+      const res = await api.get(`/${rolePrefix}/screening/${screeningId}`);
       setData(res.data.data);
     } catch (err) {
       console.error(err);
@@ -87,7 +87,7 @@ export default function ViewScreening() {
     <div className="min-h-screen bg-gray-50 pb-20">
       <div className="mb-10 flex items-center ">
         <button
-          onClick={() => navigate(`/timkesehatan/daftarSantriScreening/${santri?.id}`)}
+          onClick={() => navigate(`/${rolePrefix}/daftarSantriScreening/${santri?.id}`)}
           className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
         >
           <ArrowLeft size={24} />

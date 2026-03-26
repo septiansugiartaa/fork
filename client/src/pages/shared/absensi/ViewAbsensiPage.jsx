@@ -1,12 +1,12 @@
 import {useEffect,useState} from "react"
 import {useParams,useNavigate} from "react-router-dom"
-import api from "../../config/api"
+import api from "../../../config/api"
 import {ArrowLeft,Loader2} from "lucide-react"
 import jsPDF from "jspdf"
 import html2canvas from "html2canvas-pro"
-import logoPesantren from "../../assets/logo.png"
+import logoPesantren from "../../../assets/logo.png"
 
-export default function ViewAbsensi(){
+export default function ViewAbsensi({ rolePrefix }){
   const {id}=useParams()
   const navigate=useNavigate()
 
@@ -32,8 +32,8 @@ export default function ViewAbsensi(){
     try{
       setLoading(true)
       const [laporanRes,kamarRes]=await Promise.all([
-        api.get(`/timkesehatan/absensi/kamar/${id}/laporan`,{params:{bulan,tahun}}),
-        api.get(`/timkesehatan/absensi/kamar/${id}/detail`)
+        api.get(`/${rolePrefix}/absensi/kamar/${id}/laporan`,{params:{bulan,tahun}}),
+        api.get(`/${rolePrefix}/absensi/kamar/${id}/detail`)
       ])
       setItems(laporanRes.data.items||[])
       setAbsensi(laporanRes.data.absensi||[])

@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../config/api";
+import api from "../../../config/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
-export default function FormAbsensi() {
+export default function FormAbsensiPage({ rolePrefix }) {
     const { id, id_heading } = useParams();
     const navigate = useNavigate();
 
@@ -50,9 +50,9 @@ export default function FormAbsensi() {
     const fetchData = async () => {
         try {
             const [kamarRes, santriRes, itemRes] = await Promise.all([
-                api.get(`/timkesehatan/absensi/kamar/${id}/detail`),
-                api.get(`/timkesehatan/absensi/kamar/${id}/santri`),
-                api.get("/timkesehatan/absensi/item-kebersihan")
+                api.get(`/${rolePrefix}/absensi/kamar/${id}/detail`),
+                api.get(`/${rolePrefix}/absensi/kamar/${id}/santri`),
+                api.get(`/${rolePrefix}/absensi/item-kebersihan`)
             ])
 
             setKamar(kamarRes.data.data)
@@ -73,7 +73,7 @@ export default function FormAbsensi() {
     const fetchEditData = async () => {
         try{
             const res = await api.get(
-            `/timkesehatan/absensi/${id_heading}`
+            `/${rolePrefix}/absensi/${id_heading}`
             )
 
             const data = res.data.data
@@ -119,7 +119,7 @@ export default function FormAbsensi() {
             let res
             if(editMode){
                 res = await api.put(
-                    `/timkesehatan/absensi/update/${id_heading}`,
+                    `/${rolePrefix}/absensi/update/${id_heading}`,
                     {
                     id_kamar:id,
                     jawaban:JSON.stringify(jawaban)
@@ -128,7 +128,7 @@ export default function FormAbsensi() {
     
             } else{
                 res = await api.post(
-                    "/timkesehatan/absensi/create",
+                    `/${rolePrefix}/absensi/create`,
                     {
                     id_kamar:id,
                     jawaban:JSON.stringify(jawaban)
@@ -136,7 +136,7 @@ export default function FormAbsensi() {
                 )
             }
             alert(res.data.message)
-            navigate(`/timkesehatan/daftarAbsensiKamar/${id}`)
+            navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}`)
         }catch(err){
             if(err.response?.data?.message){
                 alert(err.response.data.message)

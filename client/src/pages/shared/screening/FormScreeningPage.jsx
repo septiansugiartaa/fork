@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../../config/api";
+import api from "../../../config/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
 const ANATOMI_AREA_OPTIONS = [
@@ -24,7 +24,7 @@ const BENTUK_OPTIONS = [
   { value: "Bintil_Bernanah", label: "Bintil bernanah" }
 ];
 
-export default function FormScreening() {
+export default function FormScreeningPage({ rolePrefix }) {
   const { id, screeningId } = useParams();
   const navigate = useNavigate();
 
@@ -65,10 +65,10 @@ export default function FormScreening() {
   const fetchData = useCallback(async () => {
     try {
       const [pertanyaanRes, santriRes, penangananRes, riwayatRes] = await Promise.all([
-        api.get("/timkesehatan/screening/pertanyaan"),
-        api.get(`/timkesehatan/screening/santri/${id}/detail`),
-        api.get("/timkesehatan/screening/penanganan"),
-        api.get(`/timkesehatan/screening/santri/${id}/screening`, { params: { page: 1, limit: 1 } })
+        api.get(`/${rolePrefix}/screening/pertanyaan`),
+        api.get(`/${rolePrefix}/screening/santri/${id}/detail`),
+        api.get(`/${rolePrefix}/screening/penanganan`),
+        api.get(`/${rolePrefix}/screening/santri/${id}/screening`, { params: { page: 1, limit: 1 } })
       ]);
   
 
@@ -79,7 +79,7 @@ export default function FormScreening() {
       setRiwayatScreeningCount(riwayatRes.data?.pagination?.total || 0);
 
       if (isEditMode) {
-        const screeningRes = await api.get(`/timkesehatan/screening/${screeningId}`);
+        const screeningRes = await api.get(`/${rolePrefix}/screening/${screeningId}`);
         const screening = screeningRes.data.data;
 
         setJawaban(
@@ -215,7 +215,7 @@ export default function FormScreening() {
 
   const handleSubmit = async () => {
     if (isEditMode) {
-      navigate(`/timkesehatan/daftarSantriScreening/${id}`);
+      navigate(`/${rolePrefix}/daftarSantriScreening/${id}`);
       return;
     }
 
@@ -236,8 +236,8 @@ export default function FormScreening() {
         }))
       };
 
-      await api.post("/timkesehatan/screening/create", payload);
-      navigate(`/timkesehatan/daftarSantriScreening/${id}`);
+      await api.post(`/${rolePrefix}/screening/create`, payload);
+      navigate(`/${rolePrefix}/daftarSantriScreening/${id}`);
     } catch (err) {
       console.error("Submit Error:", err.response?.data || err.message);
     } finally {

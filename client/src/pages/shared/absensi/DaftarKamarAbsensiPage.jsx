@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Loader2, Search, FileText } from "lucide-react";
-import Pagination from "../../components/pagination/Pagination";
-import api from "../../config/api";
+import Pagination from "../../../components/pagination/Pagination";
+import api from "../../../config/api";
 
-export default function DaftarKamarAbsensi() {
+export default function DaftarKamarAbsensiPage({ rolePrefix }) {
   const [kamarList, setKamarList] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -21,7 +21,7 @@ export default function DaftarKamarAbsensi() {
     setLoading(true);
 
     try {
-      const res = await api.get("/timkesehatan/absensi/kamar", {
+      const res = await api.get(`/${rolePrefix}/absensi/kamar`, {
         params: {
           search: debouncedSearch,
           page,
@@ -151,7 +151,7 @@ export default function DaftarKamarAbsensi() {
                             <td className="flex justify-center items-center p-4">
                                 <button
                                 onClick={() =>
-                                    navigate(`/timkesehatan/daftarAbsensiKamar/${item.id}`)
+                                    navigate(`/${rolePrefix}/daftarAbsensiKamar/${item.id}`)
                                 }
                                 className="px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center gap-2 hover:bg-green-100 transition"
                                 >
@@ -221,7 +221,7 @@ export default function DaftarKamarAbsensi() {
 
                     <button
                     onClick={() =>
-                        navigate(`/timkesehatan/daftarAbsensiKamar/${item.id}`)
+                        navigate(`/${rolePrefix}/daftarAbsensiKamar/${item.id}`)
                     }
                     className="w-full px-4 py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 hover:bg-green-100 transition"
                     >

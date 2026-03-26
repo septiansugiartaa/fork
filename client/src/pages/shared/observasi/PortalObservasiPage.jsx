@@ -71,6 +71,50 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
     </span>
   );
 
+  const renderObservasiCards = (items, emptyText) => {
+    if (!items.length) {
+      return (
+        <div className="p-6 text-center text-gray-400 text-sm">
+          {emptyText}
+        </div>
+      );
+    }
+
+    return (
+      <div className="grid grid-cols-1 gap-3 p-3">
+        {items.map((item) => (
+          <div key={item.id_observasi} className="rounded-xl border border-gray-100 bg-white p-4 shadow-sm">
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between gap-3">
+                <span className="text-gray-500">Tanggal</span>
+                <span className="font-medium text-gray-800 text-right">{new Date(item.tanggal).toLocaleDateString("id-ID")}</span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-gray-500">Waktu</span>
+                <span className="font-medium text-gray-800 text-right">{formatObservasiWaktu(item.waktu)}</span>
+              </div>
+              <div className="flex justify-between gap-3 items-center">
+                <span className="text-gray-500">Skor</span>
+                <span className="text-right">{renderScoreBadge(item)}</span>
+              </div>
+              <div className="flex justify-between gap-3">
+                <span className="text-gray-500">Pengamat</span>
+                <span className="font-medium text-gray-800 text-right">{item.users_observasi_id_timkesTousers?.nama || "-"}</span>
+              </div>
+            </div>
+
+            <button
+              onClick={() => navigate(`/${rolePrefix}/daftarSantriObservasi/${id}/view/${item.id_observasi}`)}
+              className="mt-4 w-full px-4 py-2 border border-green-200 text-green-600 rounded-lg text-sm hover:bg-green-50 transition"
+            >
+              View
+            </button>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div ref={topRef} className="space-y-6">
       <div className="flex items-center mb-6">
@@ -121,7 +165,7 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
           </div>
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full table-fixed border-collapse">
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -150,11 +194,14 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
                     </tr>
                   ) : (
                     <tr>
-                      <td colSpan="4" className="p-8 text-center text-gray-400">Belum ada observasi.</td>
+                      <td colSpan="5" className="p-8 text-center text-gray-400">Belum ada observasi.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
+            </div>
+            <div className="lg:hidden">
+              {renderObservasiCards(latest ? [latest] : [], "Belum ada observasi.")}
             </div>
           </div>
         </div>
@@ -166,7 +213,7 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
           </h2>
 
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
+            <div className="hidden lg:block overflow-x-auto">
               <table className="w-full table-fixed border-collapse">
                 <thead>
                   <tr className="bg-gray-50 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider border-b border-gray-100">
@@ -195,15 +242,23 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
                     </tr>
                   )) : (
                     <tr>
-                      <td colSpan="4" className="p-8 text-center text-gray-400">Belum ada riwayat observasi.</td>
+                      <td colSpan="5" className="p-8 text-center text-gray-400">Belum ada riwayat observasi.</td>
                     </tr>
                   )}
                 </tbody>
               </table>
             </div>
+            <div className="lg:hidden">
+              {renderObservasiCards(riwayat, "Belum ada riwayat observasi.")}
+            </div>
           </div>
 
-          <Pagination currentPage={page} totalPages={totalPages} onPageChange={setPage} />
+          <Pagination
+            currentPage={page}
+            totalPages={totalPages}
+            onNext={() => setPage((prev) => Math.min(prev + 1, totalPages))}
+            onPrev={() => setPage((prev) => Math.max(prev - 1, 1))}
+          />
         </div>
       </div>
     </div>
