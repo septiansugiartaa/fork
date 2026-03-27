@@ -1,4 +1,4 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import DOMPurify from "dompurify";
@@ -22,13 +22,16 @@ const sanitize = (html) => DOMPurify.sanitize(html || "", {
   FORBID_ATTR: ["onerror","onload","onclick","onmouseover"],
 });
 
+const LEGACY_RECENT_STORAGE_KEY = "santri_recent_materi";
+
 function DetailMateri() {
   const { id } = useParams();
   const [materi, setMateri] = useState(null);
   const [materiLain, setMateriLain] = useState([]);
   const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-
+  const navigate = useNavigate()
+  const location = useLocation();
+  
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role?.trim().toLowerCase();
 
@@ -39,6 +42,16 @@ function DetailMateri() {
   };
 
   const detailBasePath = rolePathMap[role] || "/viewMateri";
+  const backPath = location.state?.from || detailBasePath;
+  const rootFrom = location.state?.rootFrom || backPath;
+
+  const handleBack = () => {
+    if (backPath.includes("/viewMateri")) {
+      navigate(backPath, { state: { from: rootFrom, rootFrom } });
+      return;
+    }
+    navigate(backPath, { state: { rootFrom } });
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -53,6 +66,29 @@ function DetailMateri() {
     };
     fetchDetail();
   }, [id]);
+
+  useEffect(() => {
+    if (materi) {
+      console.log("ISI:", materi.detail_materi?.[0]?.isi_materi);
+    }
+  }, [materi]);
+
+  useEffect(() => {
+    localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
+  }, []);
+
+  useEffect(() => {
+    const trackMateriView = async () => {
+      if (role !== "santri" || !materi?.id_materi) return;
+      try {
+        await api.post(`/santri/scabies/materi/${materi.id_materi}/view`);
+      } catch (error) {
+        console.error("Gagal menyimpan riwayat materi:", error);
+      }
+    };
+
+    trackMateriView();
+  }, [materi, role]);
 
   useEffect(() => {
     const fetchMateriLain = async () => {
@@ -129,29 +165,46 @@ function DetailMateri() {
               <LinkMateri materiList={materiLain} detailBasePath={detailBasePath} />
             </div>
           </div>
+
+          {/* KANAN - MATERI LAIN */}
+          <div className="w-full lg:w-1/3
+            lg:border-t-0 lg:border-l border-gray-300
+            border-t lg:pt-0 lg:pl-6 mt-5">
+
+            <LinkMateri
+              materiList={materiLain}
+              detailBasePath={detailBasePath}
+              fromPath={location.pathname}
+              rootFrom={rootFrom}
+            />
+          </div>
+
         </div>
-        <CommentSection materiId={id} />
-      </div>
-    );
+      </div> 
+      <CommentSection materiId={id} />
+    </div>
+    )
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white px-4 sm:px-6 py-6 pb-20 sm:pb-24 shadow-lg">
-        <div className="max-w-6xl mx-auto flex items-center gap-4">
-          <button
-            onClick={() => navigate(detailBasePath)}
-            className="flex-shrink-0 p-2 hover:bg-white/20 rounded-full transition"
-          >
-            <ArrowLeft size={22} />
-          </button>
-          <div className="min-w-0">
-            <h1 className="text-xl sm:text-2xl font-bold truncate">
-              Jendela Ilmu Pengetahuan Tentang Scabies
-            </h1>
-          </div>
+
+    {/* HEADER */}
+    <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white px-4 sm:px-6 py-6 pb-20 sm:pb-24 shadow-lg">
+      <div className="max-w-6xl mx-auto flex items-center gap-4">
+        <button
+          onClick={handleBack}
+          className="flex-shrink-0 p-2 hover:bg-white/20 rounded-full transition"
+        >
+          <ArrowLeft size={22} />
+        </button>
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold truncate">
+            Jendela Ilmu Pengetahuan Tentang Scabies
+          </h1>
         </div>
       </div>
+    </div>
 
       {materi.gambar && (
         <div className="max-w-6xl mx-auto px-4 -mt-14 sm:-mt-16 mb-6">
@@ -190,6 +243,21 @@ function DetailMateri() {
               <LinkMateri materiList={materiLain} detailBasePath={detailBasePath} />
             </div>
           </div>
+
+          {/* KANAN - MATERI LAINNYA */}
+          <div className="
+            w-full lg:w-1/3
+            lg:border-t-0 lg:border-l border-gray-300
+            border-t lg:pt-0 lg:pl-6 mt-5"
+          >
+            <LinkMateri
+              materiList={materiLain}
+              detailBasePath={detailBasePath}
+              fromPath={location.pathname}
+              rootFrom={rootFrom}
+            />
+          </div>
+
         </div>
       </div>
 
