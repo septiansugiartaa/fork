@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import { X, Eye, Loader2, CheckCircle } from 'lucide-react';
 import DetailPembayaranModal from './DetailPembayaranModal';
+import ConfirmActionModal from './ConfirmActionModal';
 import AlertToast from "../components/AlertToast";
 import { useAlert } from "../hooks/useAlert";
 
@@ -12,6 +13,7 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRo
   const { message, showAlert, clearAlert } = useAlert();
   const [detailData, setDetailData] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [confirmStatus, setConfirmStatus] = useState({ isOpen: false, newStatus: null, loading: false });
 
   const isReadOnly = !["pengurus", "admin"].includes(userRole?.toLowerCase());
 
@@ -28,15 +30,22 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRo
     } catch (err) { console.error(err); } finally { setLoading(false); }
   };
 
-  const handleUpdateStatusTagihan = async (e) => {
-      if(isReadOnly) return; 
-      const newStatus = e.target.value;
-      if(!window.confirm(`Ubah status tagihan menjadi ${newStatus}?`)) return;
+  const handleUpdateStatusTagihan = (e) => {
+      if(isReadOnly) return;
+      setConfirmStatus({ isOpen: true, newStatus: e.target.value, loading: false });
+  };
+
+  const confirmUpdateStatus = async () => {
+      setConfirmStatus(prev => ({ ...prev, loading: true }));
       try {
-          await api.put(`/pengurus/keuangan/tagihan/${idTagihan}/status`, { status: newStatus });
-          setTagihanInfo(prev => ({ ...prev, status: newStatus }));
+          await api.put(`/pengurus/keuangan/tagihan/${idTagihan}/status`, { status: confirmStatus.newStatus });
+          setTagihanInfo(prev => ({ ...prev, status: confirmStatus.newStatus }));
           showAlert("success", "Status berhasil diperbarui");
-      } catch (err) { showAlert("error", "Gagal update status"); }
+          setConfirmStatus({ isOpen: false, newStatus: null, loading: false });
+      } catch (err) {
+          showAlert("error", "Gagal update status");
+          setConfirmStatus(prev => ({ ...prev, loading: false }));
+      }
   };
 
   const openDetail = (item) => { setDetailData(item); setIsDetailOpen(true); };
@@ -62,6 +71,16 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRo
         <div className="p-4 border-t border-gray-100 bg-gray-50 flex justify-end rounded-b-2xl"><button onClick={onClose} className="px-4 py-2 bg-white border border-gray-300 rounded-xl">Tutup</button></div>
       </div>
       <DetailPembayaranModal isOpen={isDetailOpen} onClose={() => { setIsDetailOpen(false); fetchPembayaran(); }} data={detailData} userRole={userRole} />
+      <ConfirmActionModal
+        isOpen={confirmStatus.isOpen}
+        onClose={() => setConfirmStatus({ isOpen: false, newStatus: null, loading: false })}
+        onConfirm={confirmUpdateStatus}
+        loading={confirmStatus.loading}
+        title="Ubah Status Tagihan"
+        message={`Ubah status tagihan menjadi "${confirmStatus.newStatus}"?`}
+        confirmText="Ya, Ubah"
+        confirmClass="bg-green-600 hover:bg-green-700"
+      />
     </div>
   );
 }

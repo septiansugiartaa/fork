@@ -211,15 +211,20 @@ export default function SantriProfile() {
     }
   };
 
-  const handleDeleteOrtu = async (id) => {
-    if (window.confirm("Yakin hapus data ini?")) {
-      try {
-        await api.delete(`/santri/profile/orangtua/${id}`);
-        fetchProfile();
-        showAlert("success", "Data berhasil dihapus");
-      } catch (err) {
-        showAlert("error", "Gagal menghapus data");
-      }
+  const [deleteOrtuModal, setDeleteOrtuModal] = useState({ isOpen: false, id: null, loading: false });
+
+  const handleDeleteOrtu = (id) => setDeleteOrtuModal({ isOpen: true, id, loading: false });
+
+  const confirmDeleteOrtu = async () => {
+    setDeleteOrtuModal(prev => ({ ...prev, loading: true }));
+    try {
+      await api.delete(`/santri/profile/orangtua/${deleteOrtuModal.id}`);
+      setDeleteOrtuModal({ isOpen: false, id: null, loading: false });
+      fetchProfile();
+      showAlert("success", "Data berhasil dihapus");
+    } catch (err) {
+      showAlert("error", "Gagal menghapus data");
+      setDeleteOrtuModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -480,6 +485,13 @@ export default function SantriProfile() {
           </div>
       )}
 
+      <ConfirmDeleteModal
+        isOpen={deleteOrtuModal.isOpen}
+        onClose={() => setDeleteOrtuModal({ isOpen: false, id: null, loading: false })}
+        onConfirm={confirmDeleteOrtu}
+        loading={deleteOrtuModal.loading}
+        itemName="data ini"
+      />
     </div>
   );
 }

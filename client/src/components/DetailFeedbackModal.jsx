@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import { X, Loader2, Star, MessageSquare, Trash2 } from 'lucide-react';
+import ConfirmActionModal from './ConfirmActionModal';
 
 export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role, onFeedbackHidden }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [confirmHide, setConfirmHide] = useState({ isOpen: false, id: null, loading: false });
 
   useEffect(() => {
     if (isOpen && targetItem) {
@@ -26,16 +28,20 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
     }
   };
 
-  const handleHideFeedback = async (idFeedback) => {
-    if (!window.confirm("Yakin ingin menyembunyikan komentar ini?")) return;
+  const handleHideFeedback = (idFeedback) => setConfirmHide({ isOpen: true, id: idFeedback, loading: false });
+
+  const confirmHideFeedback = async () => {
+    setConfirmHide(prev => ({ ...prev, loading: true }));
     try {
-      const res = await api.put(`/${role}/feedback/moderasi/${idFeedback}`, { is_active: false });
+      const res = await api.put(`/${role}/feedback/moderasi/${confirmHide.id}`, { is_active: false });
       if (res.data.success) {
+        setConfirmHide({ isOpen: false, id: null, loading: false });
         fetchDetail();
         if (onFeedbackHidden) onFeedbackHidden();
       }
     } catch (err) {
       console.error(err);
+      setConfirmHide(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -115,6 +121,17 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
           )}
         </div>
       </div>
+    </div>
+      <ConfirmActionModal
+        isOpen={confirmHide.isOpen}
+        onClose={() => setConfirmHide({ isOpen: false, id: null, loading: false })}
+        onConfirm={confirmHideFeedback}
+        loading={confirmHide.loading}
+        title="Sembunyikan Komentar"
+        message="Yakin ingin menyembunyikan komentar ini? Komentar tidak akan tampil ke publik."
+        confirmText="Ya, Sembunyikan"
+        confirmClass="bg-red-600 hover:bg-red-700"
+      />
     </div>
   );
 }

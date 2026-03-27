@@ -5,6 +5,7 @@ import {
   AlertTriangle, CheckCircle, X, MapPin, ChevronLeft, ChevronRight 
 } from "lucide-react";
 import AlertToast from "../../components/AlertToast";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 import { useAlert } from "../../hooks/useAlert";
 import InputSantriModal from "../../components/InputSantriModal";
 import usePagination from "../../components/pagination/usePagination";
@@ -24,6 +25,7 @@ export default function DataSantri() {
   const [selectedData, setSelectedData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const { message, showAlert, clearAlert } = useAlert();
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, loading: false });
 
   // 1. Fetch Data
   const fetchSantri = async () => {
@@ -82,16 +84,19 @@ export default function DataSantri() {
   };
 
   // 4. Delete Handler
-  const handleDelete = async (id) => {
-    if (!window.confirm("Apakah Anda yakin ingin menonaktifkan santri ini?")) return;
+  const handleDelete = (id) => setDeleteModal({ isOpen: true, id, loading: false });
 
+  const confirmDelete = async () => {
+    setDeleteModal(prev => ({ ...prev, loading: true }));
     try {
-      await api.delete(`/pimpinan/santri/${id}`);
+      await api.delete(`/pimpinan/santri/${deleteModal.id}`);
       showAlert("success", "Santri berhasil dinonaktifkan");
+      setDeleteModal({ isOpen: false, id: null, loading: false });
       fetchSantri();
     } catch (err) {
       console.error(err);
       showAlert("error", "Gagal menghapus data");
+      setDeleteModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -250,6 +255,13 @@ export default function DataSantri() {
         saving={isSaving}
       />
 
+      <ConfirmDeleteModal
+        isOpen={deleteModal.isOpen}
+        onClose={() => setDeleteModal({ isOpen: false, id: null, loading: false })}
+        onConfirm={confirmDelete}
+        loading={deleteModal.loading}
+        itemName="santri ini"
+      />
     </div>
   );
 }

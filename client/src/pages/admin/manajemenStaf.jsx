@@ -18,6 +18,7 @@ import { useAlert } from "../../hooks/useAlert";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
 import InputStafModal from "../../components/InputStafModal";
+import ConfirmActionModal from "../../components/ConfirmActionModal";
 
 export default function ManajemenStaf() {
   const [dataList, setDataList] = useState([]);
@@ -33,6 +34,7 @@ export default function ManajemenStaf() {
   const [selectedData, setSelectedData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [resetModal, setResetModal] = useState({ isOpen: false, id: null, loading: false });
 
   const fetchData = async () => {
     setLoading(true);
@@ -123,14 +125,18 @@ export default function ManajemenStaf() {
     }
   };
 
-  const handleResetPassword = async (id) => {
-    if (!window.confirm("Reset password akun ini menjadi 'Pesantren123!' ?")) return;
+  const handleResetPassword = (id) => setResetModal({ isOpen: true, id, loading: false });
+
+  const confirmResetPassword = async () => {
+    setResetModal(prev => ({ ...prev, loading: true }));
     try {
-      const res = await api.put(`/admin/staf/${id}/reset-password`, {});
+      const res = await api.put(`/admin/staf/${resetModal.id}/reset-password`, {});
       showAlert("success", res.data.message);
+      setResetModal({ isOpen: false, id: null, loading: false });
       setIsModalOpen(false);
     } catch (err) {
       showAlert("error", "Gagal mereset password");
+      setResetModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -302,6 +308,16 @@ export default function ManajemenStaf() {
         </>
       )}
 
+      <ConfirmActionModal
+        isOpen={resetModal.isOpen}
+        onClose={() => setResetModal({ isOpen: false, id: null, loading: false })}
+        onConfirm={confirmResetPassword}
+        loading={resetModal.loading}
+        title="Reset Password"
+        message={"Reset password akun ini menjadi 'Pesantren123!'? Pastikan pengguna sudah diberitahu."}
+        confirmText="Ya, Reset"
+        confirmClass="bg-orange-500 hover:bg-orange-600"
+      />
       <InputStafModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

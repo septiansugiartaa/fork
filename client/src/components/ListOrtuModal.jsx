@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import api from "../config/api"; 
-import { X, User, Plus, Loader2, Trash2 } from "lucide-react";
+import { X, User, Plus, Loader2, Trash2, AlertTriangle } from "lucide-react";
 
 export default function ListOrtuModal({ isOpen, onClose, santriData, onAssignClick, refreshTrigger }) {
   const [ortuList, setOrtuList] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [confirmRelasi, setConfirmRelasi] = useState({ open: false, id: null });
 
   useEffect(() => {
     if (isOpen && santriData) {
@@ -24,15 +25,15 @@ export default function ListOrtuModal({ isOpen, onClose, santriData, onAssignCli
     }
   };
 
-  const handleRemove = async (idRelasi) => {
-      if(!window.confirm("Putus relasi wali ini? Akses aplikasi mereka ke santri ini akan dicabut.")) return;
-      try {
-          await api.delete(`/admin/orangtua/assign/${idRelasi}`);
-          fetchOrtu();
-      } catch (err) {
-          console.error(err);
-      }
-  }
+  const handleRemove = (idRelasi) => setConfirmRelasi({ open: true, id: idRelasi });
+
+  const confirmRemove = async () => {
+    try {
+      await api.delete(`/admin/orangtua/assign/${confirmRelasi.id}`);
+      setConfirmRelasi({ open: false, id: null });
+      fetchOrtu();
+    } catch (err) { console.error(err); }
+  };
 
   if (!isOpen) return null;
 

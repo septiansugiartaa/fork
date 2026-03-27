@@ -10,6 +10,7 @@ import { useAlert } from "../../hooks/useAlert";
 
 import DetailKegiatanModal from "../../components/DetailKegiatanModal";
 import CreateKegiatanModal from "../../components/CreateKegiatanModal";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 
 export default function Kegiatan() {
   const [loading, setLoading] = useState(true);
@@ -105,15 +106,21 @@ export default function Kegiatan() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if(!window.confirm("Yakin hapus kegiatan ini?")) return;
+  const [deleteKegiatanModal, setDeleteKegiatanModal] = useState({ isOpen: false, id: null, loading: false });
+
+  const handleDelete = (id) => setDeleteKegiatanModal({ isOpen: true, id, loading: false });
+
+  const confirmDeleteKegiatan = async () => {
+    setDeleteKegiatanModal(prev => ({ ...prev, loading: true }));
     try {
-        await api.delete(`/ustadz/kegiatan/${id}`);
-        showAlert("success", "Kegiatan berhasil dihapus");
-        setIsDetailOpen(false);
-        fetchKegiatan();
+      await api.delete(`/ustadz/kegiatan/${deleteKegiatanModal.id}`);
+      showAlert("success", "Kegiatan berhasil dihapus");
+      setDeleteKegiatanModal({ isOpen: false, id: null, loading: false });
+      setIsDetailOpen(false);
+      fetchKegiatan();
     } catch (err) {
-        showAlert("error", "Gagal menghapus kegiatan");
+      showAlert("error", "Gagal menghapus kegiatan");
+      setDeleteKegiatanModal(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -297,6 +304,13 @@ export default function Kegiatan() {
         onDeleteClick={handleDelete}
       />
 
+      <ConfirmDeleteModal
+        isOpen={deleteKegiatanModal.isOpen}
+        onClose={() => setDeleteKegiatanModal({ isOpen: false, id: null, loading: false })}
+        onConfirm={confirmDeleteKegiatan}
+        loading={deleteKegiatanModal.loading}
+        itemName="kegiatan ini"
+      />
     </div>
   );
 }

@@ -14,6 +14,7 @@ import {
 import AlertToast from "../components/AlertToast";
 import { useAlert } from "../hooks/useAlert";
 import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
+import ConfirmActionModal from "../components/ConfirmActionModal";
 
 const formatTime = (dateString) => {
   if (!dateString) return "";
@@ -39,6 +40,7 @@ export default function DetailPengaduanModal({
   const { message, showAlert, clearAlert } = useAlert();
   const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
   const [isDeleting, setIsDeleting] = useState(false);
+  const [confirmSelesai, setConfirmSelesai] = useState({ isOpen: false, loading: false });
 
   const [revealedChats, setRevealedChats] = useState({});
   const chatContainerRef = useRef(null);
@@ -103,13 +105,15 @@ export default function DetailPengaduanModal({
   };
 
   // SELESAIKAN PENGADUAN
-  const handleSelesaikan = async () => {
-    if (!window.confirm("Yakin ingin menyelesaikan laporan ini? Diskusi akan ditutup permanen.")) return;
+  const handleSelesaikan = () => setConfirmSelesai({ isOpen: true, loading: false });
+
+  const confirmSelesaikan = async () => {
+    setConfirmSelesai(prev => ({ ...prev, loading: true }));
     setFinishing(true);
     try {
       const { data } = await api.put(`/${currentRole}/pengaduan/${idAduan}/selesai`);
-
       if (data.success) {
+        setConfirmSelesai({ isOpen: false, loading: false });
         showAlert("success", data.message);
         fetchDetail();
         if (onRefreshList) onRefreshList();
@@ -118,6 +122,7 @@ export default function DetailPengaduanModal({
       showAlert("error", "Gagal menyelesaikan pengaduan");
     } finally {
       setFinishing(false);
+      setConfirmSelesai(prev => ({ ...prev, loading: false }));
     }
   };
 
@@ -333,6 +338,16 @@ export default function DetailPengaduanModal({
         </div>
       </div>
       <ConfirmDeleteModal isOpen={deleteModal.isOpen} onClose={() => setDeleteModal({ isOpen: false, id: null, name: "" })} onConfirm={confirmDelete} loading={isDeleting} itemName={deleteModal.name} />
+      <ConfirmActionModal
+        isOpen={confirmSelesai.isOpen}
+        onClose={() => setConfirmSelesai({ isOpen: false, loading: false })}
+        onConfirm={confirmSelesaikan}
+        loading={confirmSelesai.loading}
+        title="Selesaikan Laporan"
+        message="Yakin ingin menyelesaikan laporan ini? Diskusi akan ditutup permanen."
+        confirmText="Ya, Selesaikan"
+        confirmClass="bg-orange-500 hover:bg-orange-600"
+      />
     </div>
   );
 }
