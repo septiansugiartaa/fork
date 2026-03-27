@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Edit2, Trash2 } from "lucide-react";
 
-function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
+function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath, fromPath, rootFrom }) {
   const navigate = useNavigate();
   const tanggalMateri = materi?.tanggal_dibuat
     ? new Date(materi.tanggal_dibuat).toLocaleDateString("id-ID", {
@@ -29,7 +29,7 @@ function CardMateri({ materi, isManage, onDelete, onEdit, detailBasePath }) {
           <p className="text-xs text-gray-400">Tanggal: {tanggalMateri}</p>
         </div>
         <div className="mt-auto">
-          <button onClick={() => navigate(`${detailBasePath}/${materi.id}`)} className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm transition hover:bg-green-800 hover:text-white">Baca Selengkapnya</button>
+          <button onClick={() => navigate(`${detailBasePath}/${materi.id}`, { state: { from: fromPath, rootFrom } })} className="w-full py-2.5 bg-green-50 text-green-600 rounded-xl font-semibold text-sm transition hover:bg-green-800 hover:text-white">Baca Selengkapnya</button>
           {isManage && (
             <div className="flex justify-between mt-1 mb-2 gap-1">
               <button className="w-1/2 py-2.5 bg-yellow-50 text-yellow-600 rounded-xl font-semibold text-sm flex justify-center items-center gap-2 transition hover:bg-yellow-500 hover:text-white" onClick={() => onEdit(materi)}><Edit2 size={16}/> Edit</button>

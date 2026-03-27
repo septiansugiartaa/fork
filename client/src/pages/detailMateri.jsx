@@ -1,9 +1,11 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { ArrowLeft } from "lucide-react";
 import LinkMateri from "../components/LinkMateri";
 import CommentSection from "../components/CommentSection";
 import api from "../config/api"
+
+const LEGACY_RECENT_STORAGE_KEY = "santri_recent_materi";
 
 function DetailMateri() {
   const { id } = useParams();
@@ -11,6 +13,7 @@ function DetailMateri() {
   const [materiLain, setMateriLain] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
+  const location = useLocation();
   
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role?.trim().toLowerCase();
@@ -24,6 +27,16 @@ function DetailMateri() {
   };
 
   const detailBasePath = rolePathMap[role] || "/viewMateri";
+  const backPath = location.state?.from || detailBasePath;
+  const rootFrom = location.state?.rootFrom || backPath;
+
+  const handleBack = () => {
+    if (backPath.includes("/viewMateri")) {
+      navigate(backPath, { state: { from: rootFrom, rootFrom } });
+      return;
+    }
+    navigate(backPath, { state: { rootFrom } });
+  };
 
   useEffect(() => {
     const fetchDetail = async () => {
@@ -49,6 +62,23 @@ function DetailMateri() {
       console.log("ISI:", materi.detail_materi?.[0]?.isi_materi);
     }
   }, [materi]);
+
+  useEffect(() => {
+    localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
+  }, []);
+
+  useEffect(() => {
+    const trackMateriView = async () => {
+      if (role !== "santri" || !materi?.id_materi) return;
+      try {
+        await api.post(`/santri/scabies/materi/${materi.id_materi}/view`);
+      } catch (error) {
+        console.error("Gagal menyimpan riwayat materi:", error);
+      }
+    };
+
+    trackMateriView();
+  }, [materi, role]);
 
   useEffect(() => {
     const fetchMateriLain = async () => {
@@ -149,6 +179,8 @@ function DetailMateri() {
             <LinkMateri
               materiList={materiLain}
               detailBasePath={detailBasePath}
+              fromPath={location.pathname}
+              rootFrom={rootFrom}
             />
           </div>
 
@@ -166,7 +198,7 @@ function DetailMateri() {
     <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white px-4 sm:px-6 py-6 pb-20 sm:pb-24 shadow-lg">
       <div className="max-w-6xl mx-auto flex items-center gap-4">
         <button
-          onClick={() => navigate(detailBasePath)}
+          onClick={handleBack}
           className="flex-shrink-0 p-2 hover:bg-white/20 rounded-full transition"
         >
           <ArrowLeft size={22} />
@@ -231,6 +263,8 @@ function DetailMateri() {
             <LinkMateri
               materiList={materiLain}
               detailBasePath={detailBasePath}
+              fromPath={location.pathname}
+              rootFrom={rootFrom}
             />
           </div>
 

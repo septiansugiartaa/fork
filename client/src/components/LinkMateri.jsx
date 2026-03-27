@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-function LinkMateri({ materiList = [], detailBasePath }) {
+function LinkMateri({ materiList = [], detailBasePath, fromPath, rootFrom }) {
   const navigate = useNavigate();
 
   return (
@@ -12,7 +12,7 @@ function LinkMateri({ materiList = [], detailBasePath }) {
       {materiList.map((materi) => (
         <div
           key={materi.id}
-          onClick={() => navigate(`${detailBasePath}/${materi.id}`)}
+          onClick={() => navigate(`${detailBasePath}/${materi.id}`, { state: { from: fromPath, rootFrom } })}
           className="flex gap-3 cursor-pointer group"
         >
           <div className="w-15 h-15 flex-shrink-0 overflow-hidden hover:">
