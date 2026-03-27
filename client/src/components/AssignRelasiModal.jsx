@@ -35,7 +35,7 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
       if (formStep === 1 && searchQuery.length >= 3) {
         setIsSearching(true);
         try {
-          const targetRole = mode === 'ortu' ? 'Orang Tua' : 'Santri';
+          const targetRole = mode === 'ortu' ? 'orangtua' : 'santri';
           const res = await api.get(`/admin/orangtua/search?role=${targetRole}&q=${searchQuery}`);
           if (res.data.success) setSearchResults(res.data.data);
         } catch (err) {

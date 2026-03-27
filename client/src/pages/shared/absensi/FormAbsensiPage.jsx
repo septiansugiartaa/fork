@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../config/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
 import AlertToast from "../../../components/AlertToast";
-import { useAlert } from "../../hooks/useAlert";
+import { useAlert } from "../../../hooks/useAlert";
 
 export default function FormAbsensiPage({ rolePrefix }) {
     const { id, id_heading } = useParams();

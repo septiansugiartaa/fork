@@ -14,9 +14,6 @@ import usePagination from "../../../components/pagination/usePagination";
 import Pagination from "../../../components/pagination/Pagination";
 
 /**
- * DataSantriPage — halaman CRUD santri yang dipakai bersama oleh admin dan pengurus.
- * Satu-satunya perbedaan adalah endpoint API, dikendalikan via prop `rolePrefix`.
- *
  * @param {string} rolePrefix — "admin" | "pengurus"
  */
 export default function DataSantriPage({ rolePrefix }) {

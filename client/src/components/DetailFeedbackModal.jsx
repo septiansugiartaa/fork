@@ -121,7 +121,6 @@ export default function DetailFeedbackModal({ isOpen, onClose, targetItem, role,
           )}
         </div>
       </div>
-    </div>
       <ConfirmActionModal
         isOpen={confirmHide.isOpen}
         onClose={() => setConfirmHide({ isOpen: false, id: null, loading: false })}
