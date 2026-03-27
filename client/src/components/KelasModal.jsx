@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
-import api from "../config/api"; // MENGGUNAKAN API GLOBAL
+import api from "../config/api"; 
 import { X, Save, Loader2, BookOpen, User } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function ModalKelas({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
   const [formData, setFormData] = useState({ kelas: "", tahun_ajaran: "", id_wali: "" });
   const [waliOptions, setWaliOptions] = useState([]);
+  const { message, showAlert, clearAlert } = useAlert();
 
   // Clean Code: Mengubah promise chain menjadi async function yang rapi di dalam useEffect
   useEffect(() => {
@@ -39,13 +42,14 @@ export default function ModalKelas({ isOpen, onClose, isEditing, editData, onSub
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.kelas || !formData.tahun_ajaran) return alert("Nama kelas dan tahun ajaran wajib diisi");
+    if (!formData.kelas || !formData.tahun_ajaran) return showAlert("error", "Nama kelas dan tahun ajaran wajib diisi");
     onSubmit(formData);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><BookOpen className="text-green-600" size={20} /> {isEditing ? "Edit Kelas" : "Tambah Kelas"}</h3>
           <button onClick={onClose}><X size={24} className="text-gray-400 hover:text-red-500"/></button>

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import { X, Save, Loader2, CheckCircle, XCircle } from 'lucide-react';
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function DetailPembayaranModal({ isOpen, onClose, data, userRole }) {
   const [statusVerifikasi, setStatusVerifikasi] = useState("");
   const [nominalKonfirmasi, setNominalKonfirmasi] = useState("");
   const [saving, setSaving] = useState(false);
+  const { message, showAlert, clearAlert } = useAlert();
 
   const isReadOnly = !["pengurus", "admin"].includes(userRole?.toLowerCase());
 
@@ -28,7 +31,7 @@ export default function DetailPembayaranModal({ isOpen, onClose, data, userRole 
       });
       onClose();
     } catch (err) {
-      alert("Gagal memverifikasi pembayaran");
+      showAlert("error", "Gagal memverifikasi pembayaran");
     } finally {
       setSaving(false);
     }
@@ -37,6 +40,7 @@ export default function DetailPembayaranModal({ isOpen, onClose, data, userRole 
   return (
     <div className="fixed inset-0 z-[12000] flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <h3 className="font-bold text-gray-800">Detail Verifikasi Bayar</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={20} /></button>

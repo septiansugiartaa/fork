@@ -2,10 +2,13 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../../../config/api";
 import { ArrowLeft, Loader2 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 export default function FormAbsensiPage({ rolePrefix }) {
     const { id, id_heading } = useParams();
     const navigate = useNavigate();
+    const { message, showAlert, clearAlert } = useAlert();
 
     const [kamar, setKamar] = useState(null);
     const [santri, setSantri] = useState([]);
@@ -135,13 +138,13 @@ export default function FormAbsensiPage({ rolePrefix }) {
                     }
                 )
             }
-            alert(res.data.message)
+            showAlert("success", res.data.message)
             navigate(`/${rolePrefix}/daftarAbsensiKamar/${id}`)
         }catch(err){
             if(err.response?.data?.message){
-                alert(err.response.data.message)
+                showAlert("error", err.response.data.message)
             }else{
-                alert("Gagal menyimpan absensi")
+                showAlert("error", "Gagal menyimpan absensi")
             }
         }finally{
             setSubmitting(false)
@@ -162,6 +165,7 @@ export default function FormAbsensiPage({ rolePrefix }) {
     return (
 
         <div className="min-h-screen bg-gray-50 pb-10">
+            <AlertToast message={message} onClose={clearAlert} />
 
         <div className="flex items-center mb-6">
             <button onClick={() => navigate(-1)}>

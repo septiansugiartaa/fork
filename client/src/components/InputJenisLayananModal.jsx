@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Loader2, List, FileText, CreditCard } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function InputJenisLayananModal({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
   const initialForm = {
@@ -7,6 +9,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
     estimasi: "",
     deskripsi: ""
   };
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [formData, setFormData] = useState(initialForm);
 
@@ -34,7 +37,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!formData.nama_layanan || !formData.estimasi) {
-      return alert("Nama layanan dan estimasi wajib diisi");
+      return showAlert("error", "Nama layanan dan estimasi wajib diisi");
     }
     onSubmit(formData);
   };
@@ -42,7 +45,7 @@ export default function InputJenisLayananModal({ isOpen, onClose, isEditing, edi
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col">
-        
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
             <List className="text-green-600" size={20} />

@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import api from "../../config/api"; 
 import { useSearchParams, Link } from "react-router-dom";
 import { Search, ArrowLeft, Loader2, CheckCircle, Clock, XCircle, Award, FileText, HelpCircle, UploadCloud, Check, CalendarDays, Download } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 // Import Helper Cetak PDF
 import { cetakBuktiPendaftaran } from "../../components/ppdb/cetakBuktiPpdb";
@@ -35,6 +37,7 @@ export default function CekStatus() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [isPdfLoading, setIsPdfLoading] = useState({ daftar: false, undangan: false, lulus: false });
@@ -67,7 +70,7 @@ export default function CekStatus() {
         namaGelombang: data.ppdb_tahun?.nama_gelombang || "-",
         tahunAjaran: data.ppdb_tahun?.tahun_ajaran || "-"
       });
-    } catch (err) { alert("Gagal memuat dokumen PDF."); } 
+    } catch (err) { showAlert("error", "Gagal memuat dokumen PDF."); } 
     finally { setIsPdfLoading(prev => ({...prev, daftar: false})); }
   };
 
@@ -83,7 +86,7 @@ export default function CekStatus() {
         // Ambil tanggal dari batas tutup gelombang (sebagai contoh dinamis)
         tanggalSeleksi: data.ppdb_tahun?.tanggal_seleksi || null 
       });
-    } catch (err) { alert("Gagal memuat dokumen PDF."); } 
+    } catch (err) { showAlert("error", "Gagal memuat dokumen PDF."); } 
     finally { setIsPdfLoading(prev => ({...prev, undangan: false})); }
   };
 
@@ -103,7 +106,7 @@ export default function CekStatus() {
         nilaiWawancara: seleksiData.nilai_wawancara,
         nilaiTotal: seleksiData.nilai_total
       });
-    } catch (err) { alert("Gagal memuat dokumen PDF."); } 
+    } catch (err) { showAlert("error", "Gagal memuat dokumen PDF."); } 
     finally { setIsPdfLoading(prev => ({...prev, lulus: false})); }
   };
 
@@ -123,14 +126,14 @@ export default function CekStatus() {
       handleCek();
     } catch (err) {
       setUploadStatus((prev) => ({ ...prev, [jenis]: "error" }));
-      alert("Gagal mengunggah dokumen. Pastikan ukuran max 2MB.");
+      showAlert("error", "Gagal mengunggah dokumen. Pastikan ukuran max 2MB.");
     }
   };
 
   const statusInfo = data ? STATUS_INFO[data.status] || STATUS_INFO.Mendaftar : null;
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50">
       <div className="bg-white shadow-sm border-b border-gray-100 px-6 py-4">
         <div className="mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -146,6 +149,7 @@ export default function CekStatus() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-8">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="mb-6">
           <Link to="/ppdb/daftar" className="inline-flex items-center gap-3 group">
             <div className="w-9 h-9 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-sm group-hover:border-green-200 group-hover:bg-green-50 group-hover:-translate-x-1 transition-all duration-300">

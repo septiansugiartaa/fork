@@ -1,16 +1,17 @@
 const express = require('express');
-const router = express.Router();
-const controller = require('../../controllers/admin/orangtuaController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/orangtuaController');
 
-router.get('/search', controller.searchUser);
-router.post('/assign', controller.assignRelasi);
-router.delete('/assign/:id_relasi', controller.removeRelasi);
+router.use(requireRole('admin'));
 
-router.get('/:id/anak', controller.getAnakByOrtu);
-
-router.get('/', controller.getOrangTua);
-router.post('/', controller.createOrangTua);
-router.put('/:id', controller.updateOrangTua);
-router.delete('/:id', controller.deleteOrangTua);
+router.get('/',                    ctrl.getOrangTua);
+router.get('/search',              ctrl.searchUser);
+router.get('/:id/anak',            ctrl.getAnakByOrtu);
+router.post('/',                   ctrl.createOrangTua);
+router.post('/relasi',             ctrl.assignRelasi);
+router.put('/:id',                 ctrl.updateOrangTua);
+router.delete('/:id',              ctrl.deleteOrangTua);
+router.delete('/relasi/:id_relasi',ctrl.removeRelasi);
 
 module.exports = router;

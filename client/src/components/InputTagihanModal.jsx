@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import { X, Save, Loader2, Users, Calendar, DollarSign, CheckSquare, Search } from 'lucide-react';
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function InputTagihanModal({ isOpen, onClose, isEditing, editData, onSubmit }) {
   const [formData, setFormData] = useState({
     nama_tagihan: "", id_jenis_tagihan: "", nominal: "", tanggal_tagihan: "", batas_pembayaran: ""
   });
+  const { message, showAlert, clearAlert } = useAlert();
   
   const [allSantri, setAllSantri] = useState([]);
   const [selectedSantri, setSelectedSantri] = useState([]);
@@ -65,7 +68,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!isSelectAll && selectedSantri.length === 0) return alert("Pilih minimal satu santri");
+    if (!isSelectAll && selectedSantri.length === 0) return showAlert("error", "Pilih minimal satu santri");
     onSubmit({ ...formData, target_santri: isSelectAll ? 'all' : selectedSantri });
   };
 
@@ -77,6 +80,7 @@ export default function InputTagihanModal({ isOpen, onClose, isEditing, editData
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
             <DollarSign className="text-green-600"/> {isEditing ? "Edit Tagihan" : "Buat Tagihan Baru"}

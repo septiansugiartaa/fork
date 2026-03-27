@@ -1,22 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
-import { X, Eye, Loader2, AlertTriangle, CheckCircle } from 'lucide-react';
+import { X, Eye, Loader2, CheckCircle } from 'lucide-react';
 import DetailPembayaranModal from './DetailPembayaranModal';
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRole }) {
   const [list, setList] = useState([]);
   const [tagihanInfo, setTagihanInfo] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
   const [detailData, setDetailData] = useState(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
 
   const isReadOnly = !["pengurus", "admin"].includes(userRole?.toLowerCase());
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
 
   useEffect(() => {
     if (isOpen && idTagihan) fetchPembayaran();
@@ -49,11 +46,7 @@ export default function ListPembayaranModal({ isOpen, onClose, idTagihan, userRo
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh]">
-        {message.text && (
-            <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
-            {message.type === 'error' ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>} <p className="text-sm font-medium">{message.text}</p>
-            </div>
-        )}
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
             <div><h3 className="font-bold text-gray-800 text-lg">Riwayat Pembayaran</h3>{tagihanInfo && <div className="flex items-center gap-2 mt-1"><span className="text-xs text-gray-500">Status:</span>{isReadOnly ? <span className={`text-xs font-bold px-2 py-1 rounded ${tagihanInfo.status === 'Lunas' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{tagihanInfo.status}</span> : <select value={tagihanInfo.status || 'Aktif'} onChange={handleUpdateStatusTagihan} className={`text-xs font-bold px-2 py-1 rounded outline-none ${tagihanInfo.status === 'Lunas' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}><option value="Aktif">Aktif</option><option value="Lunas">Lunas</option></select>}</div>}</div>
             <button onClick={onClose}><X size={20} className="text-gray-400"/></button>

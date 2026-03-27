@@ -3,6 +3,8 @@ import api from "../../config/api";
 import {
   Search, Loader2, AlertTriangle, CheckCircle, X, Star, MessageSquare
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import DetailFeedbackModal from "../../components/DetailFeedbackModal";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
@@ -10,7 +12,7 @@ import Pagination from "../../components/pagination/Pagination";
 export default function Feedback() {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [search, setSearch] = useState("");
   const [filterType, setFilterType] = useState("Semua");
@@ -20,11 +22,6 @@ export default function Feedback() {
 
   const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
   const userRole = (currentUser.role || "pengurus").toLowerCase().replace(/\s/g, '');
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -63,12 +60,7 @@ export default function Feedback() {
 
   return (
     <div className="space-y-6 relative">
-      {message.text && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === "error" ? "border-red-500 text-red-700" : "border-green-500 text-green-700"}`}>
-          {message.type === "error" ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          <p className="text-sm font-medium">{message.text}</p>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       <div className="flex justify-between items-center">
         <div>

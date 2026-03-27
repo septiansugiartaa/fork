@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Loader2, Tag, FileText } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function InputJenisTagihanModal({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
   const initialForm = {
     jenis_tagihan: ""
   };
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [formData, setFormData] = useState(initialForm);
 
@@ -29,13 +32,14 @@ export default function InputJenisTagihanModal({ isOpen, onClose, isEditing, edi
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.jenis_tagihan) return alert("Nama jenis tagihan wajib diisi");
+    if (!formData.jenis_tagihan) return showAlert("error", "Nama jenis tagihan wajib diisi");
     onSubmit(formData);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col">
+        <AlertToast message={message} onClose={clearAlert} />
         
         {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">

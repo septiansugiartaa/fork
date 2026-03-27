@@ -13,6 +13,7 @@
     "@tailwindcss/typography": "^0.5.19",
     "@tailwindcss/vite": "^4.1.18",
     "axios": "^1.13.4",
+    "dompurify": "^3.3.3",
     "html2canvas-pro": "^2.0.2",
     "jspdf": "^4.2.0",
     "jspdf-autotable": "^5.0.7",

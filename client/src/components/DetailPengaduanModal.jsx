@@ -6,12 +6,14 @@ import {
   User,
   Loader2,
   Lock,
-  AlertTriangle,
   CheckCircle,
   Trash2,
   Eye,
   EyeOff,
 } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
+import ConfirmDeleteModal from "../components/ConfirmDeleteModal";
 
 const formatTime = (dateString) => {
   if (!dateString) return "";
@@ -34,7 +36,9 @@ export default function DetailPengaduanModal({
   const [tanggapan, setTanggapan] = useState("");
   const [sending, setSending] = useState(false);
   const [finishing, setFinishing] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const [revealedChats, setRevealedChats] = useState({});
   const chatContainerRef = useRef(null);
@@ -56,16 +60,9 @@ export default function DetailPengaduanModal({
     }
   }, [tanggapan]);
 
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-  };
-
   // AMBIL DETAIL DATA
   const fetchDetail = async () => {
     try {
-      setLoading(true);
-      // Menggunakan relative path untuk proxy
       const { data } = await api.get(`/${currentRole}/pengaduan/${idAduan}`);
       setDetail(data.data);
     } catch (err) {
@@ -124,14 +121,19 @@ export default function DetailPengaduanModal({
     }
   };
 
-  // HAPUS CHAT (SOFT DELETE)
-  const handleHapusChat = async (idTanggapan) => {
-    if (!window.confirm("Yakin hapus pesan ini dari forum?")) return;
+  const handleDelete = (item) => setDeleteModal({ isOpen: true, id: item.id, name: `chat ${item.users.nama}` });
+
+  const confirmDelete = async () => {
+    setIsDeleting(true);
     try {
-      await api.delete(`/${currentRole}/pengaduan/tanggapan/${idTanggapan}`);
+      await api.delete(`/${currentRole}/pengaduan/tanggapan/${deleteModal.id}`);
+      showAlert("success", "Chat dihapus");
+      setDeleteModal({ isOpen: false, id: null, name: "" });
       fetchDetail();
-    } catch (err) {
-      showAlert("error", "Gagal menghapus pesan");
+    } catch {
+      showAlert("error", "Gagal menghapus");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -146,19 +148,7 @@ export default function DetailPengaduanModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-      {message.text && (
-        <div
-          className={`absolute top-4 left-1/2 transform -translate-x-1/2 z-[60] w-11/12 max-w-sm p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === "error" ? "bg-white border-red-500 text-red-700" : "bg-white border-green-500 text-green-700"}`}
-        >
-          <div className={`flex-shrink-0 p-2 rounded-full ${message.type === "error" ? "bg-red-100" : "bg-green-100"}`}>
-            {message.type === "error" ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button onClick={() => setMessage({ type: "", text: "" })} className="text-gray-400 hover:text-gray-600">
-            <X size={18} />
-          </button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden relative">
         {/* HEADER MODAL */}
@@ -293,7 +283,7 @@ export default function DetailPengaduanModal({
                     </div>
 
                     {currentRole === "admin" && !isDeleted && (
-                      <button onClick={() => handleHapusChat(chat.id)} className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition" title="Hapus Pesan">
+                      <button onClick={() => handleDelete(chat)} className="p-1.5 text-gray-300 hover:text-red-500 hover:bg-red-50 rounded-full transition" title="Hapus Pesan">
                         <Trash2 size={14} />
                       </button>
                     )}
@@ -342,6 +332,7 @@ export default function DetailPengaduanModal({
           )}
         </div>
       </div>
+      <ConfirmDeleteModal isOpen={deleteModal.isOpen} onClose={() => setDeleteModal({ isOpen: false, id: null, name: "" })} onConfirm={confirmDelete} loading={isDeleting} itemName={deleteModal.name} />
     </div>
   );
 }

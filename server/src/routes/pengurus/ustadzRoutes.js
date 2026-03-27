@@ -1,10 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const ustadzController = require('../../controllers/pengurus/ustadzController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/ustadzController');
 
-router.get('/', ustadzController.getUstadz);
-router.post('/', ustadzController.createUstadz);
-router.put('/:id', ustadzController.updateUstadz);
-router.delete('/:id', ustadzController.deleteUstadz);
+router.use(requireRole('pengurus'));
+
+router.get('/',       ctrl.getUstadz);
+router.post('/',      ctrl.createUstadz);
+router.put('/:id',    ctrl.updateUstadz);
+router.delete('/:id', ctrl.deleteUstadz);
 
 module.exports = router;

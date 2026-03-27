@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from "react";
 import api from "../config/api";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 import { X, Save, Loader2, School, User } from "lucide-react";
 
 export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData, onSubmit, saving, preSelectedKelas }) {
   const [formData, setFormData] = useState({ id_santri: "", id_kelas: preSelectedKelas ? preSelectedKelas.id : "" });
   const [santriOptions, setSantriOptions] = useState([]);
   const [loadingOptions, setLoadingOptions] = useState(true);
+  const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -34,7 +37,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.id_santri || !formData.id_kelas) return alert("Pilih Santri!");
+    if (!formData.id_santri || !formData.id_kelas) return showAlert("error", "Pilih Santri!");
     onSubmit(formData);
   };
 
@@ -44,6 +47,7 @@ export default function ModalAssignKelas({ isOpen, onClose, isEditing, editData,
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><School className="text-green-600" size={20} /> Tambah Santri ke Kelas</h3>
           <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={24} /></button>

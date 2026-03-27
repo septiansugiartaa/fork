@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { User, X, Search, Loader2, CheckCircle, Plus, AlertTriangle, Users } from "lucide-react";
 import api from "../config/api"; 
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 // mode: 'ortu' (Cari Ortu untuk Santri) ATAU 'santri' (Cari Santri untuk Ortu)
 export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onSubmit, saving }) {
@@ -9,7 +11,7 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
   const [isSearching, setIsSearching] = useState(false);
-  const [message, setMessage] = useState({ type: "", text: "" }); 
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [formData, setFormData] = useState({
     id_selected: null, // ID hasil pencarian
@@ -18,11 +20,6 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
     hubungan: ""
   });
 
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
-
   useEffect(() => {
     if (isOpen) {
       setFormData({ id_selected: null, nama: "", no_hp: "", hubungan: "" });
@@ -30,7 +27,6 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
       setSearchResults([]);
       setFormStep(1);
       setIsManualInput(false);
-      setMessage({ type: "", text: "" });
     }
   }, [isOpen]);
 
@@ -69,11 +65,11 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.hubungan) return showAlert("error", "Hubungan wajib diisi");
-    
     if (isManualInput && (!formData.nama || !formData.no_hp)) {
       return showAlert("error", "Nama dan No HP wajib diisi untuk akun baru");
     }
+    
+    if (!formData.hubungan) return showAlert("error", "Hubungan wajib diisi");
 
     // Susun payload sesuai Controller
     const payload = {
@@ -103,14 +99,7 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
-        
-        {message.text && (
-            <div className={`absolute top-4 left-4 right-4 z-[70] p-3 rounded-lg shadow-lg flex items-center gap-2 border-l-4 ${message.type === 'error' ? 'bg-red-50 border-red-500 text-red-700' : 'bg-green-50 border-green-500 text-green-700'}`}>
-                {message.type === 'error' ? <AlertTriangle size={16} /> : <CheckCircle size={16} />}
-                <p className="text-xs font-medium flex-1">{message.text}</p>
-                <button onClick={() => setMessage({type:"", text:""})} className="text-gray-400"><X size={16} /></button>
-            </div>
-        )}
+        <AlertToast message={message} onClose={clearAlert} />
 
         <div className="flex justify-between items-center p-5 border-b border-gray-100 bg-gray-50">
           <div>
@@ -186,14 +175,14 @@ export default function AssignRelasiModal({ isOpen, onClose, mode, baseData, onS
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Nama {isCariOrtu ? 'Wali' : 'Anak'}</label>
-                <input type="text" value={formData.nama} onChange={(e) => setFormData({ ...formData, nama: e.target.value })} disabled={!isManualInput} className={`w-full p-3 border rounded-xl outline-none ${!isManualInput ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-green-500"}`} />
+                <input type="text" value={formData.nama} onChange={(e) => setFormData({ ...formData, nama: e.target.value })} disabled={!isManualInput} className={`w-full p-3 border border-gray-200 rounded-xl outline-none ${!isManualInput ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-green-500"}`} />
               </div>
 
               {/* No HP Hanya Diminta kalau buat Wali Baru */}
               {(isManualInput || isCariOrtu) && (
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">No. HP (WhatsApp)</label>
-                    <input type="text" value={formData.no_hp} onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })} disabled={!isManualInput} className={`w-full p-3 border rounded-xl outline-none ${!isManualInput ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-green-500"}`} />
+                    <input type="text" value={formData.no_hp} onChange={(e) => setFormData({ ...formData, no_hp: e.target.value })} disabled={!isManualInput} className={`w-full p-3 border border-gray-200 rounded-xl outline-none ${!isManualInput ? "bg-gray-100 text-gray-500" : "focus:ring-2 focus:ring-green-500"}`} />
                   </div>
               )}
 

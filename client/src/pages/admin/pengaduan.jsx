@@ -3,24 +3,23 @@ import api from '../../config/api';
 import { 
   User, Loader2, CheckCircle, Search, AlertTriangle, X, Trash2
 } from 'lucide-react';
-
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import DetailPengaduanModal from '../../components/DetailPengaduanModal';
 
 export default function Pengaduan() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
   
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("Semua");
   const [selectedId, setSelectedId] = useState(null);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const userRole = "admin";
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
 
   useEffect(() => {
     fetchData();
@@ -39,17 +38,20 @@ export default function Pengaduan() {
     }
   };
 
-  const handleDeleteTiket = async (idAduan) => {
-      if (!window.confirm("Yakin ingin menghapus/memoderasi laporan ini secara permanen dari layar utama?")) return;
-      try {
-          const res = await api.delete(`/admin/pengaduan/${idAduan}`);
-          if (res.data.success) {
-              showAlert("success", "Laporan berhasil dihapus (Soft Delete)");
-              fetchData();
-          }
-      } catch (err) {
-          showAlert("error", "Gagal menghapus pengaduan");
-      }
+  const handleDelete = (item) => setDeleteModal({ isOpen: true, id: item.id, name: `Pengaduan "${item.judul}"` });
+  
+  const confirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await api.delete(`/admin/pengaduan/${deleteModal.id}`);
+      showAlert("success", "Pengaduan dihapus");
+      setDeleteModal({ isOpen: false, id: null, name: "" });
+      fetchData();
+    } catch {
+      showAlert("error", "Gagal menghapus");
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   const filteredData = data.filter(item => {
@@ -65,15 +67,7 @@ export default function Pengaduan() {
 
   return (
     <div className="space-y-6 relative">
-      {message.text && (
-        <div className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
-          <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
-             {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button onClick={() => setMessage({type:"", text:""})} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       <div className="flex justify-between items-center">
         <div>
@@ -177,7 +171,7 @@ export default function Pengaduan() {
                     {canManageTicket && (
                         <div className="flex gap-2 ml-auto">
                             <button 
-                                onClick={(e) => { e.stopPropagation(); handleDeleteTiket(item.id); }}
+                                onClick={(e) => { e.stopPropagation(); handleDelete(item); }}
                                 className="p-1.5 text-red-600 hover:bg-red-100 rounded-lg transition"
                                 title="Hapus Laporan"
                             >
@@ -210,6 +204,13 @@ export default function Pengaduan() {
           userRole={"admin"}
         />
       )}
+      <ConfirmDeleteModal 
+        isOpen={deleteModal.isOpen} 
+        onClose={() => setDeleteModal({ isOpen: false, id: null, name: "" })} 
+        onConfirm={confirmDelete} 
+        loading={isDeleting} 
+        itemName={deleteModal.name} 
+      />
     </div>
   );
 }

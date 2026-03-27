@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import { ArrowLeft, User, Loader2 } from 'lucide-react';
-import DetailPengaduanModal from '../../components/DetailPengaduanModal'; // Import Modal
+import DetailPengaduanModal from '../../components/DetailPengaduanModal'; 
 
 // --- HELPER: FORMAT JAM MENIT ---
 const formatTime = (dateString) => {

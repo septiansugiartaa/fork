@@ -1,11 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const santriController = require('../../controllers/admin/santriController');
+const express    = require('express');
+const router     = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl       = require('../../controllers/shared/santriController');
 
-router.get('/', santriController.getSantri);
-router.get('/:id/ortu', santriController.getOrtuBySantri);
-router.post('/', santriController.createSantri);
-router.put('/:id', santriController.updateSantri);
-router.delete('/:id', santriController.deleteSantri);
+// Semua route di sini hanya bisa diakses oleh role 'admin'
+router.use(requireRole('admin'));
+
+router.get('/',            ctrl.getSantri);
+router.get('/:id/ortu',   ctrl.getOrtuBySantri);
+router.post('/',           ctrl.createSantri);
+router.put('/:id',         ctrl.updateSantri);
+router.delete('/:id',      ctrl.deleteSantri);
 
 module.exports = router;

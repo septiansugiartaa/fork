@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from "react";
 import api from "../config/api"; // MENGGUNAKAN API GLOBAL
 import { X, User, Plus, Loader2, Search, Trash2, AlertTriangle } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignClick, refreshTrigger }) {
   const [santriList, setSantriList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [isRemoving, setIsRemoving] = useState(false);
+  const { message, showAlert, clearAlert } = useAlert();
   
   const [deleteConfirm, setDeleteConfirm] = useState(null);
 
@@ -53,6 +56,7 @@ export default function KelasSantriModal({ isOpen, onClose, kelasData, onAssignC
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[85vh] relative">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <div><h3 className="font-bold text-gray-800 text-lg">Daftar Santri Kelas</h3><p className="text-xs text-gray-500">{kelasData?.kelas} — TA {kelasData?.tahun_ajaran}</p></div>
           <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition text-gray-400"><X size={20} /></button>

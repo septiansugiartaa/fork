@@ -1,10 +1,13 @@
 import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSaving, initialData, myClasses = [] }) {
     const [formData, setFormData] = useState({
         nama_kegiatan: "", tanggal: "", waktu_mulai: "", waktu_selesai: "", lokasi: "", deskripsi: "", id_kelas: ""
     });
+    const { message, showAlert, clearAlert } = useAlert();
 
     const currentUser = JSON.parse(localStorage.getItem('user') || '{}');
     const userRole = (currentUser.role || "").toLowerCase().replace(/\s/g, '');
@@ -36,7 +39,7 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
         if (userRole === 'pengurus' || userRole === 'admin') {
             finalData.id_kelas = null; 
         } else if (!finalData.id_kelas) {
-            return alert("Silakan pilih kelas terlebih dahulu.");
+            return showAlert("error", "Silakan pilih kelas terlebih dahulu.");
         }
         onSubmit(finalData);
     };
@@ -44,6 +47,7 @@ export default function CreateKegiatanModal({ isOpen, onClose, onSubmit, isSavin
     return (
         <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
             <div className="bg-white rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+                <AlertToast message={message} onClose={clearAlert} />
                 <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                     <h3 className="font-bold text-gray-800 text-lg">{initialData ? "Edit Kegiatan" : "Tambah Kegiatan Baru"}</h3>
                     <button onClick={onClose} className="text-gray-400 hover:text-red-500 transition"><X size={20} /></button>

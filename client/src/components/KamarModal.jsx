@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Loader2, BedDouble, MapPin } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function KamarModal({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
   const [formData, setFormData] = useState({ kamar: "", kapasitas: "", gender: "Laki_laki", lokasi: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -27,13 +30,14 @@ export default function KamarModal({ isOpen, onClose, isEditing, editData, onSub
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.kamar) return alert("Nama kamar wajib diisi");
+    if (!formData.kamar) return showAlert("error", "Nama kamar wajib diisi");
     onSubmit(formData);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2"><BedDouble className="text-green-600" size={20} /> {isEditing ? "Edit Kamar" : "Tambah Kamar"}</h3>
           <button onClick={onClose}><X size={24} className="text-gray-400 hover:text-red-500"/></button>

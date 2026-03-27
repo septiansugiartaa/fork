@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../config/api';
 import { ArrowLeft, User, Loader2, Plus, CheckCircle, Search, AlertTriangle, X } from 'lucide-react';
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import DetailPengaduanModal from '../../components/DetailPengaduanModal'; 
 import CreatePengaduanModal from '../../components/CreatePengaduanModal';
 
@@ -14,7 +16,7 @@ const formatTime = (dateString) => {
 export default function OrangTuaPengaduan() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
   const [search, setSearch] = useState("");
 
   const [selectedId, setSelectedId] = useState(null);
@@ -23,11 +25,6 @@ export default function OrangTuaPengaduan() {
 
   const navigate = useNavigate();
   const activeSantriId = localStorage.getItem('active_santri_id') || "";
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
 
   const fetchData = async () => {
     try {
@@ -69,15 +66,7 @@ export default function OrangTuaPengaduan() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20 w-full overflow-x-hidden">
-      {message.text && (
-        <div className={`fixed top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto md:w-96 z-[11000] p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in fade-in border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
-          <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
-             {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button onClick={() => setMessage({type:"", text:""})}><X size={18} /></button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-40 shadow-lg relative md:pb-32">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-4">

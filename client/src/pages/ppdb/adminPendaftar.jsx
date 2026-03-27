@@ -9,6 +9,8 @@ import {
   Search, Filter, Plus, Eye, UserCheck,
   Edit2, AlertTriangle, CheckCircle, X, Loader2
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 const STATUS_OPTIONS = [
   { value: "", label: "Semua Status" },
@@ -46,15 +48,10 @@ export default function AdminPendaftar() {
   const [statusModal, setStatusModal] = useState({ isOpen: false, id: null, currentStatus: "", nama: "" });
 
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(pendaftar, 15);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
   const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, nama: "", type: "" }); 
   const [catatan, setCatatan] = useState("");
   const [isProcessing, setIsProcessing] = useState(false);
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-  };
 
   const fetchPendaftar = useCallback(async () => {
     try {
@@ -63,24 +60,30 @@ export default function AdminPendaftar() {
       if (filterTahun) params.append("id_tahun", filterTahun);
       if (filterStatus) params.append("status", filterStatus);
       if (search) params.append("search", search);
+
       const res = await api.get(`/ppdb/admin/pendaftar?${params}`);
       setPendaftar(res.data.data);
-      jump(1);
     } catch (err) {
       showAlert("error", "Gagal memuat data pendaftar");
     } finally {
       setLoading(false);
     }
-  }, [filterTahun, filterStatus, search, jump]);
+  }, [filterTahun, filterStatus, search]);
 
   useEffect(() => {
     api.get("/ppdb/admin/tahun").then((r) => setTahunList(r.data.data));
   }, []);
 
   useEffect(() => {
-    const delay = setTimeout(fetchPendaftar, 500);
+    const delay = setTimeout(() => {
+      fetchPendaftar();
+    }, 500);
     return () => clearTimeout(delay);
   }, [fetchPendaftar]);
+
+  useEffect(() => {
+    jump(1);
+  }, [search, filterStatus, filterTahun]);
 
   const handleUpdateStatus = async (id, status) => {
     if (status === "Ditolak") {
@@ -119,13 +122,7 @@ export default function AdminPendaftar() {
   return (
     <>
       <div className="">
-        {message.text && (
-          <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
-            {message.type === 'error' ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>} 
-            <p className="text-sm font-medium">{message.text}</p>
-            <button onClick={() => setMessage({type:"", text:""})} className="ml-2 text-gray-400 hover:text-gray-600"><X size={16}/></button>
-          </div>
-        )}
+        <AlertToast message={message} onClose={clearAlert} />
 
         <div className="flex items-center justify-between mb-6">
           <div>

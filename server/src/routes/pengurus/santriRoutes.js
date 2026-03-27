@@ -1,11 +1,15 @@
-const express = require('express');
-const router = express.Router();
-const santriController = require('../../controllers/pengurus/santriController');
+const express    = require('express');
+const router     = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl       = require('../../controllers/shared/santriController');
 
-router.get('/', santriController.getSantri);
-router.get('/:id/ortu', santriController.getOrtuBySantri);
-router.post('/', santriController.createSantri);
-router.put('/:id', santriController.updateSantri);
-router.delete('/:id', santriController.deleteSantri);
+// Pengurus punya akses yang sama ke data santri (read + write)
+router.use(requireRole('pengurus'));
+
+router.get('/',            ctrl.getSantri);
+router.get('/:id/ortu',   ctrl.getOrtuBySantri);
+router.post('/',           ctrl.createSantri);
+router.put('/:id',         ctrl.updateSantri);
+router.delete('/:id',      ctrl.deleteSantri);
 
 module.exports = router;

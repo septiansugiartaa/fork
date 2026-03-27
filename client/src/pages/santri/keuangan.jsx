@@ -10,6 +10,8 @@ import {
   CheckCircle,
   X, // Import Icon Alert
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 // Import Modals
 import TagihanModal from "../../components/TagihanModal";
@@ -18,7 +20,7 @@ import BayarModal from "../../components/BayarModal";
 export default function KeuanganSantri() {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState(null);
-  const [message, setMessage] = useState({ type: "", text: "" }); // State Alert
+  const { message, showAlert, clearAlert } = useAlert();
 
   // State Modal
   const [selectedTagihan, setSelectedTagihan] = useState(null);
@@ -28,14 +30,6 @@ export default function KeuanganSantri() {
   const [isSaving, setIsSaving] = useState(false);
 
   const navigate = useNavigate();
-
-  // --- HELPER ALERT (TOAST) ---
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => {
-      setMessage({ type: "", text: "" });
-    }, 3000);
-  };
 
   useEffect(() => {
     fetchKeuangan();
@@ -106,29 +100,7 @@ export default function KeuanganSantri() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-10 w-full overflow-x-hidden">
-      {/* --- FLOATING ALERT (Z-Index 11000: Paling Atas) --- */}
-      {message.text && (
-        <div
-          className={`fixed top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto md:w-96 z-[11000] p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === "error" ? "bg-white border-red-500 text-red-700" : "bg-white border-green-500 text-green-700"}`}
-        >
-          <div
-            className={`flex-shrink-0 p-2 rounded-full ${message.type === "error" ? "bg-red-100" : "bg-green-100"}`}
-          >
-            {message.type === "error" ? (
-              <AlertTriangle size={20} />
-            ) : (
-              <CheckCircle size={20} />
-            )}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button
-            onClick={() => setMessage({ type: "", text: "" })}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       {/* Header */}
       <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">

@@ -1,11 +1,20 @@
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet } from 'react-router-dom';
+
+const ROLE_DASHBOARD = {
+  santri:       '/santri',
+  orangtua:     '/orangtua',
+  wali:         '/orangtua',
+  pengurus:     '/pengurus',
+  pimpinan:     '/pimpinan',
+  ustadz:       '/ustadz',
+  admin:        '/admin',
+  timkesehatan: '/timkesehatan',
+};
 
 const ProtectedRoute = ({ allowedRoles }) => {
-  // 1. Ambil data dari LocalStorage
-  const token = localStorage.getItem("token");
-  const userStr = localStorage.getItem("user");
-  
-  // 2. Cek Login: Kalau ga ada token/user, tendang ke Login
+  const token   = localStorage.getItem('token');
+  const userStr = localStorage.getItem('user');
+
   if (!token || !userStr) {
     return <Navigate to="/login" replace />;
   }
@@ -13,45 +22,27 @@ const ProtectedRoute = ({ allowedRoles }) => {
   let user = {};
   try {
     user = JSON.parse(userStr);
-  } catch (e) {
-    // Kalo JSON rusak, paksa logout
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+  } catch {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
     return <Navigate to="/login" replace />;
   }
-  
-  let userRole = "";
 
+  // Normalisasi role dari berbagai shape data (string langsung, atau nested user_role array)
+  let userRole = '';
   if (typeof user.role === 'string') {
-      userRole = user.role.toLowerCase();
-  } 
-  else if (user.user_role && Array.isArray(user.user_role) && user.user_role.length > 0) {
-      userRole = user.user_role[0]?.role?.role?.toLowerCase() || "";
+    userRole = user.role.toLowerCase();
+  } else if (Array.isArray(user.user_role) && user.user_role.length > 0) {
+    userRole = user.user_role[0]?.role?.role?.toLowerCase() || '';
   }
 
   if (allowedRoles.includes(userRole)) {
     return <Outlet />;
-  } else {
-    // Redirect balik ke dashboard mereka masing-masing
-    if (userRole === 'santri') {
-        return <Navigate to="/santri" replace />;
-    } else if (userRole === 'orangtua' || userRole === 'wali') {
-        return <Navigate to="/orangtua" replace />;
-    } else if (userRole === 'pengurus') {
-        return <Navigate to="/pengurus" replace />;
-    } else if (userRole === 'pimpinan') {
-        return <Navigate to="/pimpinan" replace />;
-    } else if (userRole === 'ustadz') {
-        return <Navigate to="/ustadz" replace />;
-    } else if (userRole === 'admin') {
-        return <Navigate to="/admin" replace />;
-    } else if (userRole === 'timkesehatan') {
-        return <Navigate to="/timkesehatan" replace />;
-    } else {
-        // Fallback jika role tidak dikenali
-        return <Navigate to="/login" replace />;
-    }
   }
+
+  // Redirect ke dashboard sesuai role — fallback ke login jika tidak dikenali
+  const redirectTo = ROLE_DASHBOARD[userRole] ?? '/login';
+  return <Navigate to={redirectTo} replace />;
 };
 
 export default ProtectedRoute;

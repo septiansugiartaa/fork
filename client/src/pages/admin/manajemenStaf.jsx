@@ -12,6 +12,9 @@ import {
   Mail,
   Phone,
 } from "lucide-react";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
 import InputStafModal from "../../components/InputStafModal";
@@ -19,20 +22,17 @@ import InputStafModal from "../../components/InputStafModal";
 export default function ManajemenStaf() {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [search, setSearch] = useState("");
   const [filterRole, setFilterRole] = useState("Semua");
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [deleteModal, setDeleteModal] = useState({ isOpen: false, id: null, name: "" });
   const [selectedData, setSelectedData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-  };
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const fetchData = async () => {
     setLoading(true);
@@ -107,14 +107,19 @@ export default function ManajemenStaf() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (!window.confirm("Yakin ingin menonaktifkan akun staf ini? Mereka tidak akan bisa login lagi.")) return;
+  const handleDelete = (item) => setDeleteModal({ isOpen: true, id: item.id, name: `Staf ${item.nama}` });
+  
+  const confirmDelete = async () => {
+    setIsDeleting(true);
     try {
-      await api.delete(`/admin/staf/${id}`);
-      showAlert("success", "Akun berhasil dinonaktifkan");
+      await api.delete(`/admin/staf/${deleteModal.id}`);
+      showAlert("success", "Staf dihapus");
+      setDeleteModal({ isOpen: false, id: null, name: "" });
       fetchData();
-    } catch (err) {
-      showAlert("error", "Gagal menonaktifkan akun");
+    } catch {
+      showAlert("error", "Gagal menghapus");
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -140,15 +145,7 @@ export default function ManajemenStaf() {
 
   return (
     <div className="space-y-6 relative">
-      {message.text && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === "error" ? "border-red-500 text-red-700" : "border-green-500 text-green-700"}`}>
-          <div className={`flex-shrink-0 p-2 rounded-full ${message.type === "error" ? "bg-red-100" : "bg-green-100"}`}>
-            {message.type === "error" ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button onClick={() => setMessage({ type: "", text: "" })} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       <div className="flex justify-between items-center">
         <div>
@@ -171,7 +168,7 @@ export default function ManajemenStaf() {
             <input
               type="text"
               placeholder="Cari berdasarkan nama atau NIP staf..."
-              className="w-full pl-10 pr-10 py-1.5 outline-none bg-transparent text-gray-700"
+              className="w-full pl-10 pr-10 py-2.5 outline-none bg-transparent text-gray-700"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
@@ -252,7 +249,7 @@ export default function ManajemenStaf() {
                         <td className="p-4 text-center">
                           <div className="flex items-center justify-center gap-2">
                             <button onClick={() => handleEdit(item)} className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition" title="Edit Data & Reset Password"><Edit2 size={18} /></button>
-                            <button onClick={() => handleDelete(item.id)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Nonaktifkan Akun"><Trash2 size={18} /></button>
+                            <button onClick={() => handleDelete(item)} className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition" title="Nonaktifkan Akun"><Trash2 size={18} /></button>
                           </div>
                         </td>
                       </tr>
@@ -292,7 +289,7 @@ export default function ManajemenStaf() {
                   </div>
                   <div className="grid grid-cols-2 gap-3 mt-1">
                     <button onClick={() => handleEdit(item)} className="py-2 bg-green-50 text-green-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><Edit2 size={16} /> Edit Akun</button>
-                    <button onClick={() => handleDelete(item.id)} className="py-2 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><Trash2 size={16} /> Disable</button>
+                    <button onClick={() => handleDelete(item)} className="py-2 bg-red-50 text-red-600 rounded-xl font-semibold text-sm flex items-center justify-center gap-2 active:scale-95 transition"><Trash2 size={16} /> Disable</button>
                   </div>
                 </div>
               ))
@@ -313,6 +310,13 @@ export default function ManajemenStaf() {
         onSubmit={handleSubmit}
         onResetPassword={handleResetPassword}
         saving={isSaving}
+      />
+      <ConfirmDeleteModal 
+        isOpen={deleteModal.isOpen} 
+        onClose={() => setDeleteModal({ isOpen: false, id: null, name: "" })} 
+        onConfirm={confirmDelete} 
+        loading={isDeleting} 
+        itemName={deleteModal.name} 
       />
     </div>
   );

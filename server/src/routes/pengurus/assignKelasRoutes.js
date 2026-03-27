@@ -1,11 +1,14 @@
 const express = require('express');
-const router = express.Router();
-const kelasController = require('../../controllers/pengurus/kelasController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/kelasController');
 
-router.get('/', kelasController.getAssignKelas);
-router.get('/options', kelasController.getOptions);
-router.post('/', kelasController.createAssignKelas);
-router.put('/:id', kelasController.updateAssignKelas);
-router.delete('/:id', kelasController.deleteAssignKelas);
+router.use(requireRole('pengurus'));
+
+router.get('/',        ctrl.getAssignKelas);
+router.get('/options', ctrl.getOptions);
+router.post('/',       ctrl.createAssignKelas);
+router.put('/:id',     ctrl.updateAssignKelas);
+router.delete('/:id',  ctrl.deleteAssignKelas);
 
 module.exports = router;

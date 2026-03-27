@@ -16,6 +16,8 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import InputUstadzModal from "../../components/InputUstadzModal";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
@@ -34,16 +36,7 @@ export default function DataUstadz() {
   const [isEditing, setIsEditing] = useState(false);
   const [selectedData, setSelectedData] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
-
-  // State Alert
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => {
-      setMessage({ type: "", text: "" });
-    }, 3000);
-  };
+  const { message, showAlert, clearAlert } = useAlert();
 
   // 1. Fetch Data
   const fetchUstadz = async () => {
@@ -96,29 +89,7 @@ export default function DataUstadz() {
 
   return (
     <div className="space-y-6 relative">
-      {/* Alert */}
-      {message.text && (
-        <div
-          className={`fixed top-4 left-1/2 transform -translate-x-1/2 z-[11000] min-w-[320px] max-w-md p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === "error" ? "bg-white border-red-500 text-red-700" : "bg-white border-green-500 text-green-700"}`}
-        >
-          <div
-            className={`flex-shrink-0 p-2 rounded-full ${message.type === "error" ? "bg-red-100" : "bg-green-100"}`}
-          >
-            {message.type === "error" ? (
-              <AlertTriangle size={20} />
-            ) : (
-              <CheckCircle size={20} />
-            )}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button
-            onClick={() => setMessage({ type: "", text: "" })}
-            className="text-gray-400 hover:text-gray-600"
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       {/* Header */}
       <div className="flex justify-between items-center">

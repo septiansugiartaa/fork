@@ -1,13 +1,16 @@
 const express = require('express');
-const router = express.Router();
-const kelasController = require('../../controllers/pengurus/kelasController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/kelasController');
 
-router.get('/', kelasController.getKelas);
-router.get('/wali', kelasController.getWaliOptions);
-router.get('/:id/santri', kelasController.getSantriByKelas);
-router.post('/', kelasController.createKelas);
-router.put('/:id', kelasController.updateKelas);
-router.delete('/:id', kelasController.deleteKelas);
-router.delete('/:idKelas/santri/:idSantri', kelasController.removeSantriFromKelas);
+router.use(requireRole('pengurus'));
+
+router.get('/',                              ctrl.getKelas);
+router.get('/wali-options',                  ctrl.getWaliOptions);
+router.get('/:id/santri',                    ctrl.getSantriByKelas);
+router.post('/',                             ctrl.createKelas);
+router.put('/:id',                           ctrl.updateKelas);
+router.delete('/:id',                        ctrl.deleteKelas);
+router.delete('/:idKelas/santri/:idSantri',  ctrl.removeSantriFromKelas);
 
 module.exports = router;

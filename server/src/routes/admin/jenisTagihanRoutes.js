@@ -1,10 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const jenisTagihanController = require('../../controllers/admin/jenisTagihanController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/masterDataController');
 
-router.get('/', jenisTagihanController.getAll);
-router.post('/', jenisTagihanController.create);
-router.put('/:id', jenisTagihanController.update);
-router.delete('/:id', jenisTagihanController.remove);
+router.use(requireRole('admin'));
+
+router.get('/',       ctrl.getAllTagihan);
+router.post('/',      ctrl.createTagihanJenis);
+router.put('/:id',    ctrl.updateTagihanJenis);
+router.delete('/:id', ctrl.removeTagihanJenis);
 
 module.exports = router;

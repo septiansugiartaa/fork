@@ -1,15 +1,17 @@
 const express = require('express');
-const router = express.Router();
-const keuanganController = require('../../controllers/pengurus/keuanganController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/masterDataController');
 
-router.get('/tagihan', keuanganController.getTagihan);
-router.get('/options', keuanganController.getOptions);
-router.post('/tagihan', keuanganController.createTagihan);
-router.put('/tagihan/:id', keuanganController.updateTagihan);
-router.delete('/tagihan/:id', keuanganController.deleteTagihan);
+router.use(requireRole('pengurus'));
 
-router.get('/pembayaran/:idTagihan', keuanganController.getPembayaranByTagihan);
-router.put('/tagihan/:id/status', keuanganController.updateStatusTagihan);
-router.put('/pembayaran/:id/verify', keuanganController.verifyPembayaran);
+router.get('/tagihan', ctrl.getTagihan);
+router.get('/options', ctrl.getKeuanganOptions);
+router.get('/:idTagihan/pembayaran', ctrl.getPembayaranByTagihan);
+router.post('/', ctrl.createTagihan);
+router.put('/:id', ctrl.updateTagihan);
+router.put('/:id/status', ctrl.updateStatusTagihan);
+router.put('/pembayaran/:id/verifikasi', ctrl.verifyPembayaran);
+router.delete('/:id', ctrl.deleteTagihan);
 
 module.exports = router;

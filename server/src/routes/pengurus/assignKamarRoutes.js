@@ -1,10 +1,13 @@
 const express = require('express');
-const router = express.Router();
-const kamarController = require('../../controllers/pengurus/kamarController');
+const router  = express.Router();
+const { requireRole } = require('../../middleware/verifyToken');
+const ctrl    = require('../../controllers/shared/kamarController');
 
-router.get('/', kamarController.getAssignKamar);
-router.get('/options', kamarController.getOptions);
-router.post('/', kamarController.createAssignKamar);
-router.delete('/:id', kamarController.deleteAssignKamar);
+router.use(requireRole('pengurus'));
+
+router.get('/',        ctrl.getAssignKamar);
+router.get('/options', ctrl.getOptions);
+router.post('/',       ctrl.createAssignKamar);
+router.delete('/:id',  ctrl.deleteAssignKamar);
 
 module.exports = router;

@@ -6,6 +6,8 @@ import {
   Tooltip as RechartsTooltip, Legend, ResponsiveContainer,
 } from "recharts";
 import { Activity, DollarSign, AlertCircle, Star, Loader2, Printer } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 // 1. IMPORT FUNGSI GENERATOR PDF
 import { PdfLaporanPimpinan } from "../../components/PdfLaporanPimpinan";
@@ -14,6 +16,7 @@ export default function PimpinanDashboard() {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const { message, showAlert, clearAlert } = useAlert();
 
   // 2. REFERENSI ELEMEN CHART UNTUK DIFOTO PDF NANTI
   const barChartRef = useRef(null);
@@ -56,7 +59,7 @@ export default function PimpinanDashboard() {
       // Panggil fungsi dari file terpisah, passing data dan referensi chart-nya
       await PdfLaporanPimpinan(data, barChartRef, pieChartRef);
     } catch (error) {
-      alert("Terjadi kesalahan saat menyusun dokumen cetak.");
+      showAlert("error", "Terjadi kesalahan saat menyusun dokumen cetak.");
     } finally {
       setIsExporting(false);
     }
@@ -73,6 +76,7 @@ export default function PimpinanDashboard() {
 
   return (
     <div className="bg-gray-50 min-h-screen space-y-6">
+      <AlertToast message={message} onClose={clearAlert} />
       
       {/* HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

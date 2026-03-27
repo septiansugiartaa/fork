@@ -15,24 +15,18 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => {
-    return Promise.reject(error);
-  }
+  (error) => Promise.reject(error)
 );
 
-// RESPONSE INTERCEPTOR: Tangani error global (misal Token Expired)
+// RESPONSE INTERCEPTOR: Tangani error global (Token Expired → auto logout)
 api.interceptors.response.use(
-  (response) => {
-    return response;
-  },
+  (response) => response,
   (error) => {
-    // Jika backend mengembalikan status 401 Unauthorized
     if (error.response && error.response.status === 401) {
-      console.warn("Token expired atau tidak valid. Mengarahkan ke Login...");
+      console.warn('Token expired atau tidak valid. Mengarahkan ke Login...');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
-      // Arahkan ke login
-      window.location.href = '/login'; 
+      window.location.href = '/login';
     }
     return Promise.reject(error);
   }

@@ -9,6 +9,8 @@ import {
   X,
   Calendar,
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import DaftarPembayaranModal from "../../components/DaftarPembayaranModal";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
@@ -25,14 +27,7 @@ export default function Keuangan() {
   const [isListBayarOpen, setIsListBayarOpen] = useState(false);
   const [selectedTagihanId, setSelectedTagihanId] = useState(null);
 
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => {
-      setMessage({ type: "", text: "" });
-    }, 3000);
-  };
+  const { message, showAlert, clearAlert } = useAlert();
 
   const fetchData = async () => {
     setLoading(true);
@@ -97,19 +92,7 @@ export default function Keuangan() {
 
   return (
     <div className="space-y-6 relative">
-      {/* Alert */}
-      {message.text && (
-        <div
-          className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === "error" ? "border-red-500 text-red-700" : "border-green-500 text-green-700"}`}
-        >
-          {message.type === "error" ? (
-            <AlertTriangle size={20} />
-          ) : (
-            <CheckCircle size={20} />
-          )}{" "}
-          <p className="text-sm font-medium">{message.text}</p>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       {/* Header */}
       <div className="flex justify-between items-center">

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import api from '../config/api';
 import { X, Save, Loader2, Calendar, FileText, MapPin, ChevronDown } from 'lucide-react';
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }) {
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({});
   const [userContext, setUserContext] = useState({ kamar: '', kelas: '' });
   const [locationType, setLocationType] = useState("");
+  const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -46,7 +49,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
         onClose();
       }
     } catch (err) {
-      alert("Gagal mengirim pengajuan");
+      showAlert("error", "Gagal mengirim pengajuan");
     } finally {
       setLoading(false);
     }
@@ -57,6 +60,7 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl flex flex-col overflow-hidden">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
           <div><h3 className="font-bold text-gray-800 text-lg">Formulir Permintaan</h3><p className="text-xs text-green-600 font-medium">Layanan: {layanan.nama_layanan}</p></div>
           <button onClick={onClose} className="p-2 hover:bg-gray-200 rounded-full transition"><X size={20} /></button>

@@ -4,14 +4,15 @@ import api from '../../config/api';
 import { ArrowLeft, Search, Calendar, ChevronRight, Clock, CheckCircle, XCircle, Star, AlertTriangle, X, Loader2 } from 'lucide-react';
 import DetailRiwayatLayananModal from '../../components/DetailRiwayatLayananModal';
 import FeedbackModal from '../../components/FeedbackModal';
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 export default function RiwayatLayananList() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   
-  // State Alert
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   // State Modals
   const [selectedDetailId, setSelectedDetailId] = useState(null);
@@ -19,12 +20,6 @@ export default function RiwayatLayananList() {
   const [isSavingFeedback, setIsSavingFeedback] = useState(false);
 
   const navigate = useNavigate();
-
-  // --- SHOW ALERT HELPER ---
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
 
   // --- FETCH DATA ---
   const fetchRiwayat = async () => {
@@ -86,17 +81,7 @@ export default function RiwayatLayananList() {
 
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      
-      {/* ALERT COMPONENT */}
-      {message.text && (
-        <div className={`fixed top-4 left-4 right-4 md:top-8 md:right-8 md:left-auto md:w-96 z-[11000] p-4 rounded-xl shadow-2xl flex items-center gap-3 animate-in slide-in-from-top-5 fade-in duration-300 border-l-4 ${message.type === 'error' ? 'bg-white border-red-500 text-red-700' : 'bg-white border-green-500 text-green-700'}`}>
-          <div className={`flex-shrink-0 p-2 rounded-full ${message.type === 'error' ? 'bg-red-100' : 'bg-green-100'}`}>
-             {message.type === 'error' ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          </div>
-          <p className="text-sm font-medium flex-1">{message.text}</p>
-          <button onClick={() => setMessage({type:"", text:""})} className="text-gray-400 hover:text-gray-600"><X size={18} /></button>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       {/* Header Gradient */}
       <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg relative">

@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { X, Save, Loader2, FileText, CheckCircle } from 'lucide-react';
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function ProsesLayananModal({ isOpen, onClose, data, onSubmit, saving }) {
   const [formData, setFormData] = useState({
     status_sesudah: "Proses", // Default value
     catatan: ""
   });
+  const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen && data) {
@@ -21,13 +24,14 @@ export default function ProsesLayananModal({ isOpen, onClose, data, onSubmit, sa
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.status_sesudah) return alert("Pilih status terlebih dahulu");
+    if (!formData.status_sesudah) return showAlert("error", "Pilih status terlebih dahulu");
     onSubmit(data.id, formData);
   };
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl flex flex-col">
+        <AlertToast message={message} onClose={clearAlert} />
         
         {/* Header */}
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">

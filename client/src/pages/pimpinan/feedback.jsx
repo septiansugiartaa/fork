@@ -10,6 +10,8 @@ import {
   Star,
   MessageSquare
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 import DetailFeedbackModal from "../../components/DetailFeedbackModal";
 import usePagination from "../../components/pagination/usePagination";
 import Pagination from "../../components/pagination/Pagination";
@@ -17,20 +19,15 @@ import Pagination from "../../components/pagination/Pagination";
 export default function FeedbackView() {
   const [dataList, setDataList] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   // Search & Filter state
   const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState("Semua"); // Semua, Kegiatan, Layanan
+  const [filterType, setFilterType] = useState("Semua");
 
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState(null); // { id, tipe }
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => { setMessage({ type: "", text: "" }); }, 3000);
-  };
+  const [selectedItem, setSelectedItem] = useState(null); 
 
   const fetchData = async () => {
     setLoading(true);
@@ -74,13 +71,7 @@ export default function FeedbackView() {
 
   return (
     <div className="space-y-6 relative">
-      {/* Alert */}
-      {message.text && (
-        <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === "error" ? "border-red-500 text-red-700" : "border-green-500 text-green-700"}`}>
-          {message.type === "error" ? <AlertTriangle size={20} /> : <CheckCircle size={20} />}
-          <p className="text-sm font-medium">{message.text}</p>
-        </div>
-      )}
+      <AlertToast message={message} onClose={clearAlert} />
 
       {/* Header */}
       <div className="flex justify-between items-center">

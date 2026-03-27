@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { X, Star, Loader2, AlertTriangle, CheckCircle } from "lucide-react";
+import { X, Star, Loader2, CheckCircle } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving }) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [review, setReview] = useState("");
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
@@ -17,11 +19,6 @@ export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving 
 
   if (!isOpen || !item) return null;
 
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-  };
-
   const handleSubmit = () => {
     if (rating === 0) return showAlert("error", "Silakan beri rating bintang.");
     if (!review.trim()) return showAlert("error", "Silakan isi ulasan Anda.");
@@ -31,11 +28,8 @@ export default function FeedbackModal({ isOpen, onClose, item, onSubmit, saving 
   return (
     <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white rounded-2xl w-full max-w-md shadow-2xl p-6 relative">
-        {message.text && (
-          <div className={`absolute top-4 left-4 right-4 p-3 rounded-xl text-xs font-bold flex items-center gap-2 animate-bounce ${message.type === 'error' ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'}`}>
-            {message.type === 'error' ? <AlertTriangle size={14} /> : <CheckCircle size={14} />} {message.text}
-          </div>
-        )}
+        <AlertToast message={message} onClose={clearAlert} />
+
         <div className="flex justify-between items-center mb-6 pt-4">
           <div><h3 className="text-xl font-bold text-gray-800">Beri Ulasan</h3><p className="text-xs text-gray-500 mt-0.5">{item.nama}</p></div>
           <button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full transition"><X size={20} /></button>

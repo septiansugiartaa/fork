@@ -9,6 +9,8 @@ import {
   Users, CheckCircle, XCircle, Clock,
   Plus, Edit2, Trash2, Award, AlertTriangle, X
 } from "lucide-react";
+import AlertToast from "../../components/AlertToast";
+import { useAlert } from "../../hooks/useAlert";
 
 export default function AdminPpdbDashboard() {
   const { user } = useContext(AuthContext);
@@ -23,14 +25,9 @@ export default function AdminPpdbDashboard() {
 
   const { currentData, currentPage, maxPage, next, prev, jump } = usePagination(tahunList, 10);
 
-  const [message, setMessage] = useState({ type: "", text: "" });
+  const { message, showAlert, clearAlert } = useAlert();
   const [modalDelete, setModalDelete] = useState({ isOpen: false, id: null });
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const showAlert = (type, text) => {
-    setMessage({ type, text });
-    setTimeout(() => setMessage({ type: "", text: "" }), 3000);
-  };
 
   const fetchData = useCallback(async () => {
     try {
@@ -41,15 +38,19 @@ export default function AdminPpdbDashboard() {
       ]);
       setStats(statsRes.data.data);
       setTahunList(tahunRes.data.data);
-      jump(1);
     } catch (err) {
       showAlert("error", "Gagal memuat data dashboard");
     } finally {
       setLoading(false);
     }
-  }, [selectedTahun, jump]);
+  }, [selectedTahun]);
 
   useEffect(() => { fetchData(); }, [fetchData]);
+
+  const handleFilterChange = (idTahun) => {
+    setSelectedTahun(idTahun);
+    jump(1);
+  };
 
   const confirmDelete = async () => {
     setIsDeleting(true);
@@ -81,13 +82,7 @@ export default function AdminPpdbDashboard() {
   return (
     <>
       <div className="">
-        {message.text && (
-          <div className={`fixed top-4 left-1/2 -translate-x-1/2 z-[11000] p-4 rounded-xl shadow-lg flex items-center gap-3 animate-in slide-in-from-top-5 border-l-4 bg-white ${message.type === 'error' ? 'border-red-500 text-red-700' : 'border-green-500 text-green-700'}`}>
-            {message.type === 'error' ? <AlertTriangle size={20}/> : <CheckCircle size={20}/>} 
-            <p className="text-sm font-medium">{message.text}</p>
-            <button onClick={() => setMessage({type:"", text:""})} className="ml-2 text-gray-400 hover:text-gray-600"><X size={16}/></button>
-          </div>
-        )}
+        <AlertToast message={message} onClose={clearAlert} />
 
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -107,7 +102,7 @@ export default function AdminPpdbDashboard() {
         <div className="mb-6 flex items-center gap-3 flex-wrap">
           <span className="text-sm font-medium text-gray-600">Filter:</span>
           <button
-            onClick={() => setSelectedTahun(null)}
+            onClick={() => handleFilterChange(null)}
             className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
               !selectedTahun ? "bg-green-600 text-white shadow-md" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
             }`}
@@ -117,7 +112,7 @@ export default function AdminPpdbDashboard() {
           {tahunList.map((t) => (
             <button
               key={t.id}
-              onClick={() => setSelectedTahun(t.id)}
+              onClick={() => handleFilterChange(t.id)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition ${
                 selectedTahun === t.id ? "bg-green-600 text-white shadow-md" : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
               }`}

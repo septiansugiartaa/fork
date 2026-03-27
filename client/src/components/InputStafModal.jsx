@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { X, Save, Loader2, ShieldAlert, KeyRound } from "lucide-react";
+import AlertToast from "../components/AlertToast";
+import { useAlert } from "../hooks/useAlert";
 
 export default function InputStafModal({ isOpen, onClose, isEditing, editData, onSubmit, onResetPassword, saving }) {
   const initialForm = {
@@ -10,6 +12,7 @@ export default function InputStafModal({ isOpen, onClose, isEditing, editData, o
     jenis_kelamin: "",
     roles: [],
   };
+  const { message, showAlert, clearAlert } = useAlert();
 
   const [formData, setFormData] = useState(initialForm);
   const availableRoles = ["Admin", "Pimpinan", "Tim Kesehatan", "Pengurus", "Ustadz"];
@@ -48,13 +51,14 @@ export default function InputStafModal({ isOpen, onClose, isEditing, editData, o
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (formData.roles.length === 0) return alert("Pilih minimal 1 Hak Akses (Role)!");
+    if (formData.roles.length === 0) return showAlert("error", "Pilih minimal 1 Hak Akses (Role)!");
     onSubmit(formData);
   };
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
       <div className="bg-white w-full max-w-2xl rounded-2xl shadow-2xl flex flex-col max-h-[90vh]">
+        <AlertToast message={message} onClose={clearAlert} />
         <div className="p-5 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
           <h3 className="font-bold text-gray-800 text-lg flex items-center gap-2">
             <ShieldAlert className="text-green-600" size={20} />
