@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { CheckCircle, UploadCloud, ChevronRight, ChevronDown, Check, FileText, Loader2, ArrowLeft, Plus, X } from "lucide-react";
 
 // IMPORT FUNGSI CETAK PDF DARI FILE UTILS
-import { cetakBuktiPendaftaran } from "../../components/ppdb/cetakBuktiPpdb"; 
+import { cetakBuktiPendaftaran } from "../../components/ppdb/CetakBuktiPpdb"; 
 
 const STEPS = ["Pilih Gelombang", "Data Diri", "Data Wali", "Upload Dokumen", "Selesai"];
 

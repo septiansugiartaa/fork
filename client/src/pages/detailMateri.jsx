@@ -130,7 +130,7 @@ function DetailMateri() {
         {materi.gambar && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
             <img
-              src={`http://localhost:3000/uploads/${materi.gambar}`}
+              src={`/uploads/${materi.gambar}`}
               alt={materi.judul_materi}
               className="w-full h-72 object-cover"
             />
@@ -162,27 +162,17 @@ function DetailMateri() {
             </div>
 
             <div className="w-full lg:w-1/3 lg:border-t-0 lg:border-l border-gray-300 border-t lg:pt-0 lg:pl-6 mt-5">
-              <LinkMateri materiList={materiLain} detailBasePath={detailBasePath} />
+              <LinkMateri
+                materiList={materiLain}
+                detailBasePath={detailBasePath}
+                fromPath={location.pathname}
+                rootFrom={rootFrom}
+              />
             </div>
           </div>
-
-          {/* KANAN - MATERI LAIN */}
-          <div className="w-full lg:w-1/3
-            lg:border-t-0 lg:border-l border-gray-300
-            border-t lg:pt-0 lg:pl-6 mt-5">
-
-            <LinkMateri
-              materiList={materiLain}
-              detailBasePath={detailBasePath}
-              fromPath={location.pathname}
-              rootFrom={rootFrom}
-            />
-          </div>
-
         </div>
+        <CommentSection materiId={id} />
       </div> 
-      <CommentSection materiId={id} />
-    </div>
     )
   }
 
@@ -210,7 +200,7 @@ function DetailMateri() {
         <div className="max-w-6xl mx-auto px-4 -mt-14 sm:-mt-16 mb-6">
           <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
             <img
-              src={`http://localhost:3000/uploads/${materi.gambar}`}
+              src={`/uploads/${materi.gambar}`}
               alt={materi.judul_materi}
               className="w-full h-48 sm:h-64 md:h-72 object-cover"
             />
@@ -240,24 +230,14 @@ function DetailMateri() {
             </div>
 
             <div className="w-full lg:w-1/3 lg:border-t-0 lg:border-l border-gray-300 border-t lg:pt-0 lg:pl-6 mt-5">
-              <LinkMateri materiList={materiLain} detailBasePath={detailBasePath} />
+              <LinkMateri 
+                materiList={materiLain} 
+                detailBasePath={detailBasePath} 
+                fromPath={location.pathname}
+                rootFrom={rootFrom}
+              />
             </div>
           </div>
-
-          {/* KANAN - MATERI LAINNYA */}
-          <div className="
-            w-full lg:w-1/3
-            lg:border-t-0 lg:border-l border-gray-300
-            border-t lg:pt-0 lg:pl-6 mt-5"
-          >
-            <LinkMateri
-              materiList={materiLain}
-              detailBasePath={detailBasePath}
-              fromPath={location.pathname}
-              rootFrom={rootFrom}
-            />
-          </div>
-
         </div>
       </div>
 

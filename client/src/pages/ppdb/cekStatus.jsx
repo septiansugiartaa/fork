@@ -6,8 +6,8 @@ import AlertToast from "../../components/AlertToast";
 import { useAlert } from "../../hooks/useAlert";
 
 // Import Helper Cetak PDF
-import { cetakBuktiPendaftaran } from "../../components/ppdb/cetakBuktiPpdb";
-import { cetakUndanganSeleksi, cetakBuktiKelulusan } from "../../components/ppdb/cetakDokumenStatus";
+import { cetakBuktiPendaftaran } from "../../components/ppdb/CetakBuktiPpdb";
+import { cetakUndanganSeleksi, cetakBuktiKelulusan } from "../../components/ppdb/CetakDokumenStatus";
 import LupaNomorModal from "../../components/ppdb/LupaNomorModal";
 
 const STATUS_INFO = {

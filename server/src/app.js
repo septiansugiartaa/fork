@@ -38,7 +38,7 @@ app.use(cors({
 // 3. RATE LIMITING 
 // Rate limit auth
 const authLimiter = rateLimit({
-  windowMs: 0 * 60 * 1000, 
+  windowMs: 1 * 60 * 1000, 
   max: 10, 
   standardHeaders: true,
   legacyHeaders: false,
@@ -69,12 +69,12 @@ app.use('/api/ppdb/public', require('./routes/ppdb/publicPpdbRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 
 app.use('/foto-profil', express.static(path.join(__dirname, '../public/uploads/profil')));
+app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 // 6. PROTECTED ROUTES 
 app.use(verifyToken);
 
 app.use('/payments', express.static(path.join(__dirname, '../public/uploads/payments')));
-app.use('/uploads', express.static(path.join(__dirname, '../public/uploads')));
 
 app.use(activityLog);
 
