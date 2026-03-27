@@ -14,6 +14,8 @@ import SantriKegiatan from "./pages/santri/kegiatan"
 import SantriPengaduan from "./pages/santri/pengaduan"
 import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
+import SantriScabiesDashboard from "./pages/santri/scabiesDashboard"
+import SantriScabiesKonsultasi from "./pages/santri/scabiesKonsultasi"
 import MateriView from "./pages/viewMateri"
 import DetailMateri from "./pages/detailMateri"
 import MateriManage from "./pages/manageMateri"
@@ -122,8 +124,10 @@ function App() {
                 <Route path="riwayat" element={<SantriRiwayatLayanan />} />
               </Route>
               <Route path="scabies">
+                <Route index element={<SantriScabiesDashboard />} />
                 <Route path="viewMateri" element={<MateriView />} />
                 <Route path="viewMateri/:id" element={<DetailMateri />} />
+                <Route path="konsultasi" element={<SantriScabiesKonsultasi />} />
               </Route>
             </Route>
           </Route>

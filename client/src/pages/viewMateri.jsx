@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../config/api';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft,
   Search,
@@ -8,11 +8,16 @@ import {
 } from "lucide-react";
 import CardMateri from "../components/CardMateri";
 
+const LEGACY_RECENT_STORAGE_KEY = "santri_recent_materi";
+
 export default function MateriView (){
     const [materi, setMateri] = useState([]);
     const [search, setSearch] = useState("");
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+    const location = useLocation();
+    const rootFrom = location.state?.rootFrom || location.state?.from || "/santri";
+    const backPath = rootFrom;
     
     const fetchMateri = async () => {
         try {
@@ -32,6 +37,7 @@ export default function MateriView (){
     };
     
     useEffect(() => {
+        localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
         fetchMateri();
     }, []);
 
@@ -58,7 +64,7 @@ export default function MateriView (){
             <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-24 shadow-lg">
                 <div className="max-w-6xl mx-auto flex items-center gap-4">
                     <button
-                        onClick={() => navigate("/santri")}
+                        onClick={() => navigate(backPath)}
                         className="flex-shrink-0 p-2 hover:bg-white/20 rounded-full transition"
                     >
                         <ArrowLeft size={24} />
@@ -101,7 +107,7 @@ export default function MateriView (){
             <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 pb-10">
                {filteredMateri.length > 0 ? (
                     filteredMateri.map((item) => (
-                        <CardMateri key={item.id} materi={item} detailBasePath="/santri/scabies/viewMateri" />
+                        <CardMateri key={item.id} materi={item} detailBasePath="/santri/scabies/viewMateri" fromPath={location.pathname} rootFrom={rootFrom} />
                     ))
                     ) : (
                     <p className="col-span-full text-center text-gray-500">
