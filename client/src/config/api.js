@@ -22,7 +22,9 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    const isLoginURL = (error.config?.url === '/auth/login');
+
+    if (error.response && error.response.status === 401 && !isLoginURL) {
       console.warn('Token expired atau tidak valid. Mengarahkan ke Login...');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
