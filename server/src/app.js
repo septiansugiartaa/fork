@@ -10,6 +10,8 @@ const activityLog = require('./middleware/activityLog');
 
 dotenv.config();
 
+const konsultasiService = require('./controllers/shared/konsultasiService');
+
 const app = express();
 
 // 1. SECURITY HEADERS 
@@ -36,10 +38,18 @@ app.use(cors({
 }));
 
 // 3. RATE LIMITING 
+// Rate limit auth
+const authLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, 
+  max: 10, 
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { success: false, message: 'Terlalu banyak percobaan. Coba lagi dalam 15 menit.' },
+});
 
 // Rate limit umum
 const generalLimiter = rateLimit({
-  windowMs: 60 * 1000,
+  windowMs: 60 * 1000, // 1 menit
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
@@ -47,6 +57,7 @@ const generalLimiter = rateLimit({
 });
 
 app.use('/api', generalLimiter);
+app.use('/api/auth', authLimiter);
 
 // 4. BODY PARSER 
 app.use(express.json({ limit: '2mb' }));
@@ -82,6 +93,7 @@ app.use('/api/santri/kegiatan', require('./routes/santri/kegiatanRoutes'));
 app.use('/api/santri/pengaduan', require('./routes/santri/pengaduanRoutes'));
 app.use('/api/santri/layanan', require('./routes/santri/layananRoutes'));
 app.use('/api/santri/layanan/riwayat', require('./routes/santri/riwayatLayananRoutes'));
+app.use('/api/santri/konsultasi', require('./routes/santri/konsultasiRoutes'));
 
 // Global
 app.use('/api/global/viewMateri', require('./routes/viewMateriRoutes'));
@@ -151,6 +163,7 @@ app.use('/api/admin/observasi', require('./routes/admin/observasiRoutes'));
 app.use('/api/timkesehatan/screening', require('./routes/timkesehatan/screeningRoutes'));
 app.use('/api/timkesehatan/absensi', require('./routes/timkesehatan/absensiRoutes'));
 app.use('/api/timkesehatan/observasi', require('./routes/timkesehatan/observasiRoutes'));
+app.use('/api/timkesehatan/konsultasi', require('./routes/timkesehatan/konsultasiRoutes'));
 
 // PPDB
 app.use('/api/ppdb/admin', require('./routes/ppdb/adminPpdbRoutes'));
@@ -183,6 +196,16 @@ app.use((err, req, res, next) => {
 
 // 8. START SERVER 
 const PORT = process.env.PORT || 3000;
+
+setInterval(async () => {
+  try {
+    await konsultasiService.autoCloseExpiredActiveRooms();
+    await konsultasiService.autoCloseInactiveRooms();
+  } catch (error) {
+    console.error('Auto close konsultasi gagal:', error.message);
+  }
+}, 5 * 60 * 1000);
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });

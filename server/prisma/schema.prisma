@@ -549,43 +549,48 @@ model user_role {
 }
 
 model users {
-  id                                    Int                    @id @default(autoincrement())
-  nip                                   String?                @db.VarChar(100)
-  nama                                  String?                @db.VarChar(100)
-  jenis_kelamin                         users_jenis_kelamin?
-  tempat_lahir                          String?                @db.VarChar(100)
-  tanggal_lahir                         DateTime?              @db.Date
-  email                                 String?                @db.VarChar(100)
-  no_hp                                 String?                @db.VarChar(100)
-  alamat                                String?                @db.VarChar(255)
-  foto_profil                           String?                @db.VarChar(100)
-  password                              String?                @db.VarChar(100)
-  is_active                             Boolean                @default(true)
-  last_opened_notif                     DateTime?              @db.DateTime(0)
-  absensi                               absensi[]
-  activity_log                          activity_log[]
-  feedback                              feedback[]
-  heading_absensi                       heading_absensi[]
-  kamar_santri                          kamar_santri[]
-  kegiatan                              kegiatan[]
-  kelas                                 kelas[]
-  kelas_santri                          kelas_santri[]
-  materi_comment                        materi_comment[]
-  materi_comment_reply                  materi_comment_reply[]
-  observasi_observasi_id_santriTousers  observasi[]            @relation("observasi_id_santriTousers")
-  observasi_observasi_id_timkesTousers  observasi[]            @relation("observasi_id_timkesTousers")
-  orangtua_orangtua_id_santriTousers    orangtua[]             @relation("orangtua_id_santriTousers")
-  orangtua_orangtua_id_orangtuaTousers  orangtua[]             @relation("orangtua_id_orangtuaTousers")
-  pengaduan_pengaduan_id_pelaporTousers pengaduan[]            @relation("pengaduan_id_pelaporTousers")
-  pengaduan_pengaduan_id_santriTousers  pengaduan[]            @relation("pengaduan_id_santriTousers")
-  ppdb_pendaftar                        ppdb_pendaftar[]
-  ppdb_seleksi                          ppdb_seleksi[]
-  riwayat_layanan                       riwayat_layanan[]
-  screening_screening_id_timkesTousers  screening[]            @relation("screening_id_timkesTousers")
-  screening_screening_id_santriTousers  screening[]            @relation("screening_id_santriTousers")
-  tagihan                               tagihan[]
-  tanggapan_aduan                       tanggapan_aduan[]
-  user_role                             user_role[]
+  id                                               Int                      @id @default(autoincrement())
+  nip                                              String?                  @db.VarChar(100)
+  nama                                             String?                  @db.VarChar(100)
+  jenis_kelamin                                    users_jenis_kelamin?
+  tempat_lahir                                     String?                  @db.VarChar(100)
+  tanggal_lahir                                    DateTime?                @db.Date
+  email                                            String?                  @db.VarChar(100)
+  no_hp                                            String?                  @db.VarChar(100)
+  alamat                                           String?                  @db.VarChar(255)
+  foto_profil                                      String?                  @db.VarChar(100)
+  password                                         String?                  @db.VarChar(100)
+  is_active                                        Boolean                  @default(true)
+  last_opened_notif                                DateTime?                @db.DateTime(0)
+  absensi                                          absensi[]
+  activity_log                                     activity_log[]
+  feedback                                         feedback[]
+  heading_absensi                                  heading_absensi[]
+  kamar_santri                                     kamar_santri[]
+  kegiatan                                         kegiatan[]
+  kelas                                            kelas[]
+  kelas_santri                                     kelas_santri[]
+  konsultasi_message                               konsultasi_message[]
+  konsultasi_read_cursor                           konsultasi_read_cursor[]
+  konsultasi_room_konsultasi_room_id_santriTousers konsultasi_room[]        @relation("konsultasi_room_id_santriTousers")
+  konsultasi_room_konsultasi_room_id_timkesTousers konsultasi_room[]        @relation("konsultasi_room_id_timkesTousers")
+  konsultasi_room_konsultasi_room_closed_byTousers konsultasi_room[]        @relation("konsultasi_room_closed_byTousers")
+  materi_comment                                   materi_comment[]
+  materi_comment_reply                             materi_comment_reply[]
+  observasi_observasi_id_santriTousers             observasi[]              @relation("observasi_id_santriTousers")
+  observasi_observasi_id_timkesTousers             observasi[]              @relation("observasi_id_timkesTousers")
+  orangtua_orangtua_id_santriTousers               orangtua[]               @relation("orangtua_id_santriTousers")
+  orangtua_orangtua_id_orangtuaTousers             orangtua[]               @relation("orangtua_id_orangtuaTousers")
+  pengaduan_pengaduan_id_pelaporTousers            pengaduan[]              @relation("pengaduan_id_pelaporTousers")
+  pengaduan_pengaduan_id_santriTousers             pengaduan[]              @relation("pengaduan_id_santriTousers")
+  ppdb_pendaftar                                   ppdb_pendaftar[]
+  ppdb_seleksi                                     ppdb_seleksi[]
+  riwayat_layanan                                  riwayat_layanan[]
+  screening_screening_id_timkesTousers             screening[]              @relation("screening_id_timkesTousers")
+  screening_screening_id_santriTousers             screening[]              @relation("screening_id_santriTousers")
+  tagihan                                          tagihan[]
+  tanggapan_aduan                                  tanggapan_aduan[]
+  user_role                                        user_role[]
 }
 
 model faq {
@@ -635,6 +640,63 @@ model screening_predileksi {
   screening       screening                             @relation(fields: [id_screening], references: [id_screening], onDelete: NoAction, onUpdate: NoAction, map: "screening_predileksi_screening_FK")
 
   @@index([id_screening], map: "screening_predileksi_screening_FK")
+}
+
+model konsultasi_message {
+  id_message             Int                             @id @default(autoincrement())
+  id_room                Int
+  id_sender              Int
+  sender_role            konsultasi_message_sender_role?
+  messgae_text           String                          @db.Text
+  sent_at                DateTime                        @db.DateTime(0)
+  read_at                DateTime?                       @db.DateTime(0)
+  is_active              Boolean
+  konsultasi_room        konsultasi_room                 @relation(fields: [id_room], references: [id_room], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_message_konsultasi_room_FK")
+  users                  users                           @relation(fields: [id_sender], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_message_users_FK")
+  konsultasi_read_cursor konsultasi_read_cursor[]
+
+  @@index([id_room], map: "konsultasi_message_konsultasi_room_FK")
+  @@index([id_sender], map: "konsultasi_message_users_FK")
+}
+
+model konsultasi_read_cursor {
+  id_read              Int                 @id @default(autoincrement())
+  id_room              Int
+  id_user              Int
+  last_read_message_id Int?
+  last_read_at         DateTime?           @db.DateTime(0)
+  konsultasi_message   konsultasi_message? @relation(fields: [last_read_message_id], references: [id_message], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_read_cursor_konsultasi_message_FK")
+  konsultasi_room      konsultasi_room     @relation(fields: [id_room], references: [id_room], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_read_cursor_konsultasi_room_FK")
+  users                users               @relation(fields: [id_user], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_read_cursor_users_FK")
+
+  @@index([last_read_message_id], map: "konsultasi_read_cursor_konsultasi_message_FK")
+  @@index([id_room], map: "konsultasi_read_cursor_konsultasi_room_FK")
+  @@index([id_user], map: "konsultasi_read_cursor_users_FK")
+}
+
+model konsultasi_room {
+  id_room                                Int                                @id @default(autoincrement())
+  id_santri                              Int
+  id_timkes                              Int
+  status                                 konsultasi_room_status
+  antrian_urutan                         BigInt
+  active_date                            DateTime?                          @db.DateTime(0)
+  last_message_at                        DateTime                           @db.DateTime(0)
+  closed_at                              DateTime?                          @db.DateTime(0)
+  closed_by                              Int?
+  close_reason_type                      konsultasi_room_close_reason_type?
+  closed_reason_text                     String?                            @db.Text
+  created_at                             DateTime                           @db.DateTime(0)
+  updated_at                             DateTime                           @db.DateTime(0)
+  konsultasi_message                     konsultasi_message[]
+  konsultasi_read_cursor                 konsultasi_read_cursor[]
+  users_konsultasi_room_id_santriTousers users                              @relation("konsultasi_room_id_santriTousers", fields: [id_santri], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_room_users_FK")
+  users_konsultasi_room_id_timkesTousers users                              @relation("konsultasi_room_id_timkesTousers", fields: [id_timkes], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_room_users_FK_1")
+  users_konsultasi_room_closed_byTousers users?                             @relation("konsultasi_room_closed_byTousers", fields: [closed_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "konsultasi_room_users_FK_2")
+
+  @@index([id_santri], map: "konsultasi_room_users_FK")
+  @@index([id_timkes], map: "konsultasi_room_users_FK_1")
+  @@index([closed_by], map: "konsultasi_room_users_FK_2")
 }
 
 enum item_kebersihan_waktu_pengerjaan {
@@ -807,4 +869,21 @@ enum screening_predileksi_bentuk_kelainan {
   Bintil_Merah_Kecil
   Terowongan_Kecil_di_Kulit
   Bintil_Bernanah
+}
+
+enum konsultasi_message_sender_role {
+  santri
+  timkesehatan
+}
+
+enum konsultasi_room_status {
+  active
+  waiting
+  closed
+}
+
+enum konsultasi_room_close_reason_type {
+  manual_timkes
+  manual_santri
+  auto_inactive
 }

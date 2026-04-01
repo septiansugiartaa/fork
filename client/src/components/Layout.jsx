@@ -24,7 +24,8 @@ import {
   Receipt,
   BarChart3,
   UserPlus,
-  ClipboardCheck
+  ClipboardCheck,
+  MessageCircle
 } from "lucide-react";
 
 export default function GlobalLayout() {
@@ -163,6 +164,13 @@ export default function GlobalLayout() {
       roles: ["timkesehatan", "admin"],
     },
 
+    {
+      name: "Konsultasi",
+      path: "/konsultasi",
+      icon: MessageCircle,
+      roles: ["timkesehatan"],
+    },
+
     { category: "PENGADUAN", roles: ["admin", "pimpinan"] },
 
     {
@@ -261,6 +269,7 @@ export default function GlobalLayout() {
     if (path.includes("manageMateri")) return "Materi";
     if (path.includes("daftarSantriScreening")) return "Screening";
     if (path.includes("daftarAbsensiKamar")) return "Absensi Kesehatan";
+    if (path.includes("konsultasi")) return "Konsultasi";
 
     const menuMatch = filteredMenu.find((m) => {
 

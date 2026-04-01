@@ -16,6 +16,7 @@ import SantriLayanan from "./pages/santri/layanan"
 import SantriRiwayatLayanan from "./pages/santri/riwayatLayanan"
 import SantriScabiesDashboard from "./pages/santri/scabiesDashboard"
 import SantriScabiesKonsultasi from "./pages/santri/scabiesKonsultasi"
+import SantriScabiesKonsultasiRoom from "./pages/santri/scabiesKonsultasiRoom"
 import MateriView from "./pages/viewMateri"
 import DetailMateri from "./pages/detailMateri"
 import MateriManage from "./pages/manageMateri"
@@ -46,6 +47,8 @@ import TimkesObservasi from "./pages/timkesehatan/observasi/daftarSantriObservas
 import TimkesDetailObservasi from "./pages/timkesehatan/observasi/portalObservasi"
 import TimkesCreateObservasi from "./pages/timkesehatan/observasi/formObservasi"
 import TimkesViewObservasi from "./pages/timkesehatan/observasi/viewObservasi"
+import TimkesKonsultasiPage from "./pages/timkesehatan/konsultasi"
+import TimkesKonsultasiRiwayatPage from "./pages/timkesehatan/konsultasiRiwayat"
 
 import OrangtuaDashboard from "./pages/orangtua/dashboard"
 import OrangtuaProfile from "./pages/orangtua/pendataan"
@@ -128,6 +131,7 @@ function App() {
                 <Route path="viewMateri" element={<MateriView />} />
                 <Route path="viewMateri/:id" element={<DetailMateri />} />
                 <Route path="konsultasi" element={<SantriScabiesKonsultasi />} />
+                <Route path="konsultasi/room/:roomId" element={<SantriScabiesKonsultasiRoom />} />
               </Route>
             </Route>
           </Route>
@@ -194,6 +198,10 @@ function App() {
               <Route path="daftarSantriObservasi/:id" element={<TimkesDetailObservasi />} />
               <Route path="daftarSantriObservasi/:id/create" element={<TimkesCreateObservasi />} />
               <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<TimkesViewObservasi />} />
+
+              {/* KONSULTASI */}
+              <Route path="konsultasi" element={<TimkesKonsultasiPage />} />
+              <Route path="konsultasi/riwayat" element={<TimkesKonsultasiRiwayatPage />} />
 
               {/* FAQ */}
               <Route path="faq" element={<FaqPage />} />
