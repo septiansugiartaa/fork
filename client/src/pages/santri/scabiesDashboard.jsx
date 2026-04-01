@@ -70,6 +70,7 @@ export default function SantriScabiesDashboard() {
   const [latestReports, setLatestReports] = useState({ screening: null, observasi: null });
   const [isDownloading, setIsDownloading] = useState({ screening: false, observasi: false });
   const [loading, setLoading] = useState(true);
+  const [openingConsultation, setOpeningConsultation] = useState(false);
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
@@ -128,12 +129,34 @@ export default function SantriScabiesDashboard() {
     }
   };
 
-  if (loading) {
+  const handleOpenConsultation = async () => {
+    if (openingConsultation) return;
+
+    try {
+      setOpeningConsultation(true);
+      const { data } = await api.get('/santri/konsultasi/room/me/current');
+      const roomId = data?.data?.id;
+
+      if (roomId) {
+        navigate(`/santri/scabies/konsultasi/room/${roomId}`);
+        return;
+      }
+
+      navigate('/santri/scabies/konsultasi');
+    } catch (error) {
+      console.error('Gagal membuka konsultasi:', error);
+      navigate('/santri/scabies/konsultasi');
+    } finally {
+      setOpeningConsultation(false);
+    }
+  };
+
+  if (loading || openingConsultation) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
           <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto" />
-          <p className="mt-4 text-gray-600 font-medium">Memuat dashboard scabies...</p>
+          <p className="mt-4 text-gray-600 font-medium">{openingConsultation ? 'Membuka konsultasi...' : 'Memuat dashboard scabies...'}</p>
         </div>
       </div>
     );
@@ -174,14 +197,15 @@ export default function SantriScabiesDashboard() {
                 </button>
 
                 <button
-                  onClick={() => navigate("/santri/scabies/konsultasi")}
-                  className="text-left bg-white rounded-2xl border border-gray-200 p-5 hover:border-emerald-300 hover:shadow-md transition cursor-pointer"
+                  onClick={handleOpenConsultation}
+                  disabled={openingConsultation}
+                  className="text-left bg-white rounded-2xl border border-gray-200 p-5 hover:border-emerald-300 hover:shadow-md transition cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                 >
                   <div className="w-12 h-12 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center mb-3">
                     <MessageCircleHeart size={22} />
                   </div>
                   <h4 className="font-bold text-gray-800 text-lg">Konsultasi Timkes</h4>
-                  <p className="text-sm text-gray-500 mt-1">Tombol menuju halaman konsultasi dengan tim kesehatan.</p>
+                  <p className="text-sm text-gray-500 mt-1">{openingConsultation ? 'Membuka konsultasi...' : 'Tombol menuju halaman konsultasi dengan tim kesehatan.'}</p>
                 </button>
               </div>
             </section>
@@ -251,8 +275,9 @@ export default function SantriScabiesDashboard() {
                           Baca Selengkapnya <ArrowRight size={14} />
                         </button>
                         <button
-                          onClick={() => navigate("/santri/scabies/konsultasi")}
-                          className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50 cursor-pointer"
+                          onClick={handleOpenConsultation}
+                          disabled={openingConsultation}
+                          className="text-xs font-semibold px-3 py-1.5 rounded-lg border border-emerald-200 text-emerald-700 hover:bg-emerald-50 cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                         >
                           Tanya Timkes
                         </button>
