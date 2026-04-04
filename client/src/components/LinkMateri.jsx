@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { Microscope } from "lucide-react";
 
 function LinkMateri({ materiList = [], detailBasePath, fromPath, rootFrom }) {
   const navigate = useNavigate();
@@ -24,7 +25,9 @@ function LinkMateri({ materiList = [], detailBasePath, fromPath, rootFrom }) {
                 className="w-full h-full object-cover"
               />
             ) : (
-              <div className="w-full h-full bg-teal-500"></div>
+              <div className="w-full h-full bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+                <Microscope className="text-emerald-600" size={20} />
+              </div>
             )}
           </div>
 
