@@ -1,6 +1,6 @@
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Microscope } from "lucide-react";
 import DOMPurify from "dompurify";
 import LinkMateri from "../components/LinkMateri";
 import CommentSection from "../components/CommentSection";
@@ -127,17 +127,21 @@ function DetailMateri() {
   if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
-        {materi.gambar && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 overflow-hidden">
+          {materi.gambar ? (
             <img
               src={`/uploads/${materi.gambar}`}
               alt={materi.judul_materi}
               className="w-full h-72 object-cover"
             />
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-72 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+              <Microscope className="text-emerald-600" size={48} />
+            </div>
+          )}
+        </div>
 
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
+        <div className="bg-white rounded-2xl shadow-md border border-gray-100 p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="w-full lg:w-2/3">
               <div>
@@ -180,7 +184,7 @@ function DetailMateri() {
     <div className="min-h-screen bg-gray-50">
 
     {/* HEADER */}
-    <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white px-4 sm:px-6 py-6 pb-20 sm:pb-24 shadow-lg">
+    <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white px-4 sm:px-6 py-6 pb-20 sm:pb-24 shadow-md">
       <div className="max-w-6xl mx-auto flex items-center gap-4">
         <button
           onClick={handleBack}
@@ -196,20 +200,23 @@ function DetailMateri() {
       </div>
     </div>
 
-      {materi.gambar && (
-        <div className="max-w-6xl mx-auto px-4 -mt-14 sm:-mt-16 mb-6">
-          <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-xl">
+      <div className="max-w-6xl mx-auto px-4 -mt-14 sm:-mt-16 mb-6">
+        <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-md">
+          {materi.gambar ? (
             <img
               src={`/uploads/${materi.gambar}`}
               alt={materi.judul_materi}
               className="w-full h-48 sm:h-64 md:h-72 object-cover"
             />
-          </div>
+          ) : (
+            <div className="w-full h-48 sm:h-64 md:h-72 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+              <Microscope className="text-emerald-600" size={52} />
+            </div>
+          )}
         </div>
-      )}
-
+      </div>
       <div className="max-w-6xl mx-auto px-4 mb-12">
-        <div className="bg-white rounded-2xl shadow-xl p-6 lg:p-8">
+        <div className="bg-white rounded-2xl shadow-md p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="w-full lg:w-2/3">
               {/* PATCH: __html sekarang disanitasi dengan DOMPurify */}

@@ -56,18 +56,73 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
 
   if (!isOpen) return null;
 
+  const inputBaseClass =
+    "mt-1 w-full rounded-xl border bg-white px-4 py-2.5 text-sm text-gray-800 outline-none transition focus:ring-2 focus:ring-green-200";
+
+  const getInputClass = (hasError) =>
+    `${inputBaseClass} ${hasError ? "border-red-500 focus:ring-red-100" : "border-gray-200"}`;
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-      <div className="bg-white w-full max-w-xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] overflow-y-auto">
-          <div className="p-6 flex justify-between items-center border-b"><h2 className="text-xl font-bold text-gray-800">{materiToEdit ? "Edit Materi" : "Tambah Materi"}</h2><button onClick={onClose} className="p-2 hover:bg-gray-100 rounded-full"><X size={22} /></button></div>
-          <form onSubmit={handleSubmit} className="p-6 space-y-4">
-            <div><label className="text-sm font-medium text-gray-600">Judul Materi *</label><input type="text" value={judul_materi} onChange={(e) => setJudul(e.target.value)} className={`w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.judul_materi ? "border-red-500" : "focus:ring-2 focus:ring-green-500"}`} /></div>
-            <div><label className="text-sm font-medium text-gray-600">Ringkasan *</label><textarea rows="3" value={ringkasan} onChange={(e) => setRingkasan(e.target.value)} className={`w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.ringkasan ? "border-red-500" : "focus:ring-2 focus:ring-green-500"}`} /></div>
-            <div><label className="text-sm font-medium text-gray-600">Isi Materi *</label><div className={`mt-2 rounded-xl border ${errors.isi_materi ? "border-red-500" : "focus-within:ring-2 focus-within:ring-green-500"}`}><ReactQuill theme="snow" value={isi_materi} onChange={setIsiMateri} className="bg-white rounded-xl" /></div></div>
-            <div><label className="text-sm font-medium text-gray-600">Penulis *</label><input type="text" value={penulis} onChange={(e) => setPenulis(e.target.value)} className={`w-full mt-1 px-4 py-2 border rounded-xl outline-none ${errors.penulis ? "border-red-500" : "focus:ring-2 focus:ring-green-500"}`} /></div>
-            <div><label className="text-sm font-medium text-gray-600">Gambar</label><input type="file" accept="image/*" onChange={(e) => setGambar(e.target.files[0])} className="w-full mt-1 px-4 py-2 border rounded-xl" /></div>
-            <div className="flex justify-end gap-3 pt-4"><button type="button" onClick={onClose} className="py-2.5 px-5 bg-green-50 text-green-600 rounded-xl">Batal</button><button type="submit" disabled={loading} className="px-5 py-2 font-semibold rounded-xl text-white bg-green-600">{loading ? "Simpan..." : "Simpan"}</button></div>
-          </form>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+      <div className="w-full max-w-3xl max-h-[90vh] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-2xl">
+        <div className="flex items-center justify-between border-b border-gray-100 px-5 py-4 sm:px-6">
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800">{materiToEdit ? "Edit Materi" : "Tambah Materi"}</h2>
+            <p className="text-xs sm:text-sm text-gray-500 mt-0.5">Lengkapi form berikut untuk menyimpan materi.</p>
+          </div>
+          <button onClick={onClose} className="p-2 rounded-full text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition">
+            <X size={20} />
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto max-h-[calc(90vh-84px)] space-y-5">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="md:col-span-2">
+              <label className="text-sm font-semibold text-gray-700">Judul Materi <span className="text-red-500">*</span></label>
+              <input type="text" value={judul_materi} onChange={(e) => setJudul(e.target.value)} className={getInputClass(errors.judul_materi)} />
+              {errors.judul_materi && <p className="text-xs text-red-500 mt-1">{errors.judul_materi}</p>}
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-700">Penulis <span className="text-red-500">*</span></label>
+              <input type="text" value={penulis} onChange={(e) => setPenulis(e.target.value)} className={getInputClass(errors.penulis)} />
+              {errors.penulis && <p className="text-xs text-red-500 mt-1">{errors.penulis}</p>}
+            </div>
+
+            <div>
+              <label className="text-sm font-semibold text-gray-700">Gambar</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => setGambar(e.target.files[0])}
+                className="mt-1 w-full rounded-xl border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-700 file:mr-3 file:rounded-lg file:border-0 file:bg-green-50 file:px-3 file:py-1.5 file:text-green-700 file:font-medium hover:file:bg-green-100 transition"
+              />
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="text-sm font-semibold text-gray-700">Ringkasan <span className="text-red-500">*</span></label>
+              <textarea rows="3" value={ringkasan} onChange={(e) => setRingkasan(e.target.value)} className={getInputClass(errors.ringkasan)} />
+              {errors.ringkasan && <p className="text-xs text-red-500 mt-1">{errors.ringkasan}</p>}
+            </div>
+
+            <div className="md:col-span-2">
+              <label className="text-sm font-semibold text-gray-700">Isi Materi <span className="text-red-500">*</span></label>
+              <div className={`mt-1 overflow-hidden rounded-xl border ${errors.isi_materi ? "border-red-500" : "border-gray-200"} focus-within:ring-2 focus-within:ring-green-200`}>
+                <ReactQuill theme="snow" value={isi_materi} onChange={setIsiMateri} className="bg-white rounded-xl" />
+              </div>
+              {errors.isi_materi && <p className="text-xs text-red-500 mt-1">{errors.isi_materi}</p>}
+            </div>
+          </div>
+
+          <div className="pt-3 border-t border-gray-100 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+            <button type="button" onClick={onClose} className="px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 bg-white hover:bg-gray-50 transition">
+              Batal
+            </button>
+            <button type="submit" disabled={loading} className="px-5 py-2.5 rounded-xl font-semibold text-white bg-green-600 hover:bg-green-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition">
+              {loading ? "Menyimpan..." : "Simpan"}
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

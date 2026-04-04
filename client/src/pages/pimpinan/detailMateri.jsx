@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Microscope } from "lucide-react";
 import DOMPurify from "dompurify";
 import LinkMateri from "../../components/LinkMateri";
 import api from "../../config/api";
@@ -77,11 +78,15 @@ function DetailMateri() {
   if (role === "timkesehatan") {
     return (
       <div className="space-y-6">
-        {materi.gambar && (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          {materi.gambar ? (
             <img src={`/uploads/${materi.gambar}`} alt={materi.judul_materi} className="w-full h-72 object-cover" />
-          </div>
-        )}
+          ) : (
+            <div className="w-full h-72 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+              <Microscope className="text-emerald-600" size={48} />
+            </div>
+          )}
+        </div>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-8">
             <div className="w-full lg:w-2/3">
@@ -107,13 +112,17 @@ function DetailMateri() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {materi.gambar && (
-        <div className="max-w-6xl mx-auto px-4 mb-6 pt-6">
-          <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-sm">
+      <div className="max-w-6xl mx-auto px-4 mb-6 pt-6">
+        <div className="bg-gray-800 rounded-2xl overflow-hidden shadow-sm">
+          {materi.gambar ? (
             <img src={`/uploads/${materi.gambar}`} alt={materi.judul_materi} className="w-full h-48 sm:h-64 md:h-72 object-cover" />
-          </div>
-        </div>
-      )}
+          ) : (
+            <div className="w-full h-48 sm:h-64 md:h-72 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center">
+              <Microscope className="text-emerald-600" size={52} />
+            </div>
+          )}
+        </div>    
+      </div>  
       <div className="max-w-6xl mx-auto px-4 mb-12">
         <div className="bg-white rounded-2xl shadow-sm p-6 lg:p-8">
           <div className="flex flex-col lg:flex-row gap-8">
