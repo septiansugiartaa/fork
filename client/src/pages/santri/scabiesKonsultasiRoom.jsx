@@ -162,15 +162,32 @@ export default function SantriScabiesKonsultasiRoom() {
           <div className='bg-white rounded-2xl p-5 w-full max-w-md'>
             <div className='flex items-center justify-between'>
               <h3 className='font-bold text-gray-800'>Selesaikan Konsultasi</h3>
-              <button onClick={() => setShowCloseModal(false)} className='p-2 rounded-lg hover:bg-gray-100'>
-                <X size={16} />
+              <button 
+                onClick={() => {
+                  setShowCloseModal(false);
+                  setClosingReason('');
+                }} 
+                className='p-2 rounded-lg hover:bg-gray-100'>
+                  <X size={16} />
               </button>
             </div>
             <p className='text-sm text-gray-500 mt-1'>Tuliskan alasan konsultasi selesai.</p>
             <textarea value={closingReason} onChange={(e) => setClosingReason(e.target.value)} className='w-full mt-3 border border-gray-200 rounded-xl p-3 text-sm min-h-28 outline-none focus:ring-2 focus:ring-green-200' placeholder='Alasan penutupan...' />
             <div className='mt-4 flex justify-end gap-2'>
-              <button onClick={() => setShowCloseModal(false)} className='px-4 py-2 rounded-lg bg-gray-100 text-gray-700'>Batal</button>
-              <button onClick={closeRoom} className='px-4 py-2 rounded-lg bg-red-600 text-white'>Simpan & Tutup</button>
+              <button 
+                onClick={() => {
+                  setShowCloseModal(false);
+                  setClosingReason('');
+                }} 
+                className='px-4 py-2 rounded-lg bg-gray-100 text-gray-700'>
+                Batal
+              </button>
+              <button 
+                onClick={closeRoom} 
+                className='px-4 py-2 rounded-lg bg-red-600 text-white'
+              >
+                Simpan & Tutup
+              </button>
             </div>
           </div>
         </div>

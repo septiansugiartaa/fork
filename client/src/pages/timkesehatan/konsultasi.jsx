@@ -98,6 +98,7 @@ export default function TimkesKonsultasiPage() {
   const fetchMessages = async (roomId) => {
     if (!roomId) {
       setMessages([]);
+      setSelectedRoom(null);
       return;
     }
     const { data } = await api.get(`/timkesehatan/konsultasi/rooms/${roomId}/messages`);
@@ -191,7 +192,6 @@ export default function TimkesKonsultasiPage() {
     setClosingReason('');
     setShowCloseModal(false);
     await fetchRooms();
-    if (selectedRoomId) await fetchMessages(selectedRoomId);
   };
 
   return (

@@ -37,15 +37,6 @@ app.use(cors({
   credentials: true,
 }));
 
-// 3. RATE LIMITING 
-// Rate limit auth
-const authLimiter = rateLimit({
-  windowMs: 1 * 60 * 1000, 
-  max: 10, 
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { success: false, message: 'Terlalu banyak percobaan. Coba lagi dalam 15 menit.' },
-});
 
 // Rate limit umum
 const generalLimiter = rateLimit({
@@ -57,7 +48,6 @@ const generalLimiter = rateLimit({
 });
 
 app.use('/api', generalLimiter);
-app.use('/api/auth', authLimiter);
 
 // 4. BODY PARSER 
 app.use(express.json({ limit: '2mb' }));
