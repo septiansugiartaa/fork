@@ -150,7 +150,7 @@ const autoCloseExpiredActiveRooms = async () => {
         data: {
           status: 'closed',
           closed_at: new Date(),
-          close_reason_type: 'auto_slot_reset',
+          close_reason_type: 'auto_inactive',
           closed_reason_text: 'Ditutup otomatis karena reset slot harian',
           updated_at: new Date(),
         },
@@ -287,8 +287,9 @@ const getRoomMessages = async (roomId, userId) => {
   const senderIds = [...new Set(messages.map((item) => item.id_sender))];
   const senders = await prisma.users.findMany({ where: { id: { in: senderIds } }, select: { id: true, nama: true, foto_profil: true } });
   const senderMap = new Map(senders.map((item) => [item.id, item]));
+  const [hydratedRoom] = await attachRoomRelations([room], userId);
 
-  return { room: normalizeRoom(room), messages: messages.map((item) => normalizeMessage(item, senderMap)) };
+  return { room: normalizeRoom(hydratedRoom), messages: messages.map((item) => normalizeMessage(item, senderMap)) };
 };
 
 const sendMessage = async ({ roomId, senderId, senderRole, messageText }) => {
