@@ -1,5 +1,5 @@
 import { ArrowLeft, MessageCircleHeart, Clock3, UserRound, History } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../config/api";
 
@@ -16,13 +16,88 @@ const normalizeRoom = (room) => ({
     : null,
 });
 
+const getDateTitle = (dateValue) => {
+  if (!dateValue) return 'Tanpa Tanggal';
+  return new Date(dateValue).toLocaleDateString('id-ID', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+  });
+};
+
+const groupRoomsByDate = (items = []) => {
+  const groups = [];
+
+  items.forEach((room) => {
+    const title = getDateTitle(room.closed_at);
+    const lastGroup = groups[groups.length - 1];
+
+    if (!lastGroup || lastGroup.title !== title) {
+      groups.push({ title, rooms: [room] });
+      return;
+    }
+
+    lastGroup.rooms.push(room);
+  });
+
+  return groups;
+};
+
+const getDateKey = (dateValue) => {
+  if (!dateValue) return '';
+  const date = new Date(dateValue);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, '0');
+  const day = `${date.getDate()}`.padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const getTimkesName = (room) => room?.timkes?.nama || room?.timkes_name || 'Tanpa Nama Timkes';
+
+const formatRoomchatTime = (dateValue) => {
+  if (!dateValue) return '-';
+  return new Date(dateValue).toLocaleTimeString('en-GB', {
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  });
+};
+
+const PAGE_SIZE = 6;
+
 export default function SantriScabiesKonsultasi() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [timkesList, setTimkesList] = useState([]);
   const [historyRooms, setHistoryRooms] = useState([]);
   const [activeTab, setActiveTab] = useState('timkes');
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTimkes, setSelectedTimkes] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
   const hasLoadedRef = useRef(false);
+  const historyTimkesOptions = useMemo(() => {
+    return [...new Set(timkesList.map((item) => item?.nama).filter(Boolean))];
+  }, [timkesList]);
+
+  const filteredHistoryRooms = useMemo(() => {
+    return historyRooms.filter((room) => {
+      const matchDate = !selectedDate || getDateKey(room.closed_at) === selectedDate;
+      const timkesName = getTimkesName(room);
+      const matchTimkes = !selectedTimkes || timkesName === selectedTimkes;
+      return matchDate && matchTimkes;
+    });
+  }, [historyRooms, selectedDate, selectedTimkes]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredHistoryRooms.length / PAGE_SIZE));
+  const safeCurrentPage = Math.min(currentPage, totalPages);
+
+  const paginatedHistoryRooms = useMemo(() => {
+    const startIndex = (safeCurrentPage - 1) * PAGE_SIZE;
+    return filteredHistoryRooms.slice(startIndex, startIndex + PAGE_SIZE);
+  }, [filteredHistoryRooms, safeCurrentPage]);
+
+  const groupedHistoryRooms = useMemo(() => groupRoomsByDate(paginatedHistoryRooms), [paginatedHistoryRooms]);
 
   const loadData = async () => {
     setLoading(true);
@@ -131,18 +206,84 @@ export default function SantriScabiesKonsultasi() {
               </table>
             </div>
           ) : (
-            <div className="divide-y divide-gray-100">
-              {historyRooms.map((room) => (
-                <button key={room.id} onClick={() => navigate(`/santri/scabies/konsultasi/room/${room.id}`)} className="w-full text-left p-4 hover:bg-gray-50 transition">
-                  <div className="font-semibold text-gray-800">{room.timkes?.nama || 'Tim Kesehatan'}</div>
-                  <div className="text-xs text-gray-500 mt-1 flex items-center gap-1"><Clock3 size={13} /> Ditutup: {room.closed_at ? new Date(room.closed_at).toLocaleString('id-ID') : '-'}</div>
-                  <div className="text-sm text-gray-600 mt-1 truncate">{room.last_message?.message_text || 'Tidak ada pesan.'}</div>
-                </button>
+            <div>
+              <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-medium text-gray-600 block mb-1">Filter Tanggal</label>
+                  <input
+                    type="date"
+                    value={selectedDate}
+                    onChange={(e) => {
+                      setSelectedDate(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100"
+                  />
+                </div>
+                <div>
+                  <label className="text-xs font-medium text-gray-600 block mb-1">Filter Nama Timkes</label>
+                  <select
+                    value={selectedTimkes}
+                    onChange={(e) => {
+                      setSelectedTimkes(e.target.value);
+                      setCurrentPage(1);
+                    }}
+                    className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-green-100 bg-white"
+                  >
+                    <option value="">Semua Timkes</option>
+                    {historyTimkesOptions.map((name) => (
+                      <option key={name} value={name}>{name}</option>
+                    ))}
+                  </select>
+                </div>
+              </div>
+
+              <div className="py-2">
+              {groupedHistoryRooms.map((group, groupIndex) => (
+                <div key={`${group.title}-${groupIndex}`} className={`${groupIndex === 0 ? 'mt-0' : 'mt-4'} mb-2`}>
+                  <div className="mx-4 px-4 py-2.5 rounded-xl bg-green-50 border border-green-100 text-sm font-bold tracking-wide text-green-800 shadow-sm">
+                    {group.title}
+                  </div>
+                  {group.rooms.map((room) => (
+                    <button key={room.id} onClick={() => navigate(`/santri/scabies/konsultasi/room/${room.id}`)} className="w-full text-left p-4 hover:bg-gray-50 transition border-b border-gray-100 last:border-b-0">
+                      <div className="font-semibold text-gray-800">{room.timkes?.nama || 'Tim Kesehatan'}</div>
+                      <div className="text-xs text-gray-500 mt-1 flex items-center gap-1"><Clock3 size={13} /> Ditutup: {formatRoomchatTime(room.closed_at)}</div>
+                      <div className="text-xs text-gray-500 mt-1 truncate">Alasan: {room.last_message?.message_text || 'Tidak ada pesan.'}</div>
+                    </button>
+                  ))}
+                </div>
               ))}
-              {historyRooms.length === 0 && (
+              {filteredHistoryRooms.length === 0 && (
                 <div className="p-10 text-center text-gray-500">
                   <MessageCircleHeart className="mx-auto mb-2 text-gray-300" />
-                  Belum ada riwayat percakapan.
+                  Tidak ada riwayat roomchat.
+                </div>
+              )}
+              </div>
+
+              {filteredHistoryRooms.length > 0 && (
+                <div className="px-4 py-3 border-t border-gray-100 flex items-center justify-between gap-3">
+                  <p className="text-xs text-gray-500">
+                    Halaman {safeCurrentPage} dari {totalPages} • Total {filteredHistoryRooms.length} riwayat
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                      disabled={safeCurrentPage === 1}
+                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 disabled:opacity-50"
+                    >
+                      Sebelumnya
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                      disabled={safeCurrentPage === totalPages}
+                      className="px-3 py-1.5 text-sm rounded-lg border border-gray-200 disabled:opacity-50"
+                    >
+                      Berikutnya
+                    </button>
+                  </div>
                 </div>
               )}
             </div>

@@ -60,6 +60,16 @@ const getTimkesUserRows = async () => prisma.$queryRaw`
   ORDER BY u.nama ASC
 `;
 
+const getSantriUserRows = async () => prisma.$queryRaw`
+  SELECT DISTINCT u.id, u.nama
+  FROM users u
+  INNER JOIN user_role ur ON ur.id_user = u.id AND ur.is_active = true
+  INNER JOIN role r ON r.id = ur.id_role
+  WHERE u.is_active = true
+    AND LOWER(REPLACE(r.role, ' ', '')) = 'santri'
+  ORDER BY u.nama ASC
+`;
+
 const attachRoomRelations = async (rooms, viewerId) => {
   if (!rooms.length) return [];
 
@@ -125,6 +135,14 @@ const getTimkesList = async () => {
       is_full: activeCount >= MAX_ACTIVE_PER_TIMKES,
     };
   });
+};
+
+const getSantriList = async () => {
+  const santriUsers = await getSantriUserRows();
+  return santriUsers.map((user) => ({
+    id: Number(user.id),
+    nama: user.nama,
+  }));
 };
 
 const autoCloseExpiredActiveRooms = async () => {
@@ -581,6 +599,7 @@ const getRoomHealthSummary = async ({ roomId, userId }) => {
 
 module.exports = {
   getTimkesList,
+  getSantriList,
   getCurrentRoomBySantri,
   createRoom,
   getRoomById,

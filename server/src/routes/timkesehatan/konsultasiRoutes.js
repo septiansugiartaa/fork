@@ -6,6 +6,8 @@ const router = express.Router();
 
 router.use(requireRole('timkesehatan'));
 
+router.get('/timkes', controller.getTimkes);
+router.get('/santri', controller.getSantri);
 router.get('/rooms/active', controller.getActiveRooms);
 router.get('/rooms/history', controller.getHistory);
 router.get('/rooms/:id', controller.getRoomDetail);

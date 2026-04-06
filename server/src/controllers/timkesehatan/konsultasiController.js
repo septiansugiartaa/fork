@@ -14,6 +14,24 @@ exports.getActiveRooms = async (req, res) => {
   }
 };
 
+exports.getTimkes = async (req, res) => {
+  try {
+    const data = await konsultasiService.getTimkesList();
+    return res.json({ success: true, data });
+  } catch (error) {
+    return handleError(res, error);
+  }
+};
+
+exports.getSantri = async (req, res) => {
+  try {
+    const data = await konsultasiService.getSantriList();
+    return res.json({ success: true, data });
+  } catch (error) {
+    return handleError(res, error);
+  }
+};
+
 exports.getRoomDetail = async (req, res) => {
   try {
     const data = await konsultasiService.getRoomById(req.params.id, req.user.id);
