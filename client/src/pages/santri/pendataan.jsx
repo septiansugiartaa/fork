@@ -6,6 +6,7 @@ import {
   AlertTriangle, CheckCircle, Trash2, Plus, Edit2, X, Search 
 } from "lucide-react";
 import AlertToast from "../../components/AlertToast";
+import ConfirmDeleteModal from "../../components/ConfirmDeleteModal";
 import { useAlert } from "../../hooks/useAlert";
 
 export default function SantriProfile() {
