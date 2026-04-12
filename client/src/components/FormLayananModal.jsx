@@ -68,23 +68,12 @@ export default function FormLayananModal({ isOpen, onClose, layanan, onSuccess }
 
         <div className="p-6 space-y-4 overflow-y-auto max-h-[60vh] [scrollbar-width:none]">
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1"><MapPin size={14}/> Lokasi Pengambilan/Pengerjaan</label>
-            <div className="relative">
-              <select onChange={handleLocationChange} value={locationType} className="w-full p-3 pl-10 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm appearance-none">
-                <option value="">-- Pilih Lokasi --</option>
-                <option value="Kamar">Kamar Saya ({userContext.kamar || "N/A"})</option>
-                <option value="Kelas">Kelas Saya ({userContext.kelas || "N/A"})</option>
-                <option value="Lainnya">Lainnya (Tulis Manual)</option>
-              </select>
-              <MapPin className="absolute left-3.5 top-3.5 text-gray-400" size={16} /><ChevronDown className="absolute right-3.5 top-3.5 text-gray-400 pointer-events-none" size={16} />
-            </div>
-            {locationType === "Lainnya" && (
-              <input type="text" name="lokasi" placeholder="Masukkan lokasi spesifik..." className="w-full mt-3 p-3 bg-white border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm" onChange={handleChange} />
-            )}
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1"><MapPin size={14}/> Lokasi Kepergian</label>
+            <input type="text" name="lokasi" placeholder="Masukkan lokasi spesifik..." className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm" onChange={handleChange} />
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1"><Calendar size={14}/> Waktu Diinginkan</label>
+            <label className="block text-xs font-bold text-gray-400 uppercase tracking-widest mb-2 flex items-center gap-1"><Calendar size={14}/> Waktu Izin</label>
             <div className="relative"><input type="datetime-local" name="waktu" className="w-full p-3 pl-10 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 outline-none text-sm" onChange={handleChange} /><Calendar className="absolute left-3.5 top-3.5 text-gray-400" size={16} /></div>
           </div>
 

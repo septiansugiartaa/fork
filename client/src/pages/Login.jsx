@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../config/api";
-import { Loader2, Eye, EyeOff, X } from "lucide-react";
+import { Loader2, Eye, EyeOff, X, ArrowLeft } from "lucide-react";
 import RegisterModal from "../components/RegisterModal";
 import AlertToast from "../components/AlertToast";
 import { useAlert } from "../hooks/useAlert";
@@ -167,6 +167,13 @@ export default function Login() {
       {/* --- KOLOM KANAN (FORM LOGIN) --- */}
       <div className="flex w-full lg:w-1/2 justify-center items-center px-4 sm:px-6 lg:bg-white relative z-10">
         <div className="w-full max-w-lg bg-white/20 backdrop-blur-md lg:bg-transparent lg:backdrop-blur-none p-8 rounded-3xl shadow-lg lg:shadow-none border border-white/20 lg:border-none">
+          <button
+            onClick={() => navigate("/")}
+            className="absolute top-6 left-6 lg:top-8 lg:left-8 flex items-center gap-2 text-white lg:text-gray-800 hover:text-white lg:hover:text-green-600 font-bold text-lg transition-colors z-50"
+          >
+            <ArrowLeft size={24} strokeWidth={3} />
+            <span className="hidden md:inline">Kembali ke Beranda</span>
+          </button>
           <div className="lg:hidden text-center mb-8">
             <div className="w-24 h-24 mx-auto flex items-center justify-center mb-4">
               <img src="../src/assets/logo.png" alt="" />

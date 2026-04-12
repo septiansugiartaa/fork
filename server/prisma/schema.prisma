@@ -146,6 +146,7 @@ model jenis_tagihan {
 
 model kamar {
   id              Int               @id @default(autoincrement())
+  id_wali         Int?
   kamar           String?           @db.VarChar(100)
   kapasitas       Int?
   gender          kamar_gender?
@@ -153,8 +154,11 @@ model kamar {
   keterangan      String?           @db.Text
   is_active       Boolean?
   heading_absensi heading_absensi[]
+  users           users?            @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kamar_users_FK")
   kamar_santri    kamar_santri[]
   observasi       observasi[]
+
+  @@index([id_wali], map: "kamar_users_FK")
 }
 
 model kamar_santri {
@@ -566,6 +570,7 @@ model users {
   activity_log                                     activity_log[]
   feedback                                         feedback[]
   heading_absensi                                  heading_absensi[]
+  kamar                                            kamar[]
   kamar_santri                                     kamar_santri[]
   kegiatan                                         kegiatan[]
   kelas                                            kelas[]
