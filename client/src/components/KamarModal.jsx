@@ -1,26 +1,40 @@
 import React, { useState, useEffect } from "react";
-import { X, Save, Loader2, BedDouble, MapPin } from "lucide-react";
+import { X, Save, Loader2, BedDouble, MapPin, User } from "lucide-react";
 import AlertToast from "../components/AlertToast";
 import { useAlert } from "../hooks/useAlert";
+import api from "../config/api";
 
 export default function KamarModal({ isOpen, onClose, isEditing, editData, onSubmit, saving }) {
-  const [formData, setFormData] = useState({ kamar: "", kapasitas: "", gender: "Laki_laki", lokasi: "" });
+  const [formData, setFormData] = useState({ kamar: "", kapasitas: "", gender: "Laki_laki", lokasi: "", id_wali: "" });
+  const [waliOptions, setWaliOptions] = useState([]);
   const { message, showAlert, clearAlert } = useAlert();
 
   useEffect(() => {
     if (isOpen) {
-        if (isEditing && editData) {
-            setFormData({ 
-              kamar: editData.kamar || "", 
-              kapasitas: editData.kapasitas || "", 
-              gender: editData.gender || "Laki_laki", 
-              lokasi: editData.lokasi || "" 
-            });
-        } else {
-            setFormData({ kamar: "", kapasitas: "", gender: "Laki_laki", lokasi: "" });
-        }
+      fetchWali();
+      if (isEditing && editData) {
+        setFormData({
+          kamar: editData.kamar || "",
+          kapasitas: editData.kapasitas || "",
+          gender: editData.gender || "Laki_laki",
+          lokasi: editData.lokasi || "",
+          id_wali: editData.id_wali || "",
+        });
+      } else {
+        setFormData({ kamar: "", kapasitas: "", gender: "Laki_laki", lokasi: "", id_wali: "" });
+      }
     }
   }, [isOpen, isEditing, editData]);
+
+  const fetchWali = async () => {
+    try {
+      // Gunakan endpoint wali-options yang sudah ada di kelasController (reuse)
+      const { data } = await api.get("/pengurus/kamar/wali-options");
+      if (data.success) setWaliOptions(data.data);
+    } catch (err) {
+      console.error("Gagal load wali kamar", err);
+    }
+  };
 
   if (!isOpen) return null;
 
@@ -43,36 +57,48 @@ export default function KamarModal({ isOpen, onClose, isEditing, editData, onSub
           <button onClick={onClose}><X size={24} className="text-gray-400 hover:text-red-500"/></button>
         </div>
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kamar</label>
+            <input type="text" name="kamar" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: A1" value={formData.kamar} onChange={handleChange} />
+          </div>
+          <div className="grid grid-cols-2 gap-4">
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Nama Kamar</label>
-                <input type="text" name="kamar" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Contoh: A1" value={formData.kamar} onChange={handleChange} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Kapasitas</label>
-                    <input type="number" name="kapasitas" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" value={formData.kapasitas} onChange={handleChange} />
-                </div>
-                <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                    <select name="gender" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none bg-white" value={formData.gender} onChange={handleChange}>
-                        <option value="Laki_laki">Laki-laki</option>
-                        <option value="Perempuan">Perempuan</option>
-                    </select>
-                </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Kapasitas</label>
+              <input type="number" name="kapasitas" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" value={formData.kapasitas} onChange={handleChange} />
             </div>
             <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
-                <div className="relative">
-                    <input type="text" name="lokasi" className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Lantai 1, Gedung A" value={formData.lokasi} onChange={handleChange} />
-                    <MapPin className="absolute left-3 top-3 text-gray-400" size={16} />
-                </div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+              <select name="gender" className="w-full p-2.5 border border-gray-200 rounded-xl outline-none bg-white" value={formData.gender} onChange={handleChange}>
+                <option value="Laki_laki">Laki-laki</option>
+                <option value="Perempuan">Perempuan</option>
+              </select>
             </div>
-            <div className="pt-4 flex gap-3">
-                <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-gray-100 rounded-xl hover:bg-gray-200">Batal</button>
-                <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 flex justify-center items-center">
-                    {saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>} Simpan
-                </button>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi</label>
+            <div className="relative">
+              <input type="text" name="lokasi" className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-500" placeholder="Lantai 1, Gedung A" value={formData.lokasi} onChange={handleChange} />
+              <MapPin className="absolute left-3 top-3 text-gray-400" size={16} />
             </div>
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Wali Kamar (Ustadz)</label>
+            <div className="relative">
+              <select name="id_wali" className="w-full pl-9 p-2.5 border border-gray-200 rounded-xl outline-none bg-white focus:ring-2 focus:ring-green-500" value={formData.id_wali} onChange={handleChange}>
+                <option value="">— Tidak Ada Wali —</option>
+                {waliOptions.map(w => (
+                  <option key={w.id} value={w.id}>{w.nama} ({w.nip})</option>
+                ))}
+              </select>
+              <User className="absolute left-3 top-3 text-gray-400" size={16} />
+            </div>
+          </div>
+          <div className="pt-4 flex gap-3">
+            <button type="button" onClick={onClose} className="flex-1 py-2.5 bg-gray-100 rounded-xl hover:bg-gray-200">Batal</button>
+            <button type="submit" disabled={saving} className="flex-1 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 flex justify-center items-center">
+              {saving ? <Loader2 className="animate-spin mr-2" size={18}/> : <Save className="mr-2" size={18}/>} Simpan
+            </button>
+          </div>
         </form>
       </div>
     </div>

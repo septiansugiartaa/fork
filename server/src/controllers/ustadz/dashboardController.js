@@ -3,9 +3,8 @@ const prisma = new PrismaClient();
 
 exports.getDashboardData = async (req, res) => {
     try {
-        const userId = req.user.id; // ID User dari token (Ustadz)
+        const userId = req.user.id;
 
-        // 1. Ambil data User (Ustadz)
         const pengguna = await prisma.users.findUnique({
             where: { id: userId, is_active: true }
         });
@@ -20,92 +19,73 @@ exports.getDashboardData = async (req, res) => {
         const hariIniSelesai = new Date();
         hariIniSelesai.setHours(23, 59, 59, 999);
 
-        // 2. Jalankan Query Paralel untuk Performa Optimal
         const [
             kegiatanHariIni, 
             pengaduanTerbaru, 
             totalSantri, 
             pengaduanAktifCount,
             kegiatanAktifCount,
-            kelasDiampu
+            kelasDiampu,
+            kamarDiampu
         ] = await Promise.all([
-            // A. Kegiatan Hari Ini 
             prisma.kegiatan.findMany({
                 where: {
-                    tanggal: {
-                        gte: hariIniMulai,
-                        lte: hariIniSelesai
-                    },
+                    tanggal: { gte: hariIniMulai, lte: hariIniSelesai },
                     is_active: true
                 },
                 orderBy: { waktu_mulai: 'asc' },
                 take: 5
             }),
-
-            // B. Pengaduan Terbaru
             prisma.pengaduan.findMany({
-                where: { 
-                    is_active: true,
-                    status: 'Aktif' 
-                },
+                where: { is_active: true, status: 'Aktif' },
                 include: {
-                    users_pengaduan_id_santriTousers: {
-                        select: { nama: true }
-                    }
+                    users_pengaduan_id_santriTousers: { select: { nama: true } }
                 },
                 orderBy: { waktu_aduan: 'desc' },
                 take: 4
             }),
-
-            // C. Count Total Santri Aktif di Pondok
             prisma.users.count({
                 where: {
                     is_active: true,
-                    user_role: { 
-                        some: { role: { role: 'Santri' } } 
-                    }
+                    user_role: { some: { role: { role: 'Santri' } } }
                 }
             }),
-
-            // D. Count Pengaduan Aktif
             prisma.pengaduan.count({
-                where: {
-                    is_active: true,
-                    status: 'Aktif' 
-                }
+                where: { is_active: true, status: 'Aktif' }
             }),
-
-            // E. Count Kegiatan Aktif
             prisma.kegiatan.count({
                 where: { is_active: true }
             }),
-
-            // F. Cari kelas di mana ustadz ini menjadi wali
             prisma.kelas.findMany({
-                where: {
-                    id_wali: userId,
-                    is_active: true
-                },
-                select: { kelas: true }
+                where: { id_wali: userId, is_active: true },
+                select: { id: true, kelas: true }
+            }),
+            prisma.kamar.findMany({
+                where: { id_wali: userId, is_active: true },
+                select: { id: true, kamar: true }
             })
         ]);
 
-        let statusKelas = [];
+        // Bangun label jabatan: gabung kelas + kamar walian
+        let jabatan = [];
         if (kelasDiampu.length > 0) {
-            // Jika wali kelas, buat array misal: ["Wali Kelas 7A", "Wali Kelas 7B"]
-            statusKelas = kelasDiampu.map(k => `Wali ${k.kelas}`);
-        } else {
-            // Jika bukan, default array 1 elemen
-            statusKelas = ["Pengajar"];
+            jabatan.push(...kelasDiampu.map(k => `Wali ${k.kelas}`));
+        }
+        if (kamarDiampu.length > 0) {
+            jabatan.push(...kamarDiampu.map(k => `Wali ${k.kamar}`));
+        }
+        if (jabatan.length === 0) {
+            jabatan = ['Pengajar'];
         }
 
-        // 3. Format Response
         const dashboardData = {
             ustadz: {
                 nama: pengguna.nama || '-',
                 nip: pengguna.nip || '-',
                 foto_profil: pengguna.foto_profil || '-',
-                jabatan: statusKelas
+                jabatan,
+                kelas_binaan: kelasDiampu,
+                kamar_binaan: kamarDiampu
             },
 
             kegiatan_hari_ini: kegiatanHariIni.map(keg => ({

@@ -295,10 +295,16 @@ export default function SantriDashboard() {
               <div className="bg-white/10 p-4 rounded-xl">
                 <p className="text-green-100 mb-1">Kelas</p>
                 <p className="text-xl font-semibold">{santri.kelas}</p>
+                {santri.wali_kelas && (
+                  <p className="text-xs text-green-200 mt-1">Wali: {santri.wali_kelas}</p>
+                )}
               </div>
               <div className="bg-white/10 p-4 rounded-xl">
                 <p className="text-green-100 mb-1">Kamar</p>
                 <p className="text-xl font-semibold">{santri.kamar}</p>
+                {santri.wali_kamar && (
+                  <p className="text-xs text-green-200 mt-1">Wali: {santri.wali_kamar}</p>
+                )}
               </div>
             </div>
           </div>

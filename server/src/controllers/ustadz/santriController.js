@@ -1,29 +1,33 @@
 const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
-// Helper Format Tanggal
 const formatDate = (date) => {
     if (!date) return "-";
-    return new Date(date).toLocaleDateString('id-ID', {
-        day: 'numeric', month: 'long', year: 'numeric'
-    });
+    return new Date(date).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
 };
 
 exports.getDaftarSantri = async (req, res) => {
     try {
         const userId = req.user.id; 
-        const { search, filter, id_kelas } = req.query;
+        const { search, filter, id_sub } = req.query;
 
-        // 1. Cek apakah Ustadz ini adalah Wali Kelas & Ambil Array Kelasnya
+        // Kelas yang diwali
         const kelasBinaan = await prisma.kelas.findMany({
             where: { id_wali: userId, is_active: true },
             select: { id: true, kelas: true }
         });
 
-        const isWaliKelas = kelasBinaan.length > 0;
-        const idKelasBinaan = kelasBinaan.map(k => k.id);
+        // Kamar yang diwali
+        const kamarBinaan = await prisma.kamar.findMany({
+            where: { id_wali: userId, is_active: true },
+            select: { id: true, kamar: true }
+        });
 
-        // 2. Susun Kondisi Pencarian
+        const isWaliKelas = kelasBinaan.length > 0;
+        const isWaliKamar = kamarBinaan.length > 0;
+        const idKelasBinaan = kelasBinaan.map(k => k.id);
+        const idKamarBinaan = kamarBinaan.map(k => k.id);
+
         let whereCondition = {
             is_active: true,
             user_role: { some: { role: { role: 'Santri' } } }
@@ -36,22 +40,30 @@ exports.getDaftarSantri = async (req, res) => {
             ];
         }
 
-        // 3. Logika Filter Kelas
-        if (filter === 'kelasku' && isWaliKelas) {
-            if (id_kelas && id_kelas !== 'all') {
-                whereCondition.kelas_santri = {
-                    some: {
-                        id_kelas: parseInt(id_kelas),
-                        is_active: true
-                    }
-                };
+        if (filter === 'kelasku') {
+            if (id_sub && id_sub !== 'all') {
+                whereCondition.kelas_santri = { some: { id_kelas: parseInt(id_sub), is_active: true } };
+            } else if (isWaliKelas) {
+                whereCondition.kelas_santri = { some: { id_kelas: { in: idKelasBinaan }, is_active: true } };
             } else {
-                whereCondition.kelas_santri = {
-                    some: {
-                        id_kelas: { in: idKelasBinaan },
-                        is_active: true
-                    }
-                };
+                // Tidak jadi wali kelas, return empty
+                return res.json({
+                    success: true,
+                    meta: { is_wali_kelas: false, is_wali_kamar: isWaliKamar, kelas_binaan: kelasBinaan, kamar_binaan: kamarBinaan },
+                    data: []
+                });
+            }
+        } else if (filter === 'kamarku') {
+            if (id_sub && id_sub !== 'all') {
+                whereCondition.kamar_santri = { some: { id_kamar: parseInt(id_sub), is_active: true } };
+            } else if (isWaliKamar) {
+                whereCondition.kamar_santri = { some: { id_kamar: { in: idKamarBinaan }, is_active: true } };
+            } else {
+                return res.json({
+                    success: true,
+                    meta: { is_wali_kelas: isWaliKelas, is_wali_kamar: false, kelas_binaan: kelasBinaan, kamar_binaan: kamarBinaan },
+                    data: []
+                });
             }
         }
 
@@ -62,30 +74,27 @@ exports.getDaftarSantri = async (req, res) => {
                 kelas_santri: {
                     where: { is_active: true },
                     take: 1,
+                    orderBy: { id: 'desc' },
                     include: { kelas: true }
                 },
                 kamar_santri: {
                     where: { is_active: true },
                     take: 1,
+                    orderBy: { tanggal_masuk: 'desc' },
                     include: { kamar: true }
                 },
+                absensi: { select: { status: true } },
                 orangtua_orangtua_id_santriTousers: {
                     where: { is_active: true },
-                    include: {
-                        users_orangtua_id_orangtuaTousers: true
-                }
-                },
-                absensi: {
-                    select: { status: true }
+                    include: { users_orangtua_id_orangtuaTousers: true }
                 }
             }
-            });
+        });
 
         const data = santris.map(s => {
             const totalAbsen = s.absensi.length;
             const totalHadir = s.absensi.filter(a => a.status === 'Hadir').length;
-            const persentaseHadir =
-                totalAbsen > 0 ? Math.round((totalHadir / totalAbsen) * 100) : 0;
+            const persentaseHadir = totalAbsen > 0 ? Math.round((totalHadir / totalAbsen) * 100) : 0;
 
             return {
                 id: s.id,
@@ -94,13 +103,10 @@ exports.getDaftarSantri = async (req, res) => {
                 foto_profil: s.foto_profil,
                 no_hp: s.no_hp || "-",
                 alamat: s.alamat || "-",
-
                 kelas_aktif: s.kelas_santri[0]?.kelas?.kelas || "Belum ada kelas",
                 kamar_aktif: s.kamar_santri[0]?.kamar?.kamar || "Belum ada kamar",
-
                 kehadiran: persentaseHadir,
-                kontak_orangtua:
-                s.orangtua_orangtua_id_santriTousers?.map(ortu => {
+                kontak_orangtua: s.orangtua_orangtua_id_santriTousers?.map(ortu => {
                     const dataOrtu = ortu.users_orangtua_id_orangtuaTousers;
                     return {
                         nama: dataOrtu?.nama || "Tidak Diketahui",
@@ -110,13 +116,15 @@ exports.getDaftarSantri = async (req, res) => {
                     };
                 }) || []
             };
-         });
+        });
 
         res.json({
             success: true,
             meta: {
                 is_wali_kelas: isWaliKelas,
-                kelas_binaan: kelasBinaan
+                is_wali_kamar: isWaliKamar,
+                kelas_binaan: kelasBinaan,
+                kamar_binaan: kamarBinaan
             },
             data
         });
@@ -127,18 +135,13 @@ exports.getDaftarSantri = async (req, res) => {
     }
 };
 
-// Ambil riwayat pengaduan yang PERNAH DIBUAT OLEH USTADZ INI untuk santri tertentu
 exports.getPengaduanByUstadz = async (req, res) => {
     try {
         const ustadzId = req.user.id;
         const santriId = parseInt(req.params.idSantri);
 
         const pengaduans = await prisma.pengaduan.findMany({
-            where: {
-                id_pelapor: ustadzId,
-                id_santri: santriId,
-                is_active: true
-            },
+            where: { id_pelapor: ustadzId, id_santri: santriId, is_active: true },
             orderBy: { waktu_aduan: 'desc' }
         });
 

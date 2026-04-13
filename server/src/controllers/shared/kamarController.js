@@ -8,11 +8,27 @@ exports.getKamar = async (req, res) => {
         const kamar = await prisma.kamar.findMany({
             where:   { is_active: true, kamar: { contains: search || '' } },
             orderBy: { kamar: 'asc' },
-            include: { _count: { select: { kamar_santri: { where: { is_active: true } } } } },
+            include: {
+                _count: { select: { kamar_santri: { where: { is_active: true } } } },
+                users: { select: { id: true, nama: true, nip: true } } // wali kamar
+            },
         });
         return res.json({ success: true, data: kamar });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Gagal memuat data kamar.' });
+    }
+};
+
+exports.getWaliOptions = async (req, res) => {
+    try {
+        const wali = await prisma.users.findMany({
+            where:   { is_active: true, user_role: { some: { role: { role: 'Ustadz' } } } },
+            select:  { id: true, nama: true, nip: true },
+            orderBy: { nama: 'asc' },
+        });
+        return res.json({ success: true, data: wali });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: 'Gagal memuat data wali.' });
     }
 };
 
@@ -33,9 +49,18 @@ exports.getSantriByKamar = async (req, res) => {
 };
 
 exports.createKamar = async (req, res) => {
-    const { kamar, kapasitas, gender, lokasi } = req.body;
+    const { kamar, kapasitas, gender, lokasi, id_wali } = req.body;
     try {
-        await prisma.kamar.create({ data: { kamar, kapasitas: parseInt(kapasitas), gender, lokasi, is_active: true } });
+        await prisma.kamar.create({
+            data: {
+                kamar,
+                kapasitas: parseInt(kapasitas) || null,
+                gender,
+                lokasi,
+                id_wali: parseInt(id_wali) || null,
+                is_active: true
+            }
+        });
         return res.json({ success: true, message: 'Kamar berhasil dibuat.' });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Gagal membuat kamar.' });
@@ -44,9 +69,18 @@ exports.createKamar = async (req, res) => {
 
 exports.updateKamar = async (req, res) => {
     const { id } = req.params;
-    const { kamar, kapasitas, gender, lokasi } = req.body;
+    const { kamar, kapasitas, gender, lokasi, id_wali } = req.body;
     try {
-        await prisma.kamar.update({ where: { id: parseInt(id) }, data: { kamar, kapasitas: parseInt(kapasitas), gender, lokasi } });
+        await prisma.kamar.update({
+            where: { id: parseInt(id) },
+            data: {
+                kamar,
+                kapasitas: parseInt(kapasitas) || null,
+                gender,
+                lokasi,
+                id_wali: parseInt(id_wali) || null
+            }
+        });
         return res.json({ success: true, message: 'Kamar berhasil diperbarui.' });
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Gagal update kamar.' });

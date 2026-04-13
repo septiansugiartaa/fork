@@ -156,6 +156,7 @@ model kamar {
   heading_absensi heading_absensi[]
   users           users?            @relation(fields: [id_wali], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kamar_users_FK")
   kamar_santri    kamar_santri[]
+  kegiatan        kegiatan[]
   observasi       observasi[]
 
   @@index([id_wali], map: "kamar_users_FK")
@@ -178,6 +179,7 @@ model kamar_santri {
 model kegiatan {
   id               Int        @id @default(autoincrement())
   id_kelas         Int?
+  id_kamar         Int?
   nama_kegiatan    String     @db.VarChar(100)
   tanggal          DateTime?  @db.Date
   lokasi           String?    @db.VarChar(100)
@@ -191,8 +193,10 @@ model kegiatan {
   feedback         feedback[]
   users            users?     @relation(fields: [penanggung_jawab], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_ibfk_1")
   kelas            kelas?     @relation(fields: [id_kelas], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_kelas_FK")
+  kamar            kamar?     @relation(fields: [id_kamar], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_kamar_FK")
 
   @@index([id_kelas], map: "kegiatan_kelas_FK")
+  @@index([id_kamar], map: "kegiatan_kamar_FK")
   @@index([penanggung_jawab], map: "penanggung_jawab")
 }
 

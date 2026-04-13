@@ -6,6 +6,7 @@ const ctrl    = require('../../controllers/shared/kamarController');
 router.use(requireRole('pengurus'));
 
 router.get('/',                              ctrl.getKamar);
+router.get('/wali-options',                  ctrl.getWaliOptions);
 router.get('/:id/santri',                    ctrl.getSantriByKamar);
 router.post('/',                             ctrl.createKamar);
 router.put('/:id',                           ctrl.updateKamar);
