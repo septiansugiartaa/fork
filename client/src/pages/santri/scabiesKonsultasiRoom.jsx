@@ -35,6 +35,8 @@ const formatRoomchatTime = (dateValue) => {
   });
 };
 
+const MESSAGE_POLLING_INTERVAL_MS = 3000;
+
 export default function SantriScabiesKonsultasiRoom() {
   const { roomId } = useParams();
   const navigate = useNavigate();
@@ -48,6 +50,18 @@ export default function SantriScabiesKonsultasiRoom() {
   const chatContainerRef = useRef(null);
   const shouldAutoScrollRef = useRef(true);
   const forceScrollToLatestRef = useRef(false);
+  const lastMarkedReadRef = useRef(null);
+
+  const markRoomAsRead = useCallback(async (items = []) => {
+    if (!roomId || !items.length) return;
+
+    const lastIncomingMessage = [...items].reverse().find((item) => item.sender_role !== 'santri');
+    const lastMessageId = lastIncomingMessage?.id;
+    if (!lastMessageId || lastMarkedReadRef.current === lastMessageId) return;
+
+    await api.post(`/santri/konsultasi/rooms/${roomId}/read`, { last_read_message_id: lastMessageId });
+    lastMarkedReadRef.current = lastMessageId;
+  }, [roomId]);
 
   const fetchData = useCallback(async (isFirstLoad = false) => {
     try {
@@ -56,15 +70,12 @@ export default function SantriScabiesKonsultasiRoom() {
         ? container.scrollHeight - (container.scrollTop + container.clientHeight) < 120
         : true;
 
-      const [detailRes, messageRes] = await Promise.all([
-        api.get(`/santri/konsultasi/rooms/${roomId}`),
-        api.get(`/santri/konsultasi/rooms/${roomId}/messages`),
-      ]);
-
-      setRoom(normalizeRoom(detailRes.data?.data || null));
+      const messageRes = await api.get(`/santri/konsultasi/rooms/${roomId}/messages`);
+      setRoom(normalizeRoom(messageRes.data?.data?.room || null));
 
       const items = (messageRes.data?.data?.messages || []).map(normalizeMessage);
       setMessages(items);
+      await markRoomAsRead(items);
 
       if (isFirstLoad || isNearBottom) {
         forceScrollToLatestRef.current = true;
@@ -75,14 +86,15 @@ export default function SantriScabiesKonsultasiRoom() {
     } finally {
       setLoading(false);
     }
-  }, [roomId]);
+  }, [markRoomAsRead, roomId]);
 
   useEffect(() => {
     fetchData(true);
 
     const interval = setInterval(() => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
       fetchData(false);
-    }, 5000);
+    }, MESSAGE_POLLING_INTERVAL_MS);
 
     return () => clearInterval(interval);
   }, [fetchData]);
@@ -100,10 +112,13 @@ export default function SantriScabiesKonsultasiRoom() {
     if (!message.trim() || isSending) return;
     try {
       setIsSending(true);
-      await api.post(`/santri/konsultasi/rooms/${roomId}/messages`, { message });
+      const { data } = await api.post(`/santri/konsultasi/rooms/${roomId}/messages`, { message });
       setMessage('');
       forceScrollToLatestRef.current = true;
-      await fetchData();
+      const sentMessage = normalizeMessage(data?.data || {});
+      if (sentMessage?.id) {
+        setMessages((prev) => [...prev, sentMessage]);
+      }
     } catch (error) {
       alert(error.response?.data?.message || 'Gagal mengirim pesan.');
     } finally {

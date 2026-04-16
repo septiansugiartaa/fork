@@ -41,7 +41,7 @@ app.use(cors({
 // Rate limit umum
 const generalLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 menit
-  max: 100,
+  max: 1000,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Terlalu banyak request. Coba lagi sebentar.' },
