@@ -1,5 +1,5 @@
 import { MessageCircle, History, Send, CheckCheck, Check, X, User } from 'lucide-react';
-import { useEffect, useMemo, useState, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../config/api';
 
@@ -70,6 +70,8 @@ const formatRoomchatTime = (dateValue) => {
   });
 };
 
+const MESSAGE_POLLING_INTERVAL_MS = 3000;
+
 export default function TimkesKonsultasiPage() {
   const [rooms, setRooms] = useState([]);
   const [selectedRoomId, setSelectedRoomId] = useState(null);
@@ -84,27 +86,40 @@ export default function TimkesKonsultasiPage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const chatContainerRef = useRef(null);
+  const lastMarkedReadRef = useRef({});
 
-  const fetchRooms = async () => {
+  const fetchRooms = useCallback(async () => {
     const { data } = await api.get('/timkesehatan/konsultasi/rooms/active');
     const items = (data?.data || []).map(normalizeRoom);
-    setRooms(items);
+    const visibleRooms = items.filter((room) => room?.last_message?.id);
+    setRooms(visibleRooms);
     if (!selectedRoomId) {
       const fromQuery = Number(searchParams.get('room'));
       if (fromQuery) {
         setSelectedRoomId(fromQuery);
-      } else if (items[0]?.id) {
-        setSelectedRoomId(items[0].id);
+      } else if (visibleRooms[0]?.id) {
+        setSelectedRoomId(visibleRooms[0].id);
       }
       return;
     }
 
-    if (selectedRoomId && !items.find((r) => r.id === selectedRoomId) && !searchParams.get('room')) {
-      setSelectedRoomId(items[0]?.id || null);
+    if (selectedRoomId && !visibleRooms.find((r) => r.id === selectedRoomId) && !searchParams.get('room')) {
+      setSelectedRoomId(visibleRooms[0]?.id || null);
     }
-  };
+  }, [searchParams, selectedRoomId]);
 
-  const fetchMessages = async (roomId) => {
+  const markRoomAsRead = useCallback(async (roomId, items) => {
+    if (!roomId || !items?.length) return;
+
+    const lastIncomingMessage = [...items].reverse().find((item) => item.sender_role !== 'timkesehatan');
+    const lastMessageId = lastIncomingMessage?.id;
+    if (!lastMessageId || lastMarkedReadRef.current[roomId] === lastMessageId) return;
+
+    await api.post(`/timkesehatan/konsultasi/rooms/${roomId}/read`, { last_read_message_id: lastMessageId });
+    lastMarkedReadRef.current[roomId] = lastMessageId;
+  }, []);
+
+  const fetchMessages = useCallback(async (roomId) => {
     if (!roomId) {
       setMessages([]);
       setSelectedRoom(null);
@@ -114,27 +129,39 @@ export default function TimkesKonsultasiPage() {
     const items = (data?.data?.messages || []).map(normalizeMessage);
     setMessages(items);
     setSelectedRoom(normalizeRoom(data?.data?.room || null));
-    if (items.length > 0) {
-      await api.post(`/timkesehatan/konsultasi/rooms/${roomId}/read`, { last_read_message_id: items[items.length - 1].id });
-    }
-  };
+    await markRoomAsRead(roomId, items);
+  }, [markRoomAsRead]);
 
   useEffect(() => {
     const runner = async () => {
+      if (typeof document !== 'undefined' && document.visibilityState !== 'visible') return;
       try {
         await fetchRooms();
+        if (selectedRoomId) {
+          await fetchMessages(selectedRoomId);
+        }
       } catch (error) {
         console.error(error);
       }
     };
     runner();
-    const interval = setInterval(runner, 5000);
+    const interval = setInterval(runner, MESSAGE_POLLING_INTERVAL_MS);
     return () => clearInterval(interval);
-  }, [selectedRoomId]);
+  }, [fetchMessages, fetchRooms, selectedRoomId]);
 
   useEffect(() => {
     fetchMessages(selectedRoomId).catch(console.error);
-  }, [selectedRoomId]);
+  }, [fetchMessages, selectedRoomId]);
+
+  useEffect(() => {
+    if (!selectedRoomId) return undefined;
+
+    const interval = setInterval(() => {
+      fetchMessages(selectedRoomId).catch(console.error);
+    }, MESSAGE_POLLING_INTERVAL_MS);
+
+    return () => clearInterval(interval);
+  }, [fetchMessages, selectedRoomId]);
 
   useEffect(() => {
     setShowInfoPanel(false);
@@ -186,10 +213,12 @@ export default function TimkesKonsultasiPage() {
     if (!selectedRoomId || !message.trim() || isSending) return;
     try {
       setIsSending(true);
-      await api.post(`/timkesehatan/konsultasi/rooms/${selectedRoomId}/messages`, { message });
+      const { data } = await api.post(`/timkesehatan/konsultasi/rooms/${selectedRoomId}/messages`, { message });
       setMessage('');
-      await fetchMessages(selectedRoomId);
-      await fetchRooms();
+      const sentMessage = normalizeMessage(data?.data || {});
+      if (sentMessage?.id) {
+        setMessages((prev) => [...prev, sentMessage]);
+      }
     } finally {
       setIsSending(false);
     }
