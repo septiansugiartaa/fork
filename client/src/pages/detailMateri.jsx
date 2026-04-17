@@ -31,6 +31,7 @@ function DetailMateri() {
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate()
   const location = useLocation();
+  const isPublicMateriPage = location.pathname.startsWith("/materi");
   
   const user = JSON.parse(localStorage.getItem("user"));
   const role = user?.role?.trim().toLowerCase();
@@ -41,7 +42,7 @@ function DetailMateri() {
     admin:        "/admin/manageMateri",
   };
 
-  const detailBasePath = rolePathMap[role] || "/viewMateri";
+  const detailBasePath = isPublicMateriPage ? "/materi" : (rolePathMap[role] || "/viewMateri");
   const backPath = location.state?.from || detailBasePath;
   const rootFrom = location.state?.rootFrom || backPath;
 
@@ -56,7 +57,8 @@ function DetailMateri() {
   useEffect(() => {
     const fetchDetail = async () => {
       try {
-        const res = await api.get(`/global/manageMateri/${id}`);
+        const endpoint = isPublicMateriPage ? `/public/materi/${id}` : `/global/manageMateri/${id}`;
+        const res = await api.get(endpoint);
         if (res.data.success) setMateri(res.data.data);
       } catch (err) {
         console.error(err);
@@ -65,7 +67,7 @@ function DetailMateri() {
       }
     };
     fetchDetail();
-  }, [id]);
+  }, [id, isPublicMateriPage]);
 
   useEffect(() => {
     if (materi) {
@@ -93,7 +95,8 @@ function DetailMateri() {
   useEffect(() => {
     const fetchMateriLain = async () => {
       try {
-        const res = await api.get("/global/manageMateri");
+        const endpoint = isPublicMateriPage ? "/public/materi" : "/global/manageMateri";
+        const res = await api.get(endpoint);
         if (res.data.success) {
           const filtered = res.data.data.list_materi.filter((item) => item.id !== Number(id));
           setMateriLain(filtered.slice(0, 5));
@@ -103,7 +106,7 @@ function DetailMateri() {
       }
     };
     fetchMateriLain();
-  }, [id]);
+  }, [id, isPublicMateriPage]);
 
   if (loading) {
     return (
@@ -248,9 +251,11 @@ function DetailMateri() {
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 mb-12">
-        <CommentSection materiId={id} />
-      </div>
+      {!isPublicMateriPage && (
+        <div className="max-w-6xl mx-auto px-4 mb-12">
+          <CommentSection materiId={id} />
+        </div>
+      )}
     </div>
   );
 }

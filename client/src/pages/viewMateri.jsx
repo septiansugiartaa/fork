@@ -16,13 +16,16 @@ export default function MateriView (){
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
     const location = useLocation();
-    const rootFrom = location.state?.rootFrom || location.state?.from || "/santri";
+    const isPublicMateriPage = location.pathname.startsWith("/materi");
+    const rootFrom = location.state?.rootFrom || location.state?.from || (isPublicMateriPage ? "/" : "/santri");
     const backPath = rootFrom;
+    const detailBasePath = isPublicMateriPage ? "/materi" : "/santri/scabies/viewMateri";
     
     const fetchMateri = async () => {
         try {
             setLoading(true);
-            const res = await api.get("/global/viewMateri");
+            const endpoint = isPublicMateriPage ? "/public/materi" : "/global/viewMateri";
+            const res = await api.get(endpoint);
                 if (res.data.success) {
                     setMateri(res.data.data.list_materi);
                 } else {
@@ -39,7 +42,7 @@ export default function MateriView (){
     useEffect(() => {
         localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
         fetchMateri();
-    }, []);
+    }, [isPublicMateriPage]);
 
     if (loading) {
         return (
@@ -107,7 +110,13 @@ export default function MateriView (){
             <div className="max-w-6xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 px-4 pb-10">
                {filteredMateri.length > 0 ? (
                     filteredMateri.map((item) => (
-                        <CardMateri key={item.id} materi={item} detailBasePath="/santri/scabies/viewMateri" fromPath={location.pathname} rootFrom={rootFrom} />
+                        <CardMateri
+                            key={item.id}
+                            materi={item}
+                            detailBasePath={detailBasePath}
+                            fromPath={location.pathname}
+                            rootFrom={rootFrom}
+                        />
                     ))
                     ) : (
                     <p className="col-span-full text-center text-gray-500">

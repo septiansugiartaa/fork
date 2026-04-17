@@ -72,6 +72,12 @@ export default function LandingPage() {
           </div>
           <div className="hidden md:flex items-center gap-4">
             <Link
+              to="/materi"
+              className="text-gray-600 hover:text-green-600 font-semibold px-4 py-2 transition"
+            >
+              Materi
+            </Link>
+            <Link
               to="/login"
               className="text-gray-600 hover:text-green-600 font-semibold px-4 py-2 transition"
             >

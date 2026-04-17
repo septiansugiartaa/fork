@@ -1,4 +1,4 @@
-import { MessageCircle, History, Send, CheckCheck, Check, X, User } from 'lucide-react';
+import { MessageCircle, History, Send, CheckCheck, Check, X, User, ArrowLeft } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState, useRef } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import api from '../../config/api';
@@ -87,6 +87,21 @@ export default function TimkesKonsultasiPage() {
   const navigate = useNavigate();
   const chatContainerRef = useRef(null);
   const lastMarkedReadRef = useRef({});
+  const [isMobileView, setIsMobileView] = useState(() => (typeof window !== 'undefined'
+    ? window.matchMedia('(max-width: 767px)').matches
+    : false));
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return undefined;
+    const mediaQuery = window.matchMedia('(max-width: 767px)');
+    const onViewportChange = (event) => {
+      setIsMobileView(event.matches);
+    };
+
+    setIsMobileView(mediaQuery.matches);
+    mediaQuery.addEventListener('change', onViewportChange);
+    return () => mediaQuery.removeEventListener('change', onViewportChange);
+  }, []);
 
   const fetchRooms = useCallback(async () => {
     const { data } = await api.get('/timkesehatan/konsultasi/rooms/active');
@@ -97,16 +112,20 @@ export default function TimkesKonsultasiPage() {
       const fromQuery = Number(searchParams.get('room'));
       if (fromQuery) {
         setSelectedRoomId(fromQuery);
-      } else if (visibleRooms[0]?.id) {
+      } else if (!isMobileView && visibleRooms[0]?.id) {
         setSelectedRoomId(visibleRooms[0].id);
       }
       return;
     }
 
     if (selectedRoomId && !visibleRooms.find((r) => r.id === selectedRoomId) && !searchParams.get('room')) {
-      setSelectedRoomId(visibleRooms[0]?.id || null);
+      if (isMobileView) {
+        setSelectedRoomId(null);
+      } else {
+        setSelectedRoomId(visibleRooms[0]?.id || null);
+      }
     }
-  }, [searchParams, selectedRoomId]);
+  }, [isMobileView, searchParams, selectedRoomId]);
 
   const markRoomAsRead = useCallback(async (roomId, items) => {
     if (!roomId || !items?.length) return;
@@ -234,8 +253,8 @@ export default function TimkesKonsultasiPage() {
 
   return (
     <div className='h-[calc(100vh-170px)]'>
-      <div className='h-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden grid grid-cols-12'>
-        <div className='col-span-4 border-r border-gray-100 flex flex-col min-h-0'>
+      <div className={`h-full bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden ${isMobileView ? 'flex' : 'grid grid-cols-12'}`}>
+        <div className={`${isMobileView && selectedRoomId ? 'hidden' : 'flex'} ${isMobileView ? 'w-full' : 'col-span-4'} border-r border-gray-100 flex-col min-h-0`}>
           <div className='p-4 border-b border-gray-100 flex items-center justify-between'>
             <h2 className='font-bold text-gray-800'>Konsultasi Aktif</h2>
             <button onClick={() => navigate('/timkesehatan/konsultasi/riwayat')} className='px-3 py-2 rounded-lg text-sm bg-gray-100 text-gray-700 hover:bg-gray-200 flex items-center gap-1'>
@@ -271,19 +290,26 @@ export default function TimkesKonsultasiPage() {
           </div>
         </div>
 
-        <div className='col-span-8 flex flex-col min-h-0 relative'>
+         <div className={`${isMobileView ? (selectedRoomId ? 'flex w-full' : 'hidden') : 'col-span-8 flex'} flex-col min-h-0 relative`}>
           <div className='p-4 border-b border-gray-100 flex items-center justify-between'>
-            <button type='button' onClick={() => roomHeader && setShowInfoPanel(true)} className='text-left flex items-center gap-3'>
+            <div className='flex items-center gap-2 min-w-0'>
+              {isMobileView && selectedRoomId && (
+                <button type='button' onClick={() => setSelectedRoomId(null)} className='p-2 rounded-lg hover:bg-gray-100 text-gray-600'>
+                  <ArrowLeft size={18} />
+                </button>
+              )}
+              <button type='button' onClick={() => roomHeader && setShowInfoPanel(true)} className='text-left flex items-center gap-3 min-w-0'>
                <ProfileAvatar
                 fotoProfil={roomHeader?.santri?.foto_profil}
                 nama={roomHeader?.santri?.nama}
                 className='w-10 h-10'
               />
-              <div>
-                <p className='font-semibold text-gray-800'>{roomHeader?.santri?.nama || '-'}</p>
+              <div className='min-w-0'>
+                <p className='font-semibold text-gray-800 truncate'>{roomHeader?.santri?.nama || '-'}</p>
                 <p className='text-xs text-gray-500'>Status: {roomHeader?.status || '-'}</p>
               </div>
             </button>
+            </div>
             <div className='flex items-center gap-2'>
               {selectedRoomId && roomHeader?.status !== 'closed' && (
                 <button onClick={() => setShowCloseModal(true)} className='px-3 py-2 rounded-lg bg-red-600 text-white text-sm font-semibold'>Konsultasi Selesai</button>

@@ -111,6 +111,8 @@ function App() {
         <Routes>
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/materi" element={<MateriView />} />
+          <Route path="/materi/:id" element={<DetailMateri />} />
           <Route path="/ppdb/daftar" element={<FormPendaftaran />} />
           <Route path="/ppdb/cek-status" element={<CekStatus />} />
           <Route path="/login" element={<Login />} />

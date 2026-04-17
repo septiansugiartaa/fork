@@ -41,7 +41,7 @@ app.use(cors({
 // Rate limit umum
 const generalLimiter = rateLimit({
   windowMs: 60 * 1000, // 1 menit
-  max: 1000,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { success: false, message: 'Terlalu banyak request. Coba lagi sebentar.' },
@@ -55,8 +55,8 @@ app.use(express.urlencoded({ extended: false, limit: '2mb' }));
 
 // 5. PUBLIC ROUTES (tidak perlu token) 
 app.get('/api', (req, res) => res.json({ success: true, message: 'PPDNY API' }));
-
 app.use('/api/public', require('./routes/public/publicRoutes'));
+app.use('/api/public/materi', require('./routes/viewMateriRoutes'));
 app.use('/api/ppdb/public', require('./routes/ppdb/publicPpdbRoutes'));
 app.use('/api/auth', require('./routes/authRoutes'));
 

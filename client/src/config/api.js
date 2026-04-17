@@ -23,8 +23,23 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     const isLoginURL = (error.config?.url === '/auth/login');
+    const pathname = window.location.pathname || '';
+    const isPublicPath = (
+      pathname === '/'
+      || pathname === '/login'
+      || pathname.startsWith('/ppdb')
+      || pathname === '/materi'
+      || /^\/materi\/[^/]+$/.test(pathname)
+    );
+
 
     if (error.response && error.response.status === 401 && !isLoginURL) {
+      if (isPublicPath) {
+        console.warn('Token tidak valid saat akses halaman publik. Token dibersihkan tanpa redirect.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        return Promise.reject(error);
+      }
       console.warn('Token expired atau tidak valid. Mengarahkan ke Login...');
       localStorage.removeItem('token');
       localStorage.removeItem('user');
