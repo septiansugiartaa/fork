@@ -179,6 +179,7 @@ model kamar_santri {
 model kegiatan {
   id               Int        @id @default(autoincrement())
   id_kelas         Int?
+  id_kamar         Int?
   nama_kegiatan    String     @db.VarChar(100)
   tanggal          DateTime?  @db.Date
   lokasi           String?    @db.VarChar(100)
@@ -188,7 +189,6 @@ model kegiatan {
   deskripsi        String?    @db.Text
   rutin            Boolean?   @default(false)
   is_active        Boolean?   @default(true)
-  id_kamar         Int?
   absensi          absensi[]
   feedback         feedback[]
   users            users?     @relation(fields: [penanggung_jawab], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "kegiatan_ibfk_1")
@@ -226,15 +226,17 @@ model kelas_santri {
 }
 
 model materi {
-  id_materi      Int              @id @default(autoincrement())
-  judul_materi   String           @db.VarChar(100)
-  penulis        String?          @db.VarChar(100)
-  is_active      Boolean
-  gambar         String?          @db.VarChar(1000)
-  ringkasan      String           @db.Text
-  tanggal_dibuat DateTime?        @db.DateTime(0)
-  detail_materi  detail_materi[]
-  materi_comment materi_comment[]
+  id_materi        Int                @id @default(autoincrement())
+  judul_materi     String             @db.VarChar(100)
+  penulis          String?            @db.VarChar(100)
+  is_active        Boolean
+  gambar           String?            @db.VarChar(1000)
+  ringkasan        String             @db.Text
+  tanggal_dibuat   DateTime?          @db.DateTime(0)
+  sumber           materi_sumber
+  detail_materi    detail_materi[]
+  materi_comment   materi_comment[]
+  pengajuan_materi pengajuan_materi[]
 }
 
 model observasi {
@@ -592,6 +594,7 @@ model users {
   orangtua_orangtua_id_orangtuaTousers             orangtua[]               @relation("orangtua_id_orangtuaTousers")
   pengaduan_pengaduan_id_pelaporTousers            pengaduan[]              @relation("pengaduan_id_pelaporTousers")
   pengaduan_pengaduan_id_santriTousers             pengaduan[]              @relation("pengaduan_id_santriTousers")
+  pengajuan_materi                                 pengajuan_materi[]
   ppdb_pendaftar                                   ppdb_pendaftar[]
   ppdb_seleksi                                     ppdb_seleksi[]
   riwayat_layanan                                  riwayat_layanan[]
@@ -706,6 +709,27 @@ model konsultasi_room {
   @@index([id_santri], map: "konsultasi_room_users_FK")
   @@index([id_timkes], map: "konsultasi_room_users_FK_1")
   @@index([closed_by], map: "konsultasi_room_users_FK_2")
+}
+
+model pengajuan_materi {
+  id_pengajuan    Int                     @id @default(autoincrement())
+  judul_materi    String                  @db.Text
+  penulis         String                  @db.Text
+  ringkasan       String                  @db.Text
+  isi_materi      String                  @db.Text
+  gambar          String?                 @db.Text
+  id_pengaju      Int?
+  nama_pengaju    String?                 @db.Text
+  status          pengajuan_materi_status
+  id_materi_hasil Int?
+  catatan_timkes  String?                 @db.Text
+  created_at      DateTime                @default(now()) @db.DateTime(0)
+  updated_at      DateTime                @db.DateTime(0)
+  materi          materi?                 @relation(fields: [id_materi_hasil], references: [id_materi], onDelete: NoAction, onUpdate: NoAction, map: "pengajuan_materi_materi_FK")
+  users           users?                  @relation(fields: [id_pengaju], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "pengajuan_materi_users_FK")
+
+  @@index([id_materi_hasil], map: "pengajuan_materi_materi_FK")
+  @@index([id_pengaju], map: "pengajuan_materi_users_FK")
 }
 
 enum item_kebersihan_waktu_pengerjaan {
@@ -895,4 +919,15 @@ enum konsultasi_room_close_reason_type {
   manual_timkes
   manual_santri
   auto_inactive
+}
+
+enum pengajuan_materi_status {
+  ditinjau
+  disetujui
+  ditolak
+}
+
+enum materi_sumber {
+  teori
+  pengalaman
 }
