@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import api from "../config/api";
+import { AUTH_STORAGE_EVENT, getAuthToken } from "../utils/authStorage";
 
 export const AuthContext = createContext();
 
@@ -8,8 +9,8 @@ export const AuthProvider = ({ children }) => {
   const [loadingAuth, setLoadingAuth] = useState(true);
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const token = localStorage.getItem("token");
+    const syncUserFromSession = async () => {
+      const token = getAuthToken();
       if (!token) {
         setUser(null);
         setLoadingAuth(false);
@@ -25,7 +26,19 @@ export const AuthProvider = ({ children }) => {
       }
     };
 
-    fetchUser();
+    const handleAuthChange = () => {
+      setLoadingAuth(true);
+      syncUserFromSession();
+    };
+
+    syncUserFromSession();
+    window.addEventListener("storage", handleAuthChange);
+    window.addEventListener(AUTH_STORAGE_EVENT, handleAuthChange);
+
+    return () => {
+      window.removeEventListener("storage", handleAuthChange);
+      window.removeEventListener(AUTH_STORAGE_EVENT, handleAuthChange);
+    };
   }, []);
 
   return (

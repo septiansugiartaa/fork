@@ -11,7 +11,7 @@ import { AuthContext } from "../context/AuthContext";
 const LEGACY_RECENT_STORAGE_KEY = "santri_recent_materi";
 
 // Role yang TIDAK boleh melihat tombol ajukan/riwayat
-const EXCLUDED_ROLES = ["admin", "timkesehatan"];
+const EXCLUDED_ROLES = ["admin", "timkesehatan", "pimpinan"];
 
 export default function MateriView() {
   const [materi, setMateri]                         = useState([]);
@@ -24,19 +24,28 @@ export default function MateriView() {
   const { user } = useContext(AuthContext);
   const navigate  = useNavigate();
   const location  = useLocation();
+  const role = user?.role?.trim().toLowerCase();
 
   const isPublicMateriPage = location.pathname.startsWith("/materi");
-  const rootFrom     = location.state?.rootFrom || location.state?.from || (isPublicMateriPage ? "/" : "/santri");
+  const defaultRootFrom = isPublicMateriPage
+    ? "/"
+    : role === "pimpinan"
+      ? "/pimpinan"
+      : "/santri";
+  const rootFrom     = location.state?.rootFrom || location.state?.from || defaultRootFrom;
   const backPath     = rootFrom;
-  const detailBasePath = isPublicMateriPage ? "/materi" : "/santri/scabies/viewMateri";
+  const detailBasePath = isPublicMateriPage
+    ? "/materi"
+    : role === "pimpinan"
+      ? "/pimpinan/scabies/materi"
+      : "/santri/scabies/viewMateri";
 
   // Apakah user yang login termasuk role yang dikecualikan?
-  const role              = user?.role?.trim().toLowerCase();
   const isExcludedRole    = role && EXCLUDED_ROLES.includes(role);
   // Tampilkan tombol ajukan: public user (tidak login) ATAU login tapi bukan excluded role
   const showAjukanButton  = !isExcludedRole;
   // Tampilkan tombol riwayat: hanya user yang login dan bukan excluded role
-  const showRiwayatButton = user && !isExcludedRole;
+  const showRiwayatButton = !isPublicMateriPage && user && !isExcludedRole;
 
   const fetchMateri = async () => {
     try {
@@ -227,11 +236,14 @@ export default function MateriView() {
         onSuccess={() =>
           showSuccess("Pengajuan berhasil dikirim! Tim Kesehatan akan meninjau materi Anda.")
         }
+        showRiwayatInfo={showRiwayatButton}
       />
-      <RiwayatPengajuanModal
-        isOpen={isRiwayatOpen}
-        onClose={() => setIsRiwayatOpen(false)}
-      />
+      {showRiwayatButton && (
+        <RiwayatPengajuanModal
+          isOpen={isRiwayatOpen}
+          onClose={() => setIsRiwayatOpen(false)}
+        />
+      )}
     </div>
   );
 }

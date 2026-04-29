@@ -5,7 +5,12 @@ import api from "../../../config/api";
 import Pagination from "../../../components/pagination/Pagination";
 import { formatObservasiWaktu, getObservasiBadgeClass, getObservasiScoreLabel } from "../../../components/UtilsObservasi";
 
-export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
+export default function PortalObservasiPage({
+  rolePrefix,
+  canCreate = false,
+  backPath,
+  shellVariant = "default"
+}) {
   const { id } = useParams();
   const navigate = useNavigate();
   const topRef = useRef(null);
@@ -115,16 +120,32 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
     );
   };
 
-  return (
-    <div ref={topRef} className="space-y-6">
-      <div className="flex items-center mb-6">
-        <button onClick={() => navigate(`/${rolePrefix}/daftarSantriObservasi`)} className="flex-shrink-0 hover:bg-white/20 rounded-full transition">
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="text-2xl font-bold text-gray-800 ml-4">Portal Observasi</h1>
-      </div>
+  const isScabiesShell = shellVariant === "scabies";
+  const targetBackPath = backPath || `/${rolePrefix}/daftarSantriObservasi`;
 
-      <div className="max-w-6xl mx-auto px-4 md:px-6 space-y-8 relative z-10">
+  return (
+    <div ref={topRef} className={isScabiesShell ? "min-h-screen bg-gray-50 pb-10" : "space-y-6"}>
+      {isScabiesShell ? (
+        <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-20">
+          <div className="max-w-6xl mx-auto flex items-center">
+            <button onClick={() => navigate(targetBackPath)} className="flex-shrink-0 rounded-full p-2 hover:bg-white/10 transition">
+              <ArrowLeft size={24} />
+            </button>
+            <div className="ml-4">
+              <p className="text-green-100 text-sm font-semibold">Dashboard Scabies Orang Tua</p>
+              <h1 className="text-2xl font-bold">Portal Observasi Anak</h1>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center mb-6">
+          <button onClick={() => navigate(targetBackPath)} className="flex-shrink-0 hover:bg-white/20 rounded-full transition">
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-2xl font-bold text-gray-800 ml-4">Portal Observasi</h1>
+        </div>
+      )}
+      <div className={`max-w-6xl mx-auto px-4 md:px-6 space-y-8 relative z-10 ${isScabiesShell ? "-mt-12" : ""}`}>
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-6">Data Diri Santri</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
@@ -261,6 +282,7 @@ export default function PortalObservasiPage({ rolePrefix, canCreate = false }) {
           />
         </div>
       </div>
+      {isScabiesShell && <div className="h-2" />}
     </div>
   );
 }

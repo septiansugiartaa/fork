@@ -16,19 +16,34 @@ exports.ajukanMateri = async (req, res) => {
   try {
     const { judul_materi, penulis, ringkasan, isi_materi } = req.body;
     const gambar = req.file ? req.file.filename : null;
+    const authenticatedUserId = Number(req.user?.id);
+    const id_pengaju = Number.isInteger(authenticatedUserId) ? authenticatedUserId : null;
+    let finalPenulis = penulis?.trim() || '';
 
-    if (!judul_materi?.trim() || !penulis?.trim() || !ringkasan?.trim() || !isi_materi?.trim()) {
+    if (id_pengaju) {
+      const pengaju = await prisma.users.findUnique({
+        where: { id: id_pengaju },
+        select: { nama: true }
+      });
+
+      if (!pengaju?.nama?.trim()) {
+        if (gambar) safeDeleteFile(gambar);
+        return res.status(400).json({ success: false, message: 'Nama user pengaju tidak ditemukan.' });
+      }
+
+      finalPenulis = pengaju.nama.trim();
+    }
+
+    if (!judul_materi?.trim() || !finalPenulis || !ringkasan?.trim() || !isi_materi?.trim()) {
       if (gambar) safeDeleteFile(gambar);
       return res.status(400).json({ success: false, message: 'Semua field wajib diisi.' });
     }
-
-    const id_pengaju   = req.user?.id   || null;
-    const nama_pengaju = id_pengaju ? null : (penulis?.trim() || 'Anonim');
+    const nama_pengaju = finalPenulis;
 
     const pengajuan = await prisma.pengajuan_materi.create({
       data: {
         judul_materi: judul_materi.trim(),
-        penulis:      penulis.trim(),
+        penulis:      finalPenulis,
         ringkasan:    ringkasan.trim(),
         isi_materi:   isi_materi.trim(),
         gambar,

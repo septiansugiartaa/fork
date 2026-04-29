@@ -4,7 +4,7 @@ import { ArrowLeft, Loader2 } from "lucide-react";
 import api from "../../../config/api";
 import { exportObservasiPdf } from "../../../components/PdfObservasi";
 
-export default function ViewObservasiPage({ rolePrefix }) {
+export default function ViewObservasiPage({ rolePrefix, backPath, shellVariant = "default" }) {
   const { observasiId } = useParams();
   const navigate = useNavigate();
   const [data, setData] = useState(null);
@@ -74,14 +74,31 @@ export default function ViewObservasiPage({ rolePrefix }) {
 
   const santri = data.users_observasi_id_santriTousers;
 
+  const isScabiesShell = shellVariant === "scabies";
+  const targetBackPath = backPath || `/${rolePrefix}/daftarSantriObservasi/${santri?.id}`;
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="mb-10 flex items-center ">
-        <button onClick={() => navigate(`/${rolePrefix}/daftarSantriObservasi/${santri?.id}`)} className="flex-shrink-0 hover:bg-white/20 rounded-full transition">
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 ml-3">Detail Laporan Observasi Santri</h1>
-      </div>
+      {isScabiesShell ? (
+        <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-20 mb-10">
+          <div className="max-w-6xl mx-auto flex items-center">
+            <button onClick={() => navigate(targetBackPath)} className="flex-shrink-0 rounded-full p-2 hover:bg-white/10 transition">
+              <ArrowLeft size={24} />
+            </button>
+            <div className="ml-4">
+              <p className="text-green-100 text-sm font-semibold">Dashboard Scabies Orang Tua</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Detail Laporan Observasi Anak</h1>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-10 flex items-center ">
+          <button onClick={() => navigate(targetBackPath)} className="flex-shrink-0 hover:bg-white/20 rounded-full transition">
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 ml-3">Detail Laporan Observasi Santri</h1>
+        </div>
+      )}
 
       <div className="max-w-3xl mx-auto h-[120vh] md:h-[280vh] sm:px-4">
         {pdfUrl && (

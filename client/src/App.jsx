@@ -51,6 +51,11 @@ import TimkesKonsultasiPage from "./pages/timkesehatan/konsultasi"
 import TimkesKonsultasiRiwayatPage from "./pages/timkesehatan/konsultasiRiwayat"
 
 import OrangtuaDashboard from "./pages/orangtua/dashboard"
+import OrangtuaScabiesDashboard from "./pages/orangtua/scabiesDashboard"
+import OrangTuaPortalScreening from "./pages/orangtua/screening/portalScreening"
+import OrangTuaViewScreening from "./pages/orangtua/screening/viewScreening"
+import OrangTuaPortalObservasi from "./pages/orangtua/observasi/portalObservasi"
+import OrangTuaViewObservasi from "./pages/orangtua/observasi/viewObservasi"
 import OrangtuaProfile from "./pages/orangtua/pendataan"
 import OrangtuaKegiatan from "./pages/orangtua/kegiatan"
 import OrangtuaKeuangan from "./pages/orangtua/keuangan"
@@ -65,11 +70,12 @@ import UstadzPengaduan from "./pages/ustadz/pengaduan"
 import PimpinanDashboard from "./pages/pimpinan/dashboard"
 import PimpinanSantri from "./pages/pimpinan/dataSantri"
 import PimpinanUstadz from "./pages/pimpinan/dataUstadz"
-import PimpinanMateri from "./pages/pimpinan/viewMateri"
-import PimpinanDetailMateri from "./pages/pimpinan/detailMateri"
 import PimpinanPengaduan from "./pages/pimpinan/pengaduan"
 import PimpinanKeuangan from "./pages/pimpinan/keuangan"
 import PimpinanFeedback from "./pages/pimpinan/feedback"
+import PimpinanScreening from "./pages/pimpinan/screening/daftarSantriScreening"
+import PimpinanDetailScreening from "./pages/pimpinan/screening/portalScreening"
+import PimpinanViewScreening from "./pages/pimpinan/screening/viewScreening"
 import PimpinanObservasi from "./pages/pimpinan/observasi/daftarSantriObservasi"
 import PimpinanDetailObservasi from "./pages/pimpinan/observasi/portalObservasi"
 import PimpinanViewObservasi from "./pages/pimpinan/observasi/viewObservasi"
@@ -213,6 +219,11 @@ function App() {
           <Route element={<ProtectedRoute allowedRoles={['orangtua']} />}>
             <Route path="/orangtua">
               <Route index element={<OrangtuaDashboard />} />
+              <Route path="kesehatan" element={<OrangtuaScabiesDashboard />} />
+              <Route path="daftarSantriScreening/:id" element={<OrangTuaPortalScreening />} />
+              <Route path="daftarSantriScreening/:id/view/:screeningId" element={<OrangTuaViewScreening />} />
+              <Route path="daftarSantriObservasi/:id" element={<OrangTuaPortalObservasi />} />
+              <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<OrangTuaViewObservasi />} />
               <Route path="profil" element={<OrangtuaProfile />} />
               <Route path="kegiatan" element={<OrangtuaKegiatan />} />
               <Route path="keuangan" element={<OrangtuaKeuangan />} />
@@ -235,14 +246,17 @@ function App() {
               <Route index element={<PimpinanDashboard />} />
               <Route path="data-santri" element={<PimpinanSantri />} />
               <Route path="data-ustadz" element={<PimpinanUstadz />} />
-              <Route path="scabies/materi" element={<PimpinanMateri />} />
-              <Route path="scabies/materi/:id" element={<PimpinanDetailMateri />} />
+              <Route path="scabies/materi" element={<MateriView />} />
+              <Route path="scabies/materi/:id" element={<DetailMateri />} />
               <Route path="pengaduan" element={<PimpinanPengaduan />} />
               <Route path="keuangan" element={<PimpinanKeuangan />} />
               <Route path="feedback" element={<PimpinanFeedback />} />
               <Route path="ppdb/rekapitulasi" element={<PpdbDashboard />} />
               <Route path="ppdb/pendaftar" element={<Pendaftar />} />
               <Route path="ppdb/seleksi" element={<Seleksi />} />
+              <Route path="daftarSantriScreening" element={<PimpinanScreening />} />
+              <Route path="daftarSantriScreening/:id" element={<PimpinanDetailScreening />} />
+              <Route path="daftarSantriScreening/:id/view/:screeningId" element={<PimpinanViewScreening />} />
               <Route path="daftarSantriObservasi" element={<PimpinanObservasi />} />
               <Route path="daftarSantriObservasi/:id" element={<PimpinanDetailObservasi />} />
               <Route path="daftarSantriObservasi/:id/view/:observasiId" element={<PimpinanViewObservasi />} />

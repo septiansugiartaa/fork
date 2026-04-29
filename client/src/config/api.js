@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { clearAuthSession, getAuthToken } from '../utils/authStorage';
 
 export const baseURL = '/api';
 
@@ -9,7 +10,7 @@ const api = axios.create({
 // REQUEST INTERCEPTOR: Otomatis pasang token di setiap request
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
+    const token = getAuthToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -36,13 +37,11 @@ api.interceptors.response.use(
     if (error.response && error.response.status === 401 && !isLoginURL) {
       if (isPublicPath) {
         console.warn('Token tidak valid saat akses halaman publik. Token dibersihkan tanpa redirect.');
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+        clearAuthSession();
         return Promise.reject(error);
       }
       console.warn('Token expired atau tidak valid. Mengarahkan ke Login...');
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+      clearAuthSession();
       window.location.href = '/login';
     }
     return Promise.reject(error);

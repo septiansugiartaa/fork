@@ -5,6 +5,7 @@ import { Loader2, Eye, EyeOff, X, ArrowLeft } from "lucide-react";
 import RegisterModal from "../components/RegisterModal";
 import AlertToast from "../components/AlertToast";
 import { useAlert } from "../hooks/useAlert";
+import { clearAuthSession, getAuthToken, getStoredAuthUser, setAuthSession } from "../utils/authStorage";
 
 // Map role → dashboard path (konsisten dengan ProtectedRoutes.jsx)
 const ROLE_DASHBOARD = {
@@ -56,16 +57,16 @@ export default function Login() {
 
   // Session check saat mount
   useEffect(() => {
-    const token   = localStorage.getItem("token");
-    const userStr = localStorage.getItem("user");
-    if (token && userStr) {
-      try {
-        const user = JSON.parse(userStr);
-        redirectByRole(getRoleSafe(user), true);
-      } catch {
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
-      }
+    const token = getAuthToken();
+    const user = getStoredAuthUser();
+
+    if (token && user) {
+      redirectByRole(getRoleSafe(user), true);
+      return;
+    }
+
+    if (token || localStorage.getItem("user")) {
+      clearAuthSession();
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -93,8 +94,7 @@ export default function Login() {
       } else {
         const { token, user } = response.data;
         if (token) {
-          localStorage.setItem("token", token);
-          localStorage.setItem("user", JSON.stringify(user || {}));
+          setAuthSession({ token, user });
         }
         redirectByRole(getRoleSafe(user));
       }
@@ -119,8 +119,7 @@ export default function Login() {
 
       const { token, user } = response.data;
       if (token) {
-        localStorage.setItem("token", token);
-        localStorage.setItem("user", JSON.stringify(user || {}));
+        setAuthSession({ token, user });
       }
       redirectByRole(getRoleSafe(user));
     } catch (err) {

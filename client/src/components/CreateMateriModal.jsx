@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { X } from "lucide-react";
 import api from "../config/api";
+import RichTextEditor from "./RichTextEditor";
 
 const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => {
   const [judul_materi, setJudul] = useState("");
@@ -108,7 +107,7 @@ const CreateMateriModal = ({ isOpen, onClose, refreshMateri, materiToEdit }) => 
             <div className="md:col-span-2">
               <label className="text-sm font-semibold text-gray-700">Isi Materi <span className="text-red-500">*</span></label>
               <div className={`mt-1 overflow-hidden rounded-xl border ${errors.isi_materi ? "border-red-500" : "border-gray-200"} focus-within:ring-2 focus-within:ring-green-200`}>
-                <ReactQuill theme="snow" value={isi_materi} onChange={setIsiMateri} className="bg-white rounded-xl" />
+                <RichTextEditor value={isi_materi} onChange={setIsiMateri} className="bg-white rounded-xl" />
               </div>
               {errors.isi_materi && <p className="text-xs text-red-500 mt-1">{errors.isi_materi}</p>}
             </div>

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
 import { X, CheckCircle, XCircle, Edit2, Loader2 } from "lucide-react";
 import api from "../config/api";
+import RichTextEditor from "./RichTextEditor";
 
 const ReviewPengajuanModal = ({ isOpen, pengajuan, onClose, onUpdate }) => {
   const [judul_materi, setJudul]       = useState("");
@@ -222,8 +221,7 @@ const ReviewPengajuanModal = ({ isOpen, pengajuan, onClose, onUpdate }) => {
               <label className="text-sm font-semibold text-gray-700">Isi Materi</label>
               {isEditing && !isReadOnly ? (
                 <div className="mt-1 overflow-hidden rounded-xl border border-gray-200 focus-within:ring-2 focus-within:ring-green-200">
-                  <ReactQuill
-                    theme="snow"
+                  <RichTextEditor
                     value={isi_materi}
                     onChange={setIsiMateri}
                     className="bg-white rounded-xl"

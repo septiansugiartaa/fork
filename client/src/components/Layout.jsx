@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import api from "../config/api";
+import { clearAuthSession } from "../utils/authStorage";
 
 import {
   Users,
@@ -61,7 +62,7 @@ export default function GlobalLayout() {
       } catch (error) {
 
         console.error("Akses ditolak:", error);
-        localStorage.removeItem("token");
+        clearAuthSession();
         navigate("/login");
 
       } finally {
@@ -287,8 +288,7 @@ export default function GlobalLayout() {
 
   const handleLogout = () => {
 
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
+    clearAuthSession();
     navigate("/login");
 
   };

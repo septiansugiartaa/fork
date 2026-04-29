@@ -4,7 +4,7 @@ import api from "../../../config/api";
 import { Loader2, ArrowLeft } from "lucide-react";
 import { exportScreeningPdf } from "../../../components/PdfScreening";
 
-export default function ViewScreeningPage({ rolePrefix }) {
+export default function ViewScreeningPage({ rolePrefix, backPath, shellVariant = "default" }) {
   const { screeningId } = useParams();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -83,20 +83,40 @@ export default function ViewScreeningPage({ rolePrefix }) {
 
   const santri = data.users_screening_id_santriTousers;
 
+  const isScabiesShell = shellVariant === "scabies";
+  const targetBackPath = backPath || `/${rolePrefix}/daftarSantriScreening/${santri?.id}`;
+
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <div className="mb-10 flex items-center ">
-        <button
-          onClick={() => navigate(`/${rolePrefix}/daftarSantriScreening/${santri?.id}`)}
-          className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
-        >
-          <ArrowLeft size={24} />
-        </button>
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800 ml-3">
-          Detail Laporan Screening Santri
-        </h1>
-        <div />
-      </div>
+      {isScabiesShell ? (
+        <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-20 mb-10">
+          <div className="max-w-6xl mx-auto flex items-center">
+            <button
+              onClick={() => navigate(targetBackPath)}
+              className="flex-shrink-0 rounded-full p-2 hover:bg-white/10 transition"
+            >
+              <ArrowLeft size={24} />
+            </button>
+            <div className="ml-4">
+              <p className="text-green-100 text-sm font-semibold">Dashboard Scabies Orang Tua</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Detail Laporan Screening Anak</h1>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="mb-10 flex items-center ">
+          <button
+            onClick={() => navigate(targetBackPath)}
+            className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
+          >
+            <ArrowLeft size={24} />
+          </button>
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-800 ml-3">
+            Detail Laporan Screening Santri
+          </h1>
+          <div />
+        </div>
+      )}
 
       <div className="max-w-3xl mx-auto h-[120vh] md:h-[280vh] sm:px-4">
         {pdfUrl && (

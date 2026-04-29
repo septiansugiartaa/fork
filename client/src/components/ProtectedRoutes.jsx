@@ -1,4 +1,5 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import { clearAuthSession, getAuthToken, getStoredAuthUser } from '../utils/authStorage';
 
 const ROLE_DASHBOARD = {
   santri:       '/santri',
@@ -12,19 +13,10 @@ const ROLE_DASHBOARD = {
 };
 
 const ProtectedRoute = ({ allowedRoles }) => {
-  const token   = localStorage.getItem('token');
-  const userStr = localStorage.getItem('user');
+  const token = getAuthToken();
+  const user = getStoredAuthUser();
 
-  if (!token || !userStr) {
-    return <Navigate to="/login" replace />;
-  }
-
-  let user = {};
-  try {
-    user = JSON.parse(userStr);
-  } catch {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  if (!token || !user) {
     return <Navigate to="/login" replace />;
   }
 
@@ -34,6 +26,11 @@ const ProtectedRoute = ({ allowedRoles }) => {
     userRole = user.role.toLowerCase();
   } else if (Array.isArray(user.user_role) && user.user_role.length > 0) {
     userRole = user.user_role[0]?.role?.role?.toLowerCase() || '';
+  }
+
+  if (!userRole) {
+    clearAuthSession();
+    return <Navigate to="/login" replace />;
   }
 
   if (allowedRoles.includes(userRole)) {

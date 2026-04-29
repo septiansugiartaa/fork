@@ -39,6 +39,7 @@ function DetailMateri() {
   const rolePathMap = {
     timkesehatan: "/timkesehatan/manageMateri",
     santri:       "/santri/scabies/viewMateri",
+    pimpinan:     "/pimpinan/scabies/materi",
     admin:        "/admin/manageMateri",
   };
 
@@ -68,12 +69,6 @@ function DetailMateri() {
     };
     fetchDetail();
   }, [id, isPublicMateriPage]);
-
-  useEffect(() => {
-    if (materi) {
-      console.log("ISI:", materi.detail_materi?.[0]?.isi_materi);
-    }
-  }, [materi]);
 
   useEffect(() => {
     localStorage.removeItem(LEGACY_RECENT_STORAGE_KEY);
@@ -126,6 +121,8 @@ function DetailMateri() {
 
   // HTML yang sudah disanitasi — aman untuk dirender
   const safeHtml = sanitize(materi.detail_materi?.[0]?.isi_materi);
+
+  const shouldShowComments = !isPublicMateriPage && role !== "pimpinan";
 
   if (role === "timkesehatan") {
     return (
@@ -251,7 +248,7 @@ function DetailMateri() {
         </div>
       </div>
 
-      {!isPublicMateriPage && (
+      {shouldShowComments && (
         <div className="max-w-6xl mx-auto px-4 mb-12">
           <CommentSection materiId={id} />
         </div>

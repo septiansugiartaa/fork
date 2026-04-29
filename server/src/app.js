@@ -99,6 +99,8 @@ app.use('/api/orangtua/profile',   require('./routes/orangtua/pendataanRoutes'))
 app.use('/api/orangtua/kegiatan',  require('./routes/orangtua/kegiatanRoutes'));
 app.use('/api/orangtua/keuangan',  require('./routes/orangtua/keuanganRoutes'));
 app.use('/api/orangtua/pengaduan', require('./routes/orangtua/pengaduanRoutes'));
+app.use('/api/orangtua/screening', require('./routes/orangtua/screeningRoutes'));
+app.use('/api/orangtua/observasi', require('./routes/orangtua/observasiRoutes'));
 
 app.use('/api/ustadz/dashboard', require('./routes/ustadz/dashboardRoutes'));
 app.use('/api/ustadz/profile',   require('./routes/ustadz/pendataanRoutes'));
@@ -112,6 +114,7 @@ app.use('/api/pimpinan/ustadz',    require('./routes/pimpinan/ustadzRoutes'));
 app.use('/api/pimpinan/pengaduan', require('./routes/pimpinan/pengaduanRoutes'));
 app.use('/api/pimpinan/keuangan',  require('./routes/pimpinan/keuanganRoutes'));
 app.use('/api/pimpinan/feedback',  require('./routes/pimpinan/feedbackRoutes'));
+app.use('/api/pimpinan/screening', require('./routes/pimpinan/screeningRoutes'));
 app.use('/api/pimpinan/observasi', require('./routes/pimpinan/observasiRoutes'));
 
 app.use('/api/admin/dashboard',          require('./routes/admin/dashboardRoutes'));
@@ -134,6 +137,7 @@ app.use('/api/admin/log',                require('./routes/admin/logRoutes'));
 app.use('/api/admin/screening',          require('./routes/admin/screeningRoutes'));
 app.use('/api/admin/observasi',          require('./routes/admin/observasiRoutes'));
 
+app.use('/api/timkesehatan/dashboard',       require('./routes/timkesehatan/dashboardRoutes'));
 app.use('/api/timkesehatan/screening',       require('./routes/timkesehatan/screeningRoutes'));
 app.use('/api/timkesehatan/absensi',         require('./routes/timkesehatan/absensiRoutes'));
 app.use('/api/timkesehatan/observasi',       require('./routes/timkesehatan/observasiRoutes'));

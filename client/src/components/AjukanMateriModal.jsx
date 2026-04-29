@@ -1,10 +1,10 @@
-import { useState, useEffect } from "react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { useState, useEffect, useContext } from "react";
 import { X, Send } from "lucide-react";
 import api from "../config/api";
+import RichTextEditor from "./RichTextEditor";
+import { AuthContext } from "../context/AuthContext";
 
-const AjukanMateriModal = ({ isOpen, onClose, onSuccess }) => {
+const AjukanMateriModal = ({ isOpen, onClose, onSuccess, showRiwayatInfo = true }) => {
   const [judul_materi, setJudul]       = useState("");
   const [penulis, setPenulis]           = useState("");
   const [ringkasan, setRingkasan]       = useState("");
@@ -12,18 +12,20 @@ const AjukanMateriModal = ({ isOpen, onClose, onSuccess }) => {
   const [gambar, setGambar]             = useState(null);
   const [loading, setLoading]           = useState(false);
   const [errors, setErrors]             = useState({});
+  const { user } = useContext(AuthContext);
+  const isAuthenticatedUser = Boolean(user?.id && user?.role);
 
   // Reset form setiap kali modal dibuka
   useEffect(() => {
     if (isOpen) {
       setJudul("");
-      setPenulis("");
+      setPenulis(isAuthenticatedUser ? (user?.nama || "") : "");
       setRingkasan("");
       setIsiMateri("");
       setGambar(null);
       setErrors({});
     }
-  }, [isOpen]);
+  }, [isOpen, isAuthenticatedUser, user]);
 
   const validate = () => {
     const e = {};
@@ -129,7 +131,8 @@ const AjukanMateriModal = ({ isOpen, onClose, onSuccess }) => {
                 value={penulis}
                 onChange={(e) => setPenulis(e.target.value)}
                 placeholder="Nama Anda"
-                className={inputClass("penulis")}
+                readOnly={isAuthenticatedUser}
+                className={`${inputClass("penulis")} ${isAuthenticatedUser ? "bg-gray-50 text-gray-500 cursor-not-allowed" : ""}`}
               />
               {errors.penulis && (
                 <p className="text-xs text-red-500 mt-1">{errors.penulis}</p>
@@ -177,8 +180,7 @@ const AjukanMateriModal = ({ isOpen, onClose, onSuccess }) => {
                 className={`mt-1 overflow-hidden rounded-xl border focus-within:ring-2 focus-within:ring-green-200
                   ${errors.isi_materi ? "border-red-400" : "border-gray-200"}`}
               >
-                <ReactQuill
-                  theme="snow"
+                <RichTextEditor
                   value={isi_materi}
                   onChange={setIsiMateri}
                   className="bg-white rounded-xl"
@@ -194,7 +196,8 @@ const AjukanMateriModal = ({ isOpen, onClose, onSuccess }) => {
           {/* Info */}
           <div className="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-xs text-amber-700">
             <strong>Catatan:</strong> Materi yang Anda ajukan akan ditinjau oleh Tim Kesehatan sebelum
-            diterbitkan. Anda dapat memantau status pengajuan melalui tombol "Riwayat Pengajuan".
+            diterbitkan.
+            {showRiwayatInfo && " Anda dapat memantau status pengajuan melalui tombol \"Riwayat Pengajuan\"."}
           </div>
 
           {/* Actions */}

@@ -10,7 +10,12 @@ import {
 } from "lucide-react";
 import Pagination from "../../../components/pagination/Pagination";
 
-export default function PortalScreeningPage({ rolePrefix }) {
+export default function PortalScreeningPage({
+    rolePrefix,
+    canCreate = true,
+    backPath,
+    shellVariant = "default"
+}) {
     const { id } = useParams();
     const navigate = useNavigate();
     const topRef = useRef(null);
@@ -143,21 +148,44 @@ export default function PortalScreeningPage({ rolePrefix }) {
         );
     };
 
-    return (
-        <div ref={topRef} className="space-y-6">
-            <div className="flex items-center mb-6">
-                <button
-                onClick={() => navigate(`/${rolePrefix}/daftarSantriScreening`)}
-                className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
-                >
-                <ArrowLeft size={24} />
-                </button>
-                <h1 className="text-2xl font-bold text-gray-800 ml-4">
-                Portal Screening
-                </h1>
-            </div>
+    const isScabiesShell = shellVariant === "scabies";
+    const targetBackPath = backPath || `/${rolePrefix}/daftarSantriScreening`;
 
-            <div className="max-w-6xl mx-auto px-4 md:px-6 space-y-8 relative z-10">
+    return (
+        <div
+            ref={topRef}
+            className={isScabiesShell ? "min-h-screen bg-gray-50 pb-10" : "space-y-6"}
+        >
+            {isScabiesShell ? (
+                <div className="bg-[url('../src/assets/header.png')] bg-cover bg-center text-white p-6 pb-20">
+                    <div className="max-w-6xl mx-auto flex items-center">
+                        <button
+                            onClick={() => navigate(targetBackPath)}
+                            className="flex-shrink-0 rounded-full p-2 hover:bg-white/10 transition"
+                        >
+                            <ArrowLeft size={24} />
+                        </button>
+                        <div className="ml-4">
+                            <p className="text-green-100 text-sm font-semibold">Dashboard Scabies Orang Tua</p>
+                            <h1 className="text-2xl font-bold">Portal Screening Anak</h1>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="flex items-center mb-6">
+                    <button
+                    onClick={() => navigate(targetBackPath)}
+                    className="flex-shrink-0 hover:bg-white/20 rounded-full transition"
+                    >
+                    <ArrowLeft size={24} />
+                    </button>
+                    <h1 className="text-2xl font-bold text-gray-800 ml-4">
+                    Portal Screening
+                    </h1>
+                </div>
+            )}
+
+            <div className={`max-w-6xl mx-auto px-4 md:px-6 space-y-8 relative z-10 ${isScabiesShell ? "-mt-12" : ""}`}>
 
                 {/* DATA SANTRI */}
                 <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">
@@ -212,15 +240,17 @@ export default function PortalScreeningPage({ rolePrefix }) {
                         Screening Terakhir
                         </h2>
 
-                        <button
-                        onClick={() =>
-                            navigate(`/${rolePrefix}/daftarSantriScreening/${id}/create`)
-                        }
-                        className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"
-                        >
-                        <Plus size={20} className="mr-2" />
-                        Screening Baru
-                        </button>
+                        {canCreate && (
+                            <button
+                            onClick={() =>
+                                navigate(`/${rolePrefix}/daftarSantriScreening/${id}/create`)
+                            }
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2.5 rounded-xl font-medium flex items-center shadow-lg transition"
+                            >
+                            <Plus size={20} className="mr-2" />
+                            Screening Baru
+                            </button>
+                        )}
                     </div>
 
                     <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
@@ -351,6 +381,7 @@ export default function PortalScreeningPage({ rolePrefix }) {
                 </div>
 
             </div>
+            {isScabiesShell && <div className="h-2" />}
         </div>
     );
 }
